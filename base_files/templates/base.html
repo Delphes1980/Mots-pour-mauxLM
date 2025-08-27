@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Mots pour maux LM - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css_files/styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-nav">
+        <img class="logo" src="../images/logo.png" alt="Mots pour maux LM logo">
+        <nav id="toggle-nav">
+			<a href="" id="accueil_link">Accueil</a>
+			<a href="" id="en_savoir_plus_link">En Savoir Plus</a>
+            <a href="add_review.html" id="techniques_link">Techniques Thérapeutiques</a>
+			<a href="" id="prestations_link">Prestations & Tarifs</a>
+			<a href="" id="coordonnees_link">Coordonnées & Horaires</a>
+			<a href="" id="avis_link">Les Avis</a>
+			<a href="" id="login_link">Connexion</a>
+        </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>©2023- Mots pour maux. All rights reserved.</p>
+		<p>Numéro SIRET</p>
+    </footer>
+</body>
+</html>
