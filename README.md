@@ -1,4 +1,5 @@
 # Mots-pour-mauxLM
+```
 app/
 |__README.md
 |__base_files/					# Frontend folder
@@ -75,3 +76,4 @@ app/
 	├── requirements.txt
 	|__ create_tables.sql                   
 	├── README.md
+```
