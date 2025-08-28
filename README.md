@@ -24,6 +24,7 @@ app/
 |	|	|__accueil.html
 |	|	|__avis.html
 |	|	|__coordonnees_horaires.html
+|	|	|__en_savoir_plus.html
 |	|	|__formulaire_rdv.html
 |	|	|__formulaire_commentaire.html
 |	|	|__login.html
