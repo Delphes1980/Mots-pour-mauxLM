@@ -1,0 +1,109 @@
+/* Style pour le contenu du main */
+.main-content {
+	padding: 20px;
+}
+
+/* Style pour le conteneur des cadres */
+.techniques-container {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 30px;
+	margin: 0 auto;
+	margin-top: 30px;
+}
+
+/* Style pour les cadres */
+.technique-box {
+	background-color: var(--background-card);
+	padding: 25px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le titre dans les cadres */
+.technique-box h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.3em;
+	margin-bottom: 10px;
+}
+
+/* Style pour le contenu des cadres */
+.technique-box p {
+	font-family: 'Lexend', sans-serif;
+	line-height: 1.6;
+	text-align: justify;
+	color: var(--writing-medium)
+}
+
+/* Style pour la liste */
+.technique-list {
+	padding-left: 20px;
+	margin: 0;
+}
+
+/* Style pour les éléments listés */
+.technique-list li {
+	text-align: start;
+	color: var(--writing-medium);
+}
+
+/* Style pour le conteneur des spécialités */
+.specialities-container {	
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
+	margin-top: 30px;
+	background-color: var(--background-card);
+	padding: 30px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le titre du conteneur des cadres de spécialités */
+.specialities-container h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.3em;
+	margin-bottom: 0;
+}
+
+/* Style pour le conteneur des cadres */
+.specialities-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 30px;
+	width: 100%;
+}
+
+/* Style pour les cadres des spécialités */
+.specialities-box {
+	background-color: var(--background-color);
+	padding: 10px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-weight: 600;
+}
+
+/* Style pour le titre du cadre des spécialités */
+.specialities-box .title {
+	text-align: center;
+	padding: 10px;
+	color: var(--writing-dark);
+	font-size: 1.1em;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+/* Style pour le contenu des cadres de spécialités */
+.specialities-box p {
+	text-align: justify;
+	color: var(--writing-medium)
+}
+
+/* Responsive pour les écrans plus petits */
+@media (max-width: 768px) {
+	.techniques-container, .specialities-grid {
+		grid-template-columns: 1fr;
+	}
+}
