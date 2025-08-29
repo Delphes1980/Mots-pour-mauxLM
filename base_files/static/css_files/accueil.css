@@ -1,0 +1,89 @@
+/* Style du main (CSS Grid) */
+main {
+	padding: 20px;
+}
+
+/* Style pour le contenu du main */
+.main-content {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 50px;
+	align-items: center;
+	max-width: 1000px;
+	margin: 0 auto;
+}
+
+/* Style pour le côté gauche (photo) */
+.practitioner-photo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 30px;
+}
+
+/* Style pour le conteneur de la photo */
+.image-container {
+	width: 300px;
+	height: 300px;
+	border-radius: 50%;
+	overflow: hidden;
+	box-shadow: 0 0 0 5px var(--writing-light);
+}
+
+/* Style pour la photo */
+.image-container img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: top;
+}
+
+/* Style pour le côté droit (présentation) */
+.presentation-info {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+/* Style pour le titre de la présentation */
+.presentation-text h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.3em;
+	margin-bottom: 10px;
+}
+
+/* Style pour le texte de la présentation */
+.presentation-text p {
+	font-family: 'Lexend', sans-serif;
+	line-height: 1.6;
+	text-indent: 2em;
+	text-align: justify;
+}
+
+/* Style pour le cadre des prestations proposées */
+.services {
+	padding: 20px 20px;
+	background-color: var(--background-card);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+}
+
+/* Style pour le contenu du cadre (prestations proposées) */
+.services h3 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.5em;
+	margin-bottom: 10px;
+}
+
+/* Style pour conteneur de liste */
+.services-list {
+	padding-left: 20px;
+	margin: 0;
+}
+
+/* Style pour la liste des prestations proposées */
+.services li {
+	text-align: start;
+	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color: var(--writing-dark);
+}

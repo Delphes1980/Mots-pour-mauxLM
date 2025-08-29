@@ -1,7 +1,79 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block title %}Accueil{% endblock %}
+    <title>Mots pour maux LM - Accueil</title>
 
-{% block content %}
-    <!-- Contenu de la page -->
-{% endblock %}
+    <link rel="stylesheet" href="../static/css_files/styles.css">
+    <link rel="stylesheet" href="../static/css_files/accueil.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png">
+	<link rel="manifest" href="../images/site.webmanifest">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    	<header class="header">
+			<div class="logo-container">
+        		<img class="logo" src="../images/Logo Clair.png" alt="Mots pour maux LM logo">
+			</div>
+			<div class="nav-container">
+        		<nav id="nav-links">
+					<a href="" id="accueil_link">Accueil</a>
+					<a href="" id="en_savoir_plus_link">En Savoir Plus</a>
+            		<a href="add_review.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
+					<a href="" id="prestations_link">Prestations<br>& Tarifs</a>
+					<a href="" id="coordonnees_link">Coordonnées<br>& Horaires</a>
+					<a href="" id="avis_link">Avis</a>
+					<a href="" id="login_link">Connexion</a>
+        		</nav>
+			</div>
+    	</header>
+
+    	<main>
+			<div class="hero-box"><p>Bienvenue</p></div>
+			<hr class="line">
+            <div class="main-content">
+                <div class="practitioner-photo">
+                    <div class="image-container">
+                        <img src="../images/Photo Profil.jpg" alt="Photo du praticien">
+                    </div>
+                </div>
+                <div class="presentation-info">
+                    <div class="presentation-text">
+                        <h4>Mélanie Laborda</h4>
+                        <p>Psychopraticienne et Hypnothérapeute à Saint Papoul, je vous accompagne dans votre cheminement vers le mieux-être.</p>
+                        <br>
+                        <p>Au sein de mon cabinet "Mots pour maux LM", j'accueille adultes et enfants dans un environnement bienveillant et adapté à vos besoins.</p>
+                        <br>
+                        <p>Mon approche personnalisée combine différentes techniques de psychothérapie et d'hypnose pour vous aider à surmonter vos difficultés et retrouver votre équilibre.</p>
+                    </div>
+                    <div class="services">
+                        <p>Mes services</p>
+                        <br>
+                        <ul class="services-list">
+                            <li>Psychothérapie pour adultes et enfants</li>
+                            <li>Hypnose thérapeutique</li>
+                            <li>Hypnose pour l'arrêt du tabac</li>
+                            <li>Anneau gastrique virtuel par hypnose</li>
+                            <li>Gestion des émotions</li>
+                            <li>Accompagnement des traumatismes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    	</main>
+
+		<hr class="line">
+    	<footer class="footer">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
+
+    	</footer>
+</body>
+</html>
