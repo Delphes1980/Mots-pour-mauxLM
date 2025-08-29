@@ -4,6 +4,8 @@
 	--writing-light: #B1B6A2;
 	--writing-medium: #7C7F72;
 	--writing-dark: #48493D;
+	--background-button: #5D4037;
+	--button-hover: #705141;
 }
 
 /* Style base de la page */
@@ -81,7 +83,7 @@ header, main, footer {
 	padding: 10px 5px;
 }
 
-#nav-link a:hover {
+#nav-links a:hover {
 	color: var(--writing-dark);
 	text-decoration: underline;
 }
@@ -107,7 +109,7 @@ main {
 	text-align: center;
 	color: var(--writing-dark);
 	font-family: 'DM Serif Display', sans serif;
-	font-size: 24px;
+	font-size: 26px;
 	font-weight: 700;
 	max-width: 800px;
 	margin: auto;
