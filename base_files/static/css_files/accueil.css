@@ -69,10 +69,8 @@ main {
 }
 
 /* Style pour le contenu du cadre (prestations proposées) */
-.services h3 {
-	font-family: 'DM Serif Display', serif;
-	font-size: 1.5em;
-	margin-bottom: 10px;
+.services h4 {
+	text-align: left;
 }
 
 /* Style pour conteneur de liste */
@@ -86,4 +84,33 @@ main {
 	text-align: start;
 	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	color: var(--writing-dark);
+}
+
+.button-container {
+	display: flex;
+	justify-content: center;
+}
+
+/* Style pour le bouton de contact */
+.contact-button {
+	display: inline-block;
+	padding: 15px 30px;
+	background-color: var(--background-button);
+	color: var(--writing-light);
+	text-decoration: none;
+	border-radius: 5px;
+	font-family: 'Lexend', sans serif;
+	font-weight: bold;
+	font-size: 16px;
+	text-align: center;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	margin-top: 20px;
+	max-width: 250px;
+}
+
+/* Style quand on passe sur le bouton */
+.contact-button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
