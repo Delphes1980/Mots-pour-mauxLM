@@ -94,7 +94,7 @@ header, main, footer {
 .line {
 	border: none;
 	height: 2px;
-	background-color: var(--writing-light);
+	background-color: var(--background-button);
 	width: 100%;
 	max-width: 1200px;
 	margin: 20px auto;
