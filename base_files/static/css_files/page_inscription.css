@@ -1,39 +1,33 @@
-/* Style pour le container du formulaire */
-.login-container {
+/* Style pour le conteneur du formulaire */
+.registration-container {
 	background-color: var(--background-card);
-	padding: 30px;
+	padding: 0px;
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	margin: 30px auto;
-	max-width: 400px;
-	display: flex;
+	max-width: 450px;
+	display:flex;
 	flex-direction: column;
-	min-height: 400px;
+	align-items: center;
+	justify-content: center;
+	min-height: 500px;
 }
 
 /* Style pour le conteneur des champs du formulaire */
-.login-form {
+.registration-form {
 	display: flex;
 	flex-direction: column;
 	gap: 15px;
 	align-items: center;
-	width: 100%;
+	width: 80%;
 	flex-grow: 1;
 	margin-top: 50px;
 }
 
-/* Style pour l'input (Email & Mot de passe) */
-.login-form input::placeholder {
+/* Style pour l'input (Nom, Prénom, Email & Mot de passe) */
+.registration-form input::placeholder {
 	color: var(--writing-medium);
 	font-weight: 300;
-}
-
-/* Style pour le lien d'inscription (créer un compte) */
-.login-form a {
-	color: var(--writing-medium);
-	text-decoration: none;
-	font-family: 'Lexend', sans-serif;
-	font-size: 0.9em;
 }
 
 /* Style pour le conteneur de l'input */
@@ -61,18 +55,35 @@
 /* Style pour la croix pour effacer l'input */
 .clear-input-button {
 	position: absolute;
-	top: 30%;
+	top: 15px;
 	right: 8px;
 	transform: translateY(-50%);
-	color:var(--writing-medium);
+	color: var(--writing-medium);
 	cursor: pointer;
 	font-size: 1.2em;
 	display: none;
 	z-index: 10;
 }
 
+/* Style pour le conteneur des exigences du mot de passe */
+.password-requirements {
+	width: 80%;
+	text-align: left;
+	font-size: 0.75em;
+	color: var(--writing-medium);
+	/* margin-top: 5px; */
+	margin-bottom: 5px;
+}
+
+/* Style pour le contenu des exigences */
+.password-requirements p {
+	margin: 0;
+	color: var(--background-chip);
+	opacity: 0.9;
+}
+
 /* Style pour le bouton */
-.login-form button {
+.registration-form button {
 	/* width: 80%; */
 	background-color: var(--background-button);
 	color: var(--background-card);
@@ -83,5 +94,5 @@
 	font-weight: bold;
 	text-transform: uppercase;
 	transition: background-color 0.3s ease;
-	margin-top: auto;
+	margin-top: 80px;
 }

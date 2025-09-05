@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
   inputFields.forEach(input => {
     const clearButton = input.nextElementSibling;
 
+    clearButton.style.display = 'none';
+
     input.addEventListener('input', () => {
       if (input.value.length > 0) {
         clearButton.style.display = 'block';
