@@ -122,9 +122,42 @@
 	flex-shrink: 0;
 }
 
-/* Style pour le responsive */
+/* ##### Code responsive ##### */
 @media (max-width: 768px) {
-	.prestations-container, .informations-container {
+	.prestations-container {
 		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+	.informations-container {
+		grid-template-columns: 1fr;
+		padding: 20px;
+		gap: 15px;
+	}
+	.prestation-box {
+		padding: 15px;
+	}
+	.prestation-box h3 {
+		font-size: 1.2em;
+	}
+	.prestation-box p, .prestation-list li {
+		font-size: 0.9em;
+	}
+	.prestation-list {
+		padding-left: 0;
+		list-style-position: inside;
+	}
+	.price-container p {
+		font-size: 1.2em;
+	}
+	.informations-list {
+		padding-left: 0;
+		gap: 8px;
+	}
+	.informations-list li {
+		font-size: 0.9em;
+		text-align: center;
+	}
+	.informations-list li::before {
+		flex-shrink: 0;
 	}
 }

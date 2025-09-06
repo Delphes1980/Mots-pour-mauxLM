@@ -40,3 +40,25 @@
 	text-align: start;
 	color: var(--writing-medium);
 }
+
+/* ##### Code responsive ##### */
+@media (max-width: 768px) {
+	.content-container {
+		gap: 15px;
+	}
+	.content {
+		padding: 15px;
+	}
+	.content h4 {
+		font-size: 1.1em;
+		text-align: center;
+	}
+	.content p {
+		font-size: 0.9em;
+		text-indent: 1rem;
+	}
+	.content-list {
+		padding-left: 0;
+		list-style-position: inside;
+	}
+}

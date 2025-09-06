@@ -52,7 +52,7 @@
 	padding-right: 30px;
 	border: 1px solid var(--writing-medium);
 	border-radius: 8px;
-	background-color: var(--background-card);
+	background-color: var(--background-form);
 	font-family: 'Lexend', sans-serif;
 	color: var(--writing-dark);
 	text-align: left;
@@ -73,7 +73,6 @@
 
 /* Style pour le bouton */
 .login-form button {
-	/* width: 80%; */
 	background-color: var(--background-button);
 	color: var(--background-card);
 	padding: 12px 30px;
@@ -84,4 +83,35 @@
 	text-transform: uppercase;
 	transition: background-color 0.3s ease;
 	margin-top: auto;
+}
+
+/* Style quand on passe sur le bouton */
+.login-form button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ##### Code responsive ##### */
+/* Style pour les écrans plus petits que 768px */
+@media (max-width: 768px) {
+	.login-container {
+		padding: 20px;
+		margin: 20px auto;
+		max-width: 90%;
+	}
+	.login-form {
+		margin-top: 30px;
+		gap: 10px;
+	}
+	.form-field {
+		width: 100%;
+		max-width: none;
+	}
+	.login-form button {
+		width: 100%;
+	}
+	.clear-input-button {
+		top: 25%;
+	}
 }

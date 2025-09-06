@@ -101,9 +101,31 @@
 	color: var(--writing-medium)
 }
 
+/* ##### Code responsive #####*/
+/* Pour les écrans plus petits que 1024px */
+@media (max-width: 1024px) {
+	.techniques-container, .specialities-grid {
+		grid-template-columns: 1fr;
+	}
+}
 /* Responsive pour les écrans plus petits */
 @media (max-width: 768px) {
 	.techniques-container, .specialities-grid {
-		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+	.technique-box, .specialities-container {
+		padding: 20px;
+	}
+	.technique-box h4, .specialities-container h4 {
+		font-size: 1.2em;
+		text-align: center;
+	}
+	.technique-box p, .specialities-box p {
+		font-size: 0.9em;
+	}
+	.technique-list, .specialities-box p {
+		padding-left: 0;
+		list-style-position: inside;
+		text-indent: 0;
 	}
 }

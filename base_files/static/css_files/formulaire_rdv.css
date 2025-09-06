@@ -1,0 +1,204 @@
+/* Style pour le conteneur du formulaire */
+.appointment-container {
+	background-color: var(--background-card);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	margin: 60px auto;
+	max-width: 520px;
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 500px;
+}
+
+/* Style pour le conteneur des champs du formulaire */
+.appointment-form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	align-items: center;
+	width: 100%;
+	flex-grow: 1;
+	margin-top: 30px;
+}
+
+/* Style pour les placeholder */
+.appointment-form input::placeholder, .appointment-form textarea::placeholder {
+	color: var(--writing-medium);
+	font-weight: 300;
+}
+
+/* Style pour le conteneur de l'input */
+.form-field {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	max-width: 400px;
+}
+
+/* Style pour la croix pour effacer l'input */
+.clear-input-button {
+	position: absolute;
+	top: 15px;
+	right: 8px;
+	transform: translateY(-50%);
+	color: var(--writing-medium);
+	cursor: pointer;
+	font-size: 1.2em;
+	display: none;
+	z-index: 10;
+}
+
+/* Style pour la croix pour effacer dans le champ du message */
+.message-field .clear-input-button {
+	top: 10px;
+	transform: none;
+}
+
+/* Style pour les champs de saisie (input, select et textarea) et le menu déroulant */
+.appointment-form input, .appointment-form select, .appointment-form textarea, .select-selected {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	text-align: left;
+}
+
+/* Style pour le champ du message */
+.appointment-form textarea {
+	height: 200px;
+	resize: none;
+	padding-right: 30px;
+}
+
+/* Style pour le bouton */
+.appointment-form button {
+	background-color: var(--background-button);
+	color: var(--background-card);
+	padding: 12px 30px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease;
+	margin-top: 80px;
+	margin-bottom: 30px;
+}
+
+/* Style quand on passe sur le bouton */
+.appointment-form button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Style pour le menu déroulant personnalisé */
+.select-wrapper {
+	position: relative;
+	width: 100%;
+	max-width: 400px;
+}
+
+/* Style du menu déroulant quand on clique dessus */
+.select-selected {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-medium);
+	cursor: pointer;
+	text-align: left;
+	box-sizing: border-box;
+}
+
+/* Style pour la flèche du menu déroulant */
+.select-selected:after {
+	position: absolute;
+	content: "";
+	top: 18px;
+	right: 10px;
+	width: 0;
+	height: 0;
+	border: 6px solid transparent;
+	border-color: var(--writing-medium) transparent transparent transparent;
+}
+
+/* Style pour la liste des éléments du menu déroulant */
+.select-items {
+	position: absolute;
+	width: 100%;
+	background-color: var(--background-form);
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 99;
+	border: 1px solid var(--writing-medium);
+	border-top: none;
+	border-radius: 0 0 8px 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	text-align: left;
+}
+
+/* Style pour les éléments du menu déroulant */
+.select-items div {
+	padding: 12px;
+	cursor: pointer;
+	color: var(--writing-dark);
+}
+
+/* Style pour le survol des éléments du menu déroulant */
+.select-items div:hover {
+	background-color: var(--background-select);
+	color: var(--background-card);
+}
+
+/* Style pour cacher le menu déroulant */
+.select-hide {
+	display: none;
+}
+
+/* ##### Code responsive ##### */
+/* Style pour les écrans plus petits que 768px */
+@media (max-width: 768px) {
+	.appointment-container {
+		padding: 20px;
+		margin: 30px auto;
+		max-width: 95%;
+		min-height: 400px;
+	}
+	.appointment-form {
+		margin-top: 20px;
+		width: 90%;
+		gap: 10px;
+	}
+	.form-field {
+		width: 100%;
+		max-width: none;
+	}
+	.select-wrapper {
+		width: 100%;
+		max-width: none;
+	}
+	.appointment-form textarea {
+		height: 150px;
+	}
+	.clear-input-button {
+		top: 10px;
+	}
+	.message-field .clear-input-button {
+		top: 5px;
+	}
+	.appointment-form button {
+		width: 100%;
+		margin-top: 40px;
+		margin-bottom: 20px;
+	}
+}

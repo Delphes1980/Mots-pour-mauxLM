@@ -116,3 +116,43 @@ main {
 	transform: translateY(-2px);
 	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
+
+/* ##### Code responsive ##### */
+/* Pour les écrans plus petits que 900px */
+@media (max-width: 900px) {
+	.main-content {
+		grid-template-columns: 1fr;
+		gap: 30px;
+	}
+	.practitioner-photo {
+		padding: 0;
+	}
+}
+
+/* Pour les écrans plus petits que 600px */
+@media (max-width: 600px) {
+	.image-container {
+		width: 250px;
+		height: 250px;
+	}
+	.presentation-info {
+		gap: 15px;
+	}
+	.presentation-text h4 {
+		font-size: 1.2em;
+	}
+	.presentation-text p {
+		font-size: 0.9em;
+	}
+	.services h4 {
+		text-align: center;
+	}
+	.services-list {
+		padding-left: 0;
+		list-style-position: inside;
+	}
+	.contact-button {
+		padding: 12px 25px;
+		font-size: 14px;
+	}
+}
