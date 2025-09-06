@@ -65,10 +65,33 @@
 	margin: 0;
 }
 
-/* Style pour le responsive */
+/* ##### Code responsive ##### */
+/* Style pour les écrans plus petits que 768px */
 @media (max-width: 768px) {
 	.review-container {
 		grid-template-columns: 1fr;
 		padding: 0 20px;
+		gap: 20px;
+	}
+	.review-box {
+		padding: 15px;
+	}
+	.review-name-box {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.review-name-box h3 {
+		font-size: 1.1em;
+		margin-bottom: 5px;
+	}
+	.rating-stars .bx {
+		font-size: 1em;
+	}
+	.review-text-box {
+		max-height: 100px;
+		padding: 0;
+	}
+	.review-text-box p {
+		font-size: 0.9em;
 	}
 }

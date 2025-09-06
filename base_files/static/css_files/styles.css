@@ -1,12 +1,14 @@
 :root {
 	--background-color: #E9E1CC;
 	--background-card: #F5F2EA;
+	--background-form: #FAF9F6;
+	--background-button: #5D4037;
+	--background-chip: #D27967;
+	--background-select: #A48B7F;
 	--writing-light: #B1B6A2;
 	--writing-medium: #7C7F72;
 	--writing-dark: #48493D;
-	--background-button: #5D4037;
 	--button-hover: #705141;
-	--background-chip: #D27967;
 	--icon-color: #E2725B;
 }
 
@@ -83,6 +85,7 @@ header, main, footer {
 	font-weight: 400;
 	text-align: center;
 	padding: 10px 5px;
+	white-space: nowrap;
 }
 
 #nav-links a:hover {
@@ -154,11 +157,13 @@ footer {
 	#nav-links {
 		justify-content: center;
 		gap: 10px;
+		flex-wrap: wrap;
 	}
 
 	#nav-links a {
 		font-size: 14px;
 		padding: 8px 3px;
+		white-space: normal;
 	}
 
 	.footer {
@@ -186,6 +191,7 @@ footer {
 	#nav-links a {
 		font-size: 12px;
 		padding: 5px;
+		white-space: normal;
 	}
 
 	.hero-box {
