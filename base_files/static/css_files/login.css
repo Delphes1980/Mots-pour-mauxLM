@@ -85,7 +85,7 @@
 	margin-top: auto;
 }
 
-/* Style quand on passe sur le bouton */
+/* Style pour le survol du bouton */
 .login-form button:hover {
 	background-color: var(--button-hover);
 	transform: translateY(-2px);

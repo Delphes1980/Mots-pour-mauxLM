@@ -1,3 +1,4 @@
+// Fonction qui génère les étoiles dans un avis déjà laissé
 function generateStarsInReviews(rating) {
   let stars = '';
   const maxStars = 5;

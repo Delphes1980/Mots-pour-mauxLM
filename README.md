@@ -6,27 +6,30 @@ app/
 |	|__images/
 |	|__static/
 |	|	|__css_files/
-|	|	|	|__login.css
+|	|	|	|__accueil.css
+|	|	|	|__avis.css
+|	|	|	|__coordonnees_horaires.css
+|	|	|	|__en_savoir_plus.css
+|	|	|	|__formulaire_commentaires.css
 |	|	|	|__formulaire_rdv.css
-|	|	|	|__formulaire_commentaire.css
-|	|	|	|__page_personnelle.css
+|	|	|	|__login.css
 |	|	|	|__page_inscription.css
+|	|	|	|__prestations_tarifs.css
 |	|	|	|__styles.css
+|	|	|	|__techniques_therapeutiques.css
 |	|	|__js_files/
-|	|		|__accueil.js
-|	|		|__login.js
+|	|		|__avis.js
+|	|		|__formulaire_commentaires.js
 |	|		|__formulaire_rdv.js
-|	|		|__formulaire_commentaire.js
-|	|		|__page_inscription.js
-|	|		|__page_personnelle.js
+|	|		|__login.js
 |	|__templates/
-|	|	|__base.html
 |	|	|__accueil.html
 |	|	|__avis.html
+|	|	|__base.html
 |	|	|__coordonnees_horaires.html
 |	|	|__en_savoir_plus.html
-|	|	|__formulaire_rdv.html
-|	|	|__formulaire_commentaire.html
+|	|	|__formulaire_commentaires.html
+|	|	|__formulaire_avis.html
 |	|	|__login.html
 |	|	|__page_inscription.html
 |	|	|__page_personnelle.html
@@ -72,6 +75,7 @@ app/
 	|   |__ test_relationships.py
 	|   |__ test_reviews.py
 	|   |__ test_user.py
+	|__ __init__.py
 	|── run.py                             
 	├── config.py
 	├── requirements.txt

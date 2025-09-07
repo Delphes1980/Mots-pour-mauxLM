@@ -4,11 +4,11 @@
 	<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Mots pour maux LM - Les avis</title>
+    <title>Mots pour maux LM - Laisser un avis</title>
 
 	<!-- Liens pour les fichiers CSS -->
 	<link rel="stylesheet" href="../static/css_files/styles.css">
-	<link rel="stylesheet" href="../static/css_files/avis.css">
+	<link rel="stylesheet" href="../static/css_files/formulaire_commentaires.css">
 	<!-- Liens pour le favicon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="../images/favicon/apple-touch-icon.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon/favicon-32x32.png">
@@ -19,7 +19,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
-	<!-- Lien pour les étoiles -->
+	<!-- Lien pour l'icone de croix -->
 	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
@@ -42,63 +42,49 @@
     	</header>
 
     	<main>
-			<div class="hero-box"><p>Les avis</p></div>
+			<div class="hero-box"><p>Laisser un avis</p></div>
 			<hr class="line">
-			<div class="main-content">
-				<div class="review-container">
-					<div class="review-box">
-					<div class="review-name-box">
-						<h3>Maya Angelou</h3>
-						<div class="rating-stars">
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-						</div>
+			<section class="review-container">
+				<form class="review-form" action="/review" method="post">
+					<div class="form-field">
+						<input type="text" id="last-name" name="last-name" placeholder="Nom" required>
+						<i class="bx bx-x clear-input-button"></i>
 					</div>
-					<div class="review-text-box">
-						<p>J’ai appris que les gens oublieront ce que vous avez dit, les gens oublieront ce que vous avez fait, mais les gens n’oublieront jamais ce que vous leur avez fait ressentir.</p>
+
+					<div class="form-field">
+						<input type="text" id="first-name" name="first-name" placeholder="Prénom" required>
+						<i class="bx bx-x clear-input-button"></i>
 					</div>
-					</div>
-					<div class="review-box">
-					<div class="review-name-box">
-						<h3>Nelson Mandela</h3>
-						<div class="rating-stars">
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-						</div>
-					</div>
-					<div class="review-text-box">
-						<p>Une tête bien faite et un bon coeur forment toujours une formidable combinaison.</p>
+
+					<!-- Notation étoile  -->
+					<div class="form-field">
+					<div class="stars-wrapper">
+						<div class="rating">
+                            <input type="number" name="rating" hidden id="rating-input" required>
+                            <i class="bx bx-star star" style="--i: 0;" data-value="1"></i>
+                            <i class="bx bx-star star" style="--i: 1;" data-value="2"></i>
+                            <i class="bx bx-star star" style="--i: 2;" data-value="3"></i>
+                            <i class="bx bx-star star" style="--i: 3;" data-value="4"></i>
+                            <i class="bx bx-star star" style="--i: 4;" data-value="5"></i>
+                        </div>					
 					</div>
 					</div>
-					<div class="review-box">
-					<div class="review-name-box">
-						<h3>Shakespeare</h3>
-						<div class="rating-stars">
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-						</div>
+
+					<div class="form-field message-field">
+						<textarea id="message" name="message" placeholder="Votre avis"></textarea>
+						<i class="bx bx-x clear-input-button"></i>
 					</div>
-					<div class="review-text-box">
-						<p>L'amour ne voit pas avec les yeux, mais avec l'âme.</p>
-					</div>
-					</div>
-				</div>
-			</div>
+
+					<button type="submit">Envoyer</button>
+				</form>
+			</section>
     	</main>
 
 		<hr class="line">
     	<footer class="footer">
         	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
     	</footer>
-		<script src="../static/js_files/avis.js"></script>
+
+		<script src="../static/js_files/formulaire_commentaires.js"></script>
 </body>
 </html>
