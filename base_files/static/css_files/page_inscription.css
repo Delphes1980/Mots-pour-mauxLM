@@ -96,7 +96,7 @@
 	margin-top: 80px;
 }
 
-/* Style quand on passe sur le bouton */
+/* Style pour le survol du bouton */
 .registration-form button:hover {
 	background-color: var(--button-hover);
 	transform: translateY(-2px);
