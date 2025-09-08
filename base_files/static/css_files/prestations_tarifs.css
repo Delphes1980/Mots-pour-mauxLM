@@ -1,0 +1,163 @@
+/* Style pour le contenu du main */
+.main-content {
+	padding: 20px;
+}
+
+/* Style pour le conteneur */
+.prestations-container {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 30px;
+	margin: 0 auto;
+	margin-top: 30px;
+}
+
+/* Style pour les cadres */
+.prestation-box {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--background-card);
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le titre des cadres */
+.prestation-box h3 {
+	text-align: center;
+	margin-bottom: 0;
+	padding: 10px;
+}
+
+/* Style pour le contenu des cadres */
+.prestation-box p {
+	font-family: 'Lexend', sans-serif;
+	line-height: 1.6;
+	text-align: justify;
+	color: var(--writing-medium);
+	padding: 10px;
+}
+
+/* Style pour la liste */
+.prestation-list {
+	padding-left: 20px;
+	margin: 0;
+}
+
+/* Style pour les éléments listés */
+.prestation-list li {
+	text-align: start;
+	color: var(--writing-medium);
+}
+
+/* Style pour le conteneur du prix */
+.price-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
+	background-color: var(--background-card);
+	border-radius: 10px;
+	margin-top: auto;
+}
+
+/* Style pour le contenu du cadre de prix */
+.price-container p {
+	font-size: 1.4em;
+	font-weight: 700;
+}
+
+/* Style pour le conteneur des informations */
+.informations-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
+	margin-top: 30px;
+	background-color: var(--background-card);
+	padding: 30px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le titre du cadre d'informations */
+.informations-container h4 {
+	text-align: center;
+	margin-bottom: 0;
+}
+
+/* Style pour la liste */
+.informations-list {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+/* Style pour les éléments listés */
+.informations-list li{
+	text-align: start;
+	color: var(--writing-medium);
+	display: flex;
+	align-items: center;
+	text-align: start;
+	gap: 10px;
+}
+
+
+/* Style pour les boutons informations à la place des puces */
+.informations-list li::before {
+	content: 'i';
+	color: var(--background-card);
+	font-size: 0.8em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 15px;
+	height: 15px;
+	background-color: var(--background-chip);
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+/* ##### Code responsive ##### */
+@media (max-width: 768px) {
+	.prestations-container {
+		grid-template-columns: 1fr;
+		gap: 20px;
+	}
+	.informations-container {
+		grid-template-columns: 1fr;
+		padding: 20px;
+		gap: 15px;
+	}
+	.prestation-box {
+		padding: 15px;
+	}
+	.prestation-box h3 {
+		font-size: 1.2em;
+	}
+	.prestation-box p, .prestation-list li {
+		font-size: 0.9em;
+	}
+	.prestation-list {
+		padding-left: 0;
+		list-style-position: inside;
+	}
+	.price-container p {
+		font-size: 1.2em;
+	}
+	.informations-list {
+		padding-left: 0;
+		gap: 8px;
+	}
+	.informations-list li {
+		font-size: 0.9em;
+		text-align: center;
+	}
+	.informations-list li::before {
+		flex-shrink: 0;
+	}
+}

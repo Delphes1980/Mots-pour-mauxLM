@@ -1,0 +1,200 @@
+:root {
+	--background-color: #E9E1CC;
+	--background-card: #F5F2EA;
+	--background-form: #FAF9F6;
+	--background-button: #5D4037;
+	--background-chip: #D27967;
+	--background-select: #A48B7F;
+	--writing-light: #B1B6A2;
+	--writing-medium: #7C7F72;
+	--writing-dark: #48493D;
+	--button-hover: #705141;
+	--icon-color: #E2725B;
+}
+
+/* Style base de la page */
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* Style de la page */
+body {
+	background-color: var(--background-color);
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	font-family: 'DM Serif Display', sans serif;
+	color: var(--writing-dark);
+}
+
+header, main, footer {
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+/* Style du header */
+.header {
+	display: flex;
+    justify-content: space-between;
+    align-items: center;
+	padding: 20px 50px;
+	color: var(--writing-dark);
+	background-color: var(--background-card);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	margin-top: 30px;
+}
+
+/* Style du conteneur du logo */
+.logo-container {
+	width: 350px;
+	height: auto;
+}
+
+/* Style du logo */
+.logo {
+	width: 100%;
+	height: auto;
+}
+
+/* Style du conteneur de navigation */
+.nav-container {
+	display: flex;
+	justify-content: flex-end;
+	flex-grow: 1;
+	margin-left: 50px;
+}
+
+/* Style du conteneur des liens de navigation */
+#nav-links {
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-start;
+	gap: 15px;
+}
+
+/* Style des liens de navigation */
+#nav-links a {
+	text-decoration: none;
+	color: var(--writing-medium);
+	font-family: 'DM Serif Display', sans serif;
+	font-size: 16px;
+	font-weight: 400;
+	text-align: center;
+	padding: 10px 5px;
+	white-space: nowrap;
+}
+
+#nav-links a:hover {
+	color: var(--writing-dark);
+	text-decoration: underline;
+}
+
+/* Style de la ligne séparatrice */
+.line {
+	border: none;
+	height: 2px;
+	background-color: var(--background-button);
+	width: 100%;
+	max-width: 1200px;
+	margin: 20px auto;
+}
+
+main {
+	flex-grow: 1;
+	padding: 20px;
+	text-align: center;
+}
+
+.hero-box {
+	background-color: var(--background-color);
+	text-align: center;
+	color: var(--writing-dark);
+	font-family: 'DM Serif Display', sans serif;
+	font-size: 26px;
+	font-weight: 700;
+	max-width: 800px;
+	margin: auto;
+}
+
+/* Style du footer */
+footer {
+	display: flex;
+	flex-direction: row; 
+    justify-content: center; 
+    align-items: center;
+	text-align: center;
+	color: var(--writing-medium);
+	padding: 15px;
+	gap: 20px;
+	font-size: 14px;
+}
+
+/* ##### Code responsive ##### */
+
+/* Pour les tablettes (max-width: 768px) */
+@media (max-width: 768px) {
+	.header {
+		flex-direction: column;
+		padding: 20px;
+		margin-top: 15px;
+	}
+
+	.logo-container {
+		width: 100%;
+		max-width: 250px;
+	}
+
+	.nav-container {
+		margin-left: 0;
+		margin-top: 20px;
+		width: 100%;
+	}
+
+	#nav-links {
+		justify-content: center;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+
+	#nav-links a {
+		font-size: 14px;
+		padding: 8px 3px;
+		white-space: normal;
+	}
+
+	.footer {
+		flex-direction: column;
+		gap: 10px;
+	}
+}
+
+/* Pour les mobiles (max-width: 480px) */
+@media (max-width: 480px) {
+	.header {
+		padding: 15px;
+	}
+
+	.logo-container {
+		max-width: 200px;
+	}
+
+	#nav-links {
+		flex-direction: column;
+		align-items: center;
+		gap: 5px;
+	}
+
+	#nav-links a {
+		font-size: 12px;
+		padding: 5px;
+		white-space: normal;
+	}
+
+	.hero-box {
+		font-size: 20px;
+	}
+}

@@ -1,0 +1,230 @@
+/* Style pour le conteneur du formulaire */
+.review-container {
+	background-color: var(--background-card);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	margin: 60px auto;
+	max-width: 520px;
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 500px;
+}
+
+/* Style pour le conteneur des champs du formulaire */
+.review-form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	align-items: center;
+	width: 100%;
+	flex-grow: 1;
+	margin-top: 30px;
+}
+
+/* Style pour le conteneur de l'input */
+.form-field {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	max-width: 400px;
+}
+
+/* Style pour la croix pour effacer l'input */
+.clear-input-button {
+	position: absolute;
+	top: 15px;
+	right: 8px;
+	transform: translateY(-50%);
+	color: var(--writing-medium);
+	cursor: pointer;
+	font-size: 1.2em;
+	display: none;
+	z-index: 10;
+}
+
+/* Style pour la croix pour effacer dans le champ du message */
+.message-field .clear-input-button {
+	top: 10px;
+	transform: none;
+}
+
+/* Style pour les champs de saisie */
+.review-form input, .review-form textarea {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	text-align: left;
+	box-sizing: border-box;
+}
+
+/* Style pour les champs de saisie (input et textarea) */
+.review-form input, .appointment-form textarea {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	text-align: left;
+}
+
+
+/* Style pour le champ du message */
+.review-form textarea {
+	height: 200px;
+	resize: none;
+	padding-right: 30px;
+}
+
+/* Style pour les placeholder */
+.review-form input::placeholder, .review-form textarea::placeholder {
+	color: var(--writing-medium);
+	font-weight: 300;
+}
+
+/* Style pour le bouton */
+.review-form button {
+	background-color: var(--background-button);
+	color: var(--background-card);
+	padding: 12px 30px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease;
+	margin-top: 80px;
+	margin-bottom: 30px;
+}
+
+/* Style pour le survol du bouton */
+.review-form button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Style pour le conteneur des étoiles */
+.stars-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	gap: 0.5rem;
+	font-size: 2.5rem;
+	margin: 1rem 0;
+}
+
+/* Style pour le groupe d'étoiles */
+.stars-wrapper .rating {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+}
+
+/* Style pour les étoiles individuelles */
+.stars-wrapper .star {
+	cursor: pointer;
+	color: var(--background-chip);
+	opacity: 1;
+	transition: transform 0.2s ease-in-out;
+}
+
+/* Style pour les étoiles remplies */
+.stars-wrapper .bxs-star {
+	color: var(--icon-color);
+}
+
+/* Style pour l'animation des étoiles */
+.stars-wrapper .star.active {
+	animation: animate .5s calc(var(--i) * .1s) ease-in-out forwards;
+}
+
+/* Animation */
+@keyframes animate {
+	0% {
+		opacity: 0;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.2);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* Style pour le survol des étoiles */
+.stars-wrapper .star:hover {
+	transform: scale(1.1);
+}
+
+/* ##### Code responsive ##### */
+/* Style pour les écrans plus petits que 768px */
+@media (maw-width: 768px) {
+	.review-container {
+		margin: 40px 20px;
+		padding: 20px;
+		min-height: auto;
+	}
+	.form-field {
+		width: 90%;
+		max-width: 100%;
+	}
+	.review-form button {
+		margin-top: 40px;
+		margin-bottom: 20px;
+		padding: 10px 20px;
+		font-size: 0.9rem;
+	}
+	.stars-wrapper {
+		font-size: 2rem;
+		gap: 0.3rem;
+	}
+	.review-form textarea {
+		height: 150px;
+	}
+}
+
+/* Style pour les écrans plus petits que 400px */
+@media (max-width: 400px) {
+	.review-container {
+		margin: 20px 10px;
+		padding: 15px;
+		border-radius: 8px;
+	}
+	.review-form {
+		gap: 10px;
+		margin-top: 15px;
+	}
+	.form-field {
+		width: 100%;
+	}
+	.review-form input, .review-form textarea {
+		font-size: 0.9rem;
+		padding: 10px;
+	}
+	.review-form button {
+		width: 100%;
+		margin-top: 30px;
+		padding: 12px;
+		font-size: 0.9rem;
+	}
+	.stars-wrapper {
+		font-size: 1.8rem;
+		margin: 0.5rem 0;
+	}
+	.review-form textarea {
+		height: 120px;
+	}
+}

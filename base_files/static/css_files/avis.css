@@ -1,0 +1,97 @@
+/* Style pour le contenu du main */
+.main-content {
+	padding: 20px;
+}
+
+/* Style pour le conteneur */
+.review-container {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 30px;
+	margin: 30px auto; 
+	max-width: 900px;
+}
+
+/* Styles pour les cadres */
+.review-box {
+	background-color: var(--background-card);
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le conteneur du nom du client */
+.review-name-box {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+/* Style pour le nom du client dans le cadre */
+.review-name-box h3 {
+	text-align: left;
+	margin: 0;
+	font-family: 'DM Serif Display', serif;
+	color: var(--writing-dark);
+}
+
+/* Style pour le conteneur des étoiles */
+.rating-stars {
+	display: flex;
+	gap: 2px;
+}
+
+/* Style pour les étoiles */
+.rating-stars .bx {
+	font-size: 1.2em;
+	color: var(--background-button);
+}
+
+/* Style pour le conteneur de l'avis */
+.review-text-box {
+	padding: 10px;
+	max-height: 160px;
+	overflow-y: auto;
+}
+
+/* Style pour le contenu du message */
+.review-text-box p {
+	font-family: 'Lexend', sans-serif;
+	line-height: 1.6;
+	text-align: justify;
+	color: var(--writing-medium);
+	padding: 0;
+	margin: 0;
+}
+
+/* ##### Code responsive ##### */
+/* Style pour les écrans plus petits que 768px */
+@media (max-width: 768px) {
+	.review-container {
+		grid-template-columns: 1fr;
+		padding: 0 20px;
+		gap: 20px;
+	}
+	.review-box {
+		padding: 15px;
+	}
+	.review-name-box {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.review-name-box h3 {
+		font-size: 1.1em;
+		margin-bottom: 5px;
+	}
+	.rating-stars .bx {
+		font-size: 1em;
+	}
+	.review-text-box {
+		max-height: 100px;
+		padding: 0;
+	}
+	.review-text-box p {
+		font-size: 0.9em;
+	}
+}

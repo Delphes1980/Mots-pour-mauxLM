@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mots pour maux LM - Connexion</title>
+
+	<!-- Liens pour les fichiers CSS -->
+	<link rel="stylesheet" href="../static/css_files/styles.css">
+	<link rel="stylesheet" href="../static/css_files/login.css">
+	<!-- Liens pour le favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="../images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="../images/favicon/site.webmanifest">
+	<!-- Liens pour Google fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+	<!-- Lien pour l'icone de croix -->
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    	<header class="header">
+			<div class="logo-container">
+        		<img class="logo" src="../images/Logo Clair.png" alt="Mots pour maux LM logo">
+			</div>
+			<div class="nav-container">
+        		<nav id="nav-links">
+					<a href="../templates/accueil.html" id="accueil_link">Accueil</a>
+					<a href="../templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
+            		<a href="../templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
+					<a href="../templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
+					<a href="../templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
+					<a href="../templates/avis.html" id="avis_link">Avis</a>
+					<a href="../templates/login.html" id="login_link">Connexion</a>
+        		</nav>
+			</div>
+    	</header>
+
+    	<main>
+			<div class="hero-box"><p>Connexion</p></div>
+			<hr class="line">
+			<section class="login-container">
+				<form class="login-form" action="/login" method="post">
+					<div class="form-field">
+						<input type="email" id="email" name="email" placeholder="Email" required>
+						<i class="bx bx-x clear-input-button"></i>
+					</div>
+					<div class="form-field">
+						<input type="password" id="password" name="password" placeholder="Mot de passe" required>
+						<i class="bx bx-x clear-input-button"></i>
+					</div>
+					<a href="../templates/page_inscription.html">Créer un compte</a>
+					<button type="submit">Se connecter</button>
+				</form>
+			</section>
+    	</main>
+
+		<hr class="line">
+    	<footer class="footer">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
+    	</footer>
+
+		<script src="../static/js_files/login.js"></script>
+</body>
+</html>
