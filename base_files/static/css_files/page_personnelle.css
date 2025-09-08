@@ -1,0 +1,224 @@
+/* Style pour le contenu du main */
+.main-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 50px;
+	align-items: flex-start;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+/* Style pour le titre des cadres */
+.client-info h2, .review-info-container h2 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.5em;
+	margin-bottom: 20px;
+	text-align: center;
+	color: var(--writing-dark);
+}
+
+/* Style pour le côté gauche (informations personnelles) */
+.client-info {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 30px;
+	background-color: var(--background-card);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le conteneur des champs */
+.info-container {
+	width: 100%;
+}
+
+/* Style pour le formulaire */
+#personal-info-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+/* Style pour les champs */
+.form-field {
+	margin-bottom: 15px;
+	width: 80%;
+}
+
+/* Style pour les titres des champs (label)*/
+.form-field label {
+	display: flex;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	margin-bottom: 5px;
+	color: var(--writing-medium);
+}
+
+/* Style pour les champs de saisie */
+.form-field input {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+}
+
+/* Style du bouton 'modifier' pour les infos personnelles */
+.modify-info-button {
+	background-color: var(--background-button);
+	color: var(--background-card);
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+	width: 60%;
+}
+
+/* Style pour le survol du bouton 'modifier' */
+.modify-info-button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Style pour le conteneur des 2 autres boutons */
+.button-container {
+	display: flex;
+	flex-direction: row;
+	gap: 15px;
+	width: 100%;
+	margin-top: 30px;
+}
+
+/* Style des boutons 'Prendre rdv' et 'Laisser un commentaire' */
+.contact-button {
+	flex: 1;
+	text-decoration: none;
+	text-align: center;
+	background-color: transparent;
+	border: 2px solid var(--background-button);
+	color: var(--background-button);
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+	margin-top: 50px;
+}
+
+/* Style pour le survol des 2 boutons */
+.contact-button:hover {
+	background-color: var(--background-button);
+	color:var(--background-card);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Style pour le côté droit */
+.review-info-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 30px;
+	background-color: var(--background-card);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le conteneur des commentaires */
+.review-container-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 20px;
+	width: 100%;
+}
+
+/* Style pour le conteneur de l'avis */
+.review-box {
+	padding: 20px;
+	border-radius: 8px;
+	background-color: var(--background-form);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour le conteneur des étoiles */
+.rating-stars {
+	display: flex;
+	gap: 2px;
+	margin-bottom: 10px;
+}
+
+/* Style pour les étoiles */
+.rating-stars .bx {
+	font-size: 1.2em;
+	color: var(--background-button);
+}
+
+/* Style pour le texte du commentaire */
+.review-text p {
+	font-family: 'Lexend', sans-serif;
+	line-height: 1.6;
+	text-align: justify;
+	color: var(--writing-medium);
+	margin: 0;
+}
+
+/* Style pour le bouton 'modifier' pour les commentaires */
+.modify-review-button {
+	background-color: var(--background-button);
+	color: var(--background-card);
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+	width: 50%;
+	margin-top: 30px;
+}
+
+/* Style pour le survol du bouton */
+.modify-review-button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ##### Code responsive ##### */
+/* Pour les écrans plus petits que 768px */
+@media (max-width: 768px) {
+	.main-content {
+		grid-template-columns: 1fr;
+		gap: 30px;
+		padding: 10px;
+	}
+	.client-info, .review-info-container {
+		padding: 20px;
+	}
+	.client-info h2, .review-info-container h2 {
+		font-size: 1.3em;
+	}
+	.button-container {
+		flex-direction: column;
+		gap: 10px;
+		margin-top: 20px;
+	}
+	.form-field {
+		width: 100%;
+	}
+	.modify-info-button, .modify-review-button {
+		width: 100%;
+	}
+}
