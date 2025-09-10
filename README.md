@@ -4,6 +4,16 @@ app/
 |__README.md
 |__base_files/					# Frontend folder
 |	|__images/
+|	|	|__favicon/
+|	|	|	|__android-chrome-192x192.png
+|	|	|	|__androif-chrome-512x512.png
+|	|	|	|__apple-touch-icon.png
+|	|	|	|__favicon-16x16.png
+|	|	|	|__favion-32x32.png
+|	|	|	|__favicon.ico
+|	|	|	|__site.webmanifest
+|	|	|__Logo Clair.png
+|	|	|__Phot Profil.jpg
 |	|__static/
 |	|	|__css_files/
 |	|	|	|__accueil.css
@@ -14,6 +24,7 @@ app/
 |	|	|	|__formulaire_rdv.css
 |	|	|	|__login.css
 |	|	|	|__page_inscription.css
+|	|	|	|__page_personnelle.css
 |	|	|	|__prestations_tarifs.css
 |	|	|	|__styles.css
 |	|	|	|__techniques_therapeutiques.css
@@ -22,6 +33,7 @@ app/
 |	|		|__formulaire_commentaires.js
 |	|		|__formulaire_rdv.js
 |	|		|__login.js
+|	|		|__page_personnelle.js
 |	|__templates/
 |	|	|__accueil.html
 |	|	|__avis.html
@@ -38,15 +50,12 @@ app/
 |	|
 |___app/					# Backend folder
 	├── __init__.py
-	├── api/           
-	│   ├── __init__.py
-	│   ├── v1/                         
-	│       ├── __init__.py
-	│       ├── users.py
-	│       ├── appointments.py
-	│       ├── reviews.py
-	|       |__ auth.py                 
-	|       |__ apiResources.py         
+	├── api/                                
+	|    ├── __init__.py
+	│    ├── users.py
+	│    ├── appointments.py
+	│    ├── reviews.py
+	|    |__ auth.py                 
 	├── models/                         
 	│   ├── __init__.py
 	│   ├── user.py
@@ -79,6 +88,6 @@ app/
 	|── run.py                             
 	├── config.py
 	├── requirements.txt
-	|__ create_tables.sql                   
-	├── README.md
+	|__ create_tables.sql    
+	|__utils.py               
 ```
