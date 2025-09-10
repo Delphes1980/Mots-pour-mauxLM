@@ -10,9 +10,8 @@ class Review(BaseEntity):
 	__tablename__ = 'reviews'
 	_text: Mapped[str] = mapped_column("text", Text, nullable=False)
 	_rating: Mapped[int] = mapped_column("rating", Integer, nullable=False)
-	user_id: Mapped[str] = mapped_column("user_id", String(36), ForeignKey("users.id"), nullable=False)
+	_user_id: Mapped[str] = mapped_column("user_id", String(36), ForeignKey("users.id"), nullable=False)
 	_user: Mapped[User] = relationship("User", back_populates="reviews", lazy=True)
-
 	def __init__(self, text: str, rating: int, user: User):
 		super().__init__()
 		self.text = text
@@ -56,7 +55,7 @@ class Review(BaseEntity):
 	@user.setter
 	def user(self, value):
 		self._user = self.set_user(value)
-		self.user_id = value.id
+		self._user_id = value.id
 
 	@user.expression
 	def user(cls):

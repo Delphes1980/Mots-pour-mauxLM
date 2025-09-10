@@ -76,8 +76,8 @@ class User(BaseEntity):
 		strlen_validation(names, names_name, 1, 50)
 		names_list = names.split()
 		for name in names_list:
-			if not re.fullmatch(r'^[a-zA-ZÀ-ÿ]+([\s\'-][a-zA-ZÀ-ÿ]+)*$', name, re.UNICODE):
-				raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, or dashes")
+			if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
+				raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
 		return " ".join(names_list)
 
 	def email_validation(self, email: str):

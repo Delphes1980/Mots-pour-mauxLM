@@ -9,7 +9,7 @@ class Appointment(BaseEntity):
 	__tablename__ = 'appointments'
 	_subject: Mapped[str] = mapped_column("subject", String(50), nullable=False)
 	_message: Mapped[str] = mapped_column("message", Text(500), nullable=False)
-	user_id: Mapped[str] = mapped_column("user_id", String(36), ForeignKey('users.id'), nullable=False)
+	_user_id: Mapped[str] = mapped_column("user_id", String(36), ForeignKey('users.id'), nullable=False)
 	_user: Mapped[User] = relationship("User", back_populates="appointments", lazy=True)
 
 	def __init__(self, user: User, subject: str, message: str):
@@ -25,7 +25,7 @@ class Appointment(BaseEntity):
 	@user.setter
 	def user(self, value):
 		self._user = self.set_user(value)
-		self.user_id = value.id
+		self._user_id = value.id
 
 	@user.expression
 	def user(cls):
