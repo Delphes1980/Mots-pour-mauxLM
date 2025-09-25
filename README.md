@@ -52,20 +52,23 @@ app/
 	├── __init__.py
 	├── api/                                
 	|    ├── __init__.py
-	│    ├── users.py
 	│    ├── appointments.py
+	|	 |__ auth.py
+	|	 |__ prestations.py
 	│    ├── reviews.py
-	|    |__ auth.py                 
+	|    |__ users.py                 
 	├── models/                         
 	│   ├── __init__.py
-	│   ├── user.py
 	│   ├── appointment.py
-	│   ├── review.py
-	|   |__ basemodel.py
+	|	|__ baseEntity.py
+	│   ├── prestation.py
+	|   |__ review.py
+	|	|__ user.py
 	├── services/                       
 	│   ├── __init__.py
 	│   ├── facade.py
 	|   |__ AppointmentService.py
+	|	|__ PrestationService.py
 	|   |__ ReviewService.py
 	|   |__ UserService.py
 	├── persistence/                    
@@ -74,13 +77,18 @@ app/
 	|__ images/
 	|   |__ ER Diagram.png              
 	|   |__ ER Diagram_extra.png       
-	|__ tests/                                 
-	|   |__ test_appointment.py
-	|   |__ test_relationships.py
-	|   |__ test_reviews.py
-	|	|__test_user_appointment_relationship.py
-	|	|__test_user_review_relationship.py
-	|   |__ test_user.py
+	|__ tests/  
+	|	|__ models/  
+	|		|__ test_all_relationships.py                             
+	|	    |__ test_appointment.py
+	|		|__ test_prestation_appointment_relationship.py
+	|		|__ test_prestation_review_relationship.py
+	|		|__ test_prestation.py
+	|	    |__ test_relationships.py
+	|	    |__ test_reviews.py
+	|		|__ test_user_appointment_relationship.py
+	|	 	|__ test_user_review_relationship.py
+	|	    |__ test_user.py
 	|__ __init__.py
 	|── run.py                             
 	├── config.py
