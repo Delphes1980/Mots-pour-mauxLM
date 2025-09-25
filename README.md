@@ -74,20 +74,17 @@ app/
 	|__ images/
 	|   |__ ER Diagram.png              
 	|   |__ ER Diagram_extra.png       
-	|__ tests/                          
-	|   |__ scripts/
-	|   |   |__ populate_data.sh
-	|   |   |__ tests_api.sh
-	|   |__testSQL/
-	|   |   |__ test_sql_crud.sql       
+	|__ tests/                                 
 	|   |__ test_appointment.py
 	|   |__ test_relationships.py
 	|   |__ test_reviews.py
+	|	|__test_user_appointment_relationship.py
+	|	|__test_user_review_relationship.py
 	|   |__ test_user.py
 	|__ __init__.py
 	|── run.py                             
 	├── config.py
 	├── requirements.txt
-	|__ create_tables.sql    
+	|__ create_tables.sql   
 	|__utils.py               
 ```
