@@ -1,11 +1,14 @@
 import unittest
 from datetime import datetime
+from app.tests.base_test import BaseTest
 from app.models.appointment import Appointment
 from app.models.user import User
+from app.models.prestation import Prestation
 
 
-class TestAppointment(unittest.TestCase):
+class TestAppointment(BaseTest):
     def setUp(self):
+        super().setUp()
         self.user = User(first_name="John", last_name="Doe",
                          email="john@example.com", 
                          password="Password123!", is_admin=False)
@@ -15,10 +18,13 @@ class TestAppointment(unittest.TestCase):
         self.user3 = User(first_name="Jim", last_name="Brown",
                          email="jim@example.com", 
                          password="Password123!", is_admin=False)
+        self.prestation = Prestation(name="Massage thérapeutique")
+        self.save_to_db(self.user, self.user2, self.user3, self.prestation)
         self.valid_data = {
             'subject': 'Massage therapy session',
             'message': 'I would like to book a relaxing massage session for next week.',
-            'user': self.user
+            'user': self.user,
+            'prestation': self.prestation
         }
 
     def test_appointment_creation_valid(self):
@@ -29,39 +35,39 @@ class TestAppointment(unittest.TestCase):
 
     def test_missing_required_fields(self):
         with self.assertRaises(ValueError):
-            Appointment(subject=None, message="Valid message", user=self.user)
+            Appointment(subject=None, message="Valid message", user=self.user, prestation=self.prestation)
         with self.assertRaises(ValueError):
-            Appointment(subject="Valid subject", message=None, user=self.user)
+            Appointment(subject="Valid subject", message=None, user=self.user, prestation=self.prestation)
         with self.assertRaises(ValueError):
-            Appointment(subject="Valid subject", message="Valid message", user=None)
+            Appointment(subject="Valid subject", message="Valid message", user=None, prestation=self.prestation)
 
     def test_invalid_subject_type_and_length(self):
         with self.assertRaises(ValueError):
-            Appointment(subject='', message="Valid message", user=self.user)
+            Appointment(subject='', message="Valid message", user=self.user, prestation=self.prestation)
         with self.assertRaises(TypeError):
-            Appointment(subject=123, message="Valid message", user=self.user)
+            Appointment(subject=123, message="Valid message", user=self.user, prestation=self.prestation)
         with self.assertRaises(ValueError):
-            Appointment(subject='A'*51, message="Valid message", user=self.user)
+            Appointment(subject='A'*51, message="Valid message", user=self.user, prestation=self.prestation)
 
     def test_invalid_message_type_and_length(self):
         with self.assertRaises(ValueError):
-            Appointment(subject="Valid subject", message='', user=self.user)
+            Appointment(subject="Valid subject", message='', user=self.user, prestation=self.prestation)
         with self.assertRaises(TypeError):
-            Appointment(subject="Valid subject", message=123, user=self.user)
+            Appointment(subject="Valid subject", message=123, user=self.user, prestation=self.prestation)
         with self.assertRaises(ValueError):
-            Appointment(subject="Valid subject", message='A'*501, user=self.user)
+            Appointment(subject="Valid subject", message='A'*501, user=self.user, prestation=self.prestation)
 
     def test_subject_boundaries(self):
         # Test limites valides
-        appointment1 = Appointment(subject="A", message="Valid message", user=self.user)
-        appointment50 = Appointment(subject="A"*50, message="Valid message", user=self.user2)
+        appointment1 = Appointment(subject="A", message="Valid message", user=self.user, prestation=self.prestation)
+        appointment50 = Appointment(subject="A"*50, message="Valid message", user=self.user2, prestation=self.prestation)
         self.assertEqual(appointment1.subject, "A")
         self.assertEqual(appointment50.subject, "A"*50)
 
     def test_message_boundaries(self):
         # Test limites valides
-        appointment1 = Appointment(subject="Valid subject", message="A", user=self.user)
-        appointment500 = Appointment(subject="Valid subject", message="A"*500, user=self.user2)
+        appointment1 = Appointment(subject="Valid subject", message="A", user=self.user, prestation=self.prestation)
+        appointment500 = Appointment(subject="Valid subject", message="A"*500, user=self.user2, prestation=self.prestation)
         self.assertEqual(appointment1.message, "A")
         self.assertEqual(appointment500.message, "A"*500)
 
@@ -74,7 +80,7 @@ class TestAppointment(unittest.TestCase):
 
     def test_invalid_user_type(self):
         with self.assertRaises(TypeError):
-            Appointment(subject="Valid subject", message="Valid message", user="not_a_user")
+            Appointment(subject="Valid subject", message="Valid message", user="not_a_user", prestation=self.prestation)
 
     def test_inherited_attributes(self):
         appointment = Appointment(**self.valid_data)
@@ -95,7 +101,7 @@ class TestAppointment(unittest.TestCase):
         ]
         
         for service in valid_services:
-            appointment = Appointment(subject=service, message="Demande de rendez-vous", user=self.user)
+            appointment = Appointment(subject=service, message="Demande de rendez-vous", user=self.user, prestation=self.prestation)
             self.assertEqual(appointment.subject, service)
 
     def test_service_selection_validation(self):
@@ -107,12 +113,12 @@ class TestAppointment(unittest.TestCase):
         ]
         
         for service, message in services_with_messages:
-            appointment = Appointment(subject=service, message=message, user=self.user)
+            appointment = Appointment(subject=service, message=message, user=self.user, prestation=self.prestation)
             self.assertEqual(appointment.subject, service)
             self.assertEqual(appointment.message, message)
 
     def test_user_assignment(self):
-        appointment = Appointment(subject="Therapy session", message="Book a session", user=self.user)
+        appointment = Appointment(subject="Therapy session", message="Book a session", user=self.user, prestation=self.prestation)
         self.assertEqual(appointment.user, self.user)
         self.assertEqual(appointment._user_id, self.user.id)
         
@@ -123,9 +129,9 @@ class TestAppointment(unittest.TestCase):
 
     def test_multiple_appointments_same_user(self):
         # Un même utilisateur peut prendre plusieurs rendez-vous
-        appointment1 = Appointment(subject="Massage therapy", message="Relaxing massage", user=self.user)
-        appointment2 = Appointment(subject="Reflexology", message="Foot reflexology session", user=self.user)
-        appointment3 = Appointment(subject="Aromatherapy", message="Essential oils therapy", user=self.user)
+        appointment1 = Appointment(subject="Massage therapy", message="Relaxing massage", user=self.user, prestation=self.prestation)
+        appointment2 = Appointment(subject="Reflexology", message="Foot reflexology session", user=self.user, prestation=self.prestation)
+        appointment3 = Appointment(subject="Aromatherapy", message="Essential oils therapy", user=self.user, prestation=self.prestation)
         
         # Vérifier que tous les rendez-vous sont créés avec le même utilisateur
         self.assertEqual(appointment1.user, self.user)
@@ -151,7 +157,7 @@ class TestAppointment(unittest.TestCase):
         
         appointments = []
         for subject, message in services:
-            appointment = Appointment(subject=subject, message=message, user=self.user)
+            appointment = Appointment(subject=subject, message=message, user=self.user, prestation=self.prestation)
             appointments.append(appointment)
             self.assertEqual(appointment.subject, subject)
             self.assertEqual(appointment.message, message)

@@ -1,12 +1,14 @@
 import unittest
+from app.tests.base_test import BaseTest
 from app.models.user import User
 from app.models.prestation import Prestation
 from app.models.appointment import Appointment
 from app.models.review import Review
 
 
-class TestAllRelationships(unittest.TestCase):
+class TestAllRelationships(BaseTest):
     def setUp(self):
+        super().setUp()
         self.user1 = User(first_name="John", last_name="Doe",
                          email="john@example.com", 
                          password="Password123!", is_admin=False)
@@ -16,6 +18,7 @@ class TestAllRelationships(unittest.TestCase):
         self.prestation1 = Prestation(name="Massage suédois")
         self.prestation2 = Prestation(name="Réflexologie plantaire")
         self.prestation3 = Prestation(name="Aromathérapie")
+        self.save_to_db(self.user1, self.user2, self.prestation1, self.prestation2, self.prestation3)
 
     def test_complete_user_journey(self):
         # Parcours complet : RDV → Avis → Nouveau RDV
