@@ -1,12 +1,14 @@
 import unittest
+from app.tests.base_test import BaseTest
 from app.models.prestation import Prestation
 from app.models.appointment import Appointment
 from app.models.user import User
 from app.models.review import Review
 
 
-class TestPrestationAppointmentRelations(unittest.TestCase):
+class TestPrestationAppointmentRelations(BaseTest):
     def setUp(self):
+        super().setUp()
         self.user = User(first_name="John", last_name="Doe",
                          email="john@example.com", 
                          password="Password123!", is_admin=False)

@@ -1,9 +1,10 @@
 from app.models.user import User
 from datetime import datetime
 import unittest
+from app.tests.base_test import BaseTest
 
 
-class TestUser(unittest.TestCase):
+class TestUser(BaseTest):
 
     def test_user_creation(self):
         user = User(first_name="John", last_name="Doe",

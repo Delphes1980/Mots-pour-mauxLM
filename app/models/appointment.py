@@ -10,7 +10,7 @@ from .prestation import Prestation
 class Appointment(BaseEntity):
 	__tablename__ = 'appointments'
 	_subject: Mapped[str] = mapped_column("subject", String(50), nullable=False)
-	_message: Mapped[str] = mapped_column("message", Text(500), nullable=False)
+	_message: Mapped[str] = mapped_column("message", Text, nullable=False)
 	_user_id: Mapped[str] = mapped_column("user_id", String(36), ForeignKey('users.id'), nullable=False)
 	_prestation_id: Mapped[str] = mapped_column("prestation_id", String(36), ForeignKey('prestations.id'), nullable=False)
 	_user: Mapped["User"] = relationship("User", back_populates="appointments", lazy=True)

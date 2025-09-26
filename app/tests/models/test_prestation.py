@@ -1,11 +1,12 @@
 import unittest
+from app.tests.base_test import BaseTest
 from app.models.prestation import Prestation
 from app.models.appointment import Appointment
 from app.models.review import Review
 from app.models.user import User
 
 
-class TestPrestation(unittest.TestCase):
+class TestPrestation(BaseTest):
 
     def test_prestation_creation_valid(self):
         # Test création valide

@@ -1,12 +1,14 @@
 import unittest
+from app.tests.base_test import BaseTest
 from app.models.prestation import Prestation
 from app.models.review import Review
 from app.models.user import User
 from app.models.appointment import Appointment
 
 
-class TestPrestationReviewRelations(unittest.TestCase):
+class TestPrestationReviewRelations(BaseTest):
     def setUp(self):
+        super().setUp()
         self.user = User(first_name="John", last_name="Doe",
                          email="john@example.com", 
                          password="Password123!", is_admin=False)
@@ -15,6 +17,7 @@ class TestPrestationReviewRelations(unittest.TestCase):
                          password="Password456!", is_admin=False)
         self.prestation = Prestation(name="Massage suédois")
         self.prestation2 = Prestation(name="Réflexologie plantaire")
+        self.save_to_db(self.user, self.user2, self.prestation, self.prestation2)
 
     def test_prestation_can_have_review(self):
         # Une prestation peut avoir un avis

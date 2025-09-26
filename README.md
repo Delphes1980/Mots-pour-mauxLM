@@ -50,13 +50,14 @@ app/
 |	|
 |___app/					# Backend folder
 	├── __init__.py
-	├── api/                                
-	|    ├── __init__.py
-	│    ├── appointments.py
-	|	 |__ auth.py
-	|	 |__ prestations.py
-	│    ├── reviews.py
-	|    |__ users.py                 
+	├── api/
+	|	 |__v1/                                
+	|	      ├── __init__.py
+	|	      ├── appointments.py
+	|	  	  |__ auth.py
+	|	  	  |__ prestations.py
+	|	      ├── reviews.py
+	|	      |__ users.py                 
 	├── models/                         
 	│   ├── __init__.py
 	│   ├── appointment.py
@@ -78,14 +79,20 @@ app/
 	|   |__ ER Diagram.png              
 	|   |__ ER Diagram_extra.png       
 	|__ tests/  
+	|	|__ base_test.py
+	|	|__ database/
+	|	|	|__ __init__.py
+	|	|	|__ test_all_entities_relationships.py
+	|	|	|__ test_final_postgresql.py
 	|	|__ models/  
+	|		|__ __init__.py
 	|		|__ test_all_relationships.py                             
 	|	    |__ test_appointment.py
 	|		|__ test_prestation_appointment_relationship.py
 	|		|__ test_prestation_review_relationship.py
 	|		|__ test_prestation.py
 	|	    |__ test_relationships.py
-	|	    |__ test_reviews.py
+	|	    |__ test_review.py
 	|		|__ test_user_appointment_relationship.py
 	|	 	|__ test_user_review_relationship.py
 	|	    |__ test_user.py

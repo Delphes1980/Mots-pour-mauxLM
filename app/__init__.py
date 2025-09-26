@@ -2,11 +2,12 @@ from flask import Flask
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-
+from flask_mail import Mail
 
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
+mail = Mail()
 
 
 def create_app():
@@ -18,6 +19,7 @@ def create_app():
     # Initialization of extensions
     db.init_app(app)
     bcrypt.init_app(app)
+    mail.init_app(app)
 
     # Initialize API
     api = Api(app, version='1.0', title='MotsPourMaux API', description='MotsPourMaux Application API', doc='/api/v1/')
