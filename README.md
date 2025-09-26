@@ -50,22 +50,26 @@ app/
 |	|
 |___app/					# Backend folder
 	├── __init__.py
-	├── api/                                
-	|    ├── __init__.py
-	│    ├── users.py
-	│    ├── appointments.py
-	│    ├── reviews.py
-	|    |__ auth.py                 
+	├── api/
+	|	 |__v1/                                
+	|	      ├── __init__.py
+	|	      ├── appointments.py
+	|	  	  |__ auth.py
+	|	  	  |__ prestations.py
+	|	      ├── reviews.py
+	|	      |__ users.py                 
 	├── models/                         
 	│   ├── __init__.py
-	│   ├── user.py
 	│   ├── appointment.py
-	│   ├── review.py
-	|   |__ basemodel.py
+	|	|__ baseEntity.py
+	│   ├── prestation.py
+	|   |__ review.py
+	|	|__ user.py
 	├── services/                       
 	│   ├── __init__.py
 	│   ├── facade.py
 	|   |__ AppointmentService.py
+	|	|__ PrestationService.py
 	|   |__ ReviewService.py
 	|   |__ UserService.py
 	├── persistence/                    
@@ -74,13 +78,24 @@ app/
 	|__ images/
 	|   |__ ER Diagram.png              
 	|   |__ ER Diagram_extra.png       
-	|__ tests/                                 
-	|   |__ test_appointment.py
-	|   |__ test_relationships.py
-	|   |__ test_reviews.py
-	|	|__test_user_appointment_relationship.py
-	|	|__test_user_review_relationship.py
-	|   |__ test_user.py
+	|__ tests/  
+	|	|__ base_test.py
+	|	|__ database/
+	|	|	|__ __init__.py
+	|	|	|__ test_all_entities_relationships.py
+	|	|	|__ test_final_postgresql.py
+	|	|__ models/  
+	|		|__ __init__.py
+	|		|__ test_all_relationships.py                             
+	|	    |__ test_appointment.py
+	|		|__ test_prestation_appointment_relationship.py
+	|		|__ test_prestation_review_relationship.py
+	|		|__ test_prestation.py
+	|	    |__ test_relationships.py
+	|	    |__ test_review.py
+	|		|__ test_user_appointment_relationship.py
+	|	 	|__ test_user_review_relationship.py
+	|	    |__ test_user.py
 	|__ __init__.py
 	|── run.py                             
 	├── config.py
