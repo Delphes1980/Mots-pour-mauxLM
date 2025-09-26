@@ -21,6 +21,7 @@ def create_app():
     bcrypt.init_app(app)
     mail.init_app(app)
 
+
     # Initialize API
     api = Api(app, version='1.0', title='MotsPourMaux API', description='MotsPourMaux Application API', doc='/api/v1/')
 
