@@ -5,7 +5,7 @@ from sqlalchemy import String, Boolean
 import re
 from validate_email_address import validate_email
 from sqlalchemy.ext.hybrid import hybrid_property
-from typing import List, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
 	from .review import Review
 	from .appointment import Appointment
@@ -17,15 +17,19 @@ class User(BaseEntity):
 	_last_name: Mapped[str] = mapped_column("last_name", String(50), nullable=False)
 	_email: Mapped[str] = mapped_column("email", String(120), nullable=False, unique=True)
 	_password: Mapped[str] = mapped_column("password", String(128), nullable=False)
+	_address: Mapped[Optional[str]] = mapped_column("address", String(255), nullable=True)
+	_phone_number: Mapped[Optional[str]] = mapped_column("phone_number", String(20), nullable=True)
 	_is_admin: Mapped[bool] = mapped_column("is_admin", Boolean, default=False)
 	reviews: Mapped[List["Review"]] = relationship("Review", back_populates="_user", lazy=True)
 	appointments: Mapped[List["Appointment"]] = relationship("Appointment", back_populates="_user", lazy=True)
 
-	def __init__(self, first_name: str, last_name: str, email: str, password: str, is_admin: bool = False):
+	def __init__(self, first_name: str, last_name: str, email: str, address: Optional[str], phone_number: Optional[str], password: str, is_admin: bool = False):
 		super().__init__()
 		self.first_name = first_name
 		self.last_name = last_name
 		self.email = email
+		self.address = address
+		self.phone_number = phone_number
 		self.is_admin = is_admin
 		self.password = password
 
@@ -72,7 +76,7 @@ class User(BaseEntity):
 		if names is None:
 			raise ValueError(f'Expected {names_name} but received None')
 		type_validation(names, names_name, str)
-		names_list = names.strip()
+		names = names.strip()
 		strlen_validation(names, names_name, 1, 50)
 		names_list = names.split()
 		for name in names_list:
@@ -123,3 +127,27 @@ class User(BaseEntity):
 			raise ValueError('Expected is_admin boolean but received None')
 		type_validation(value, 'is_admin', bool)
 		self._is_admin = value
+
+	@hybrid_property
+	def address(self):
+		return self._address
+	
+	@address.setter
+	def address(self, value: Optional[str]):
+		if value is not None:
+			type_validation(value, 'address', str)
+			strlen_validation(value, 'address', 0, 255)
+		self._address = value
+
+	@hybrid_property
+	def phone_number(self):
+		return self._phone_number
+	
+	@phone_number.setter
+	def phone_number(self, value: Optional[str]):
+		if value is not None:
+			type_validation(value, 'phone_number', str)
+			strlen_validation(value, 'phone_number', 0, 20)
+			if not re.fullmatch(r'^\+?[0-9\s\-()]*$', value):
+				raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
+		self._phone_number = value

@@ -30,6 +30,8 @@ class TestAllEntitiesRelationships(BaseTest):
             first_name="Alice",
             last_name="Martin",
             email="alice@example.com",
+            address=None,
+            phone_number=None,
             password="Password123!",
             is_admin=False
         )
@@ -38,6 +40,8 @@ class TestAllEntitiesRelationships(BaseTest):
             first_name="Bob", 
             last_name="Dupont",
             email="bob@example.com",
+            address=None,
+            phone_number=None,
             password="Password123!",
             is_admin=True
         )
@@ -237,6 +241,145 @@ class TestAllEntitiesRelationships(BaseTest):
         self.assertEqual(updated_prestation.name, "Massage suédois - Mis à jour")
         
         # DELETE sera géré par tearDown automatiquement
+    
+    def test_users_with_address_and_phone(self):
+        """Test des utilisateurs avec adresse et téléphone"""
+        # Créer des utilisateurs avec différentes combinaisons
+        user_with_both = User(
+            first_name="Claire",
+            last_name="Dubois",
+            email="claire@example.com",
+            address="123 Rue de la Paix, Paris",
+            phone_number="0123456789",
+            password="Password123!"
+        )
+        
+        user_with_address_only = User(
+            first_name="David",
+            last_name="Martin",
+            email="david@example.com",
+            address="456 Avenue des Champs, Lyon",
+            phone_number=None,
+            password="Password123!"
+        )
+        
+        user_with_phone_only = User(
+            first_name="Emma",
+            last_name="Leroy",
+            email="emma@example.com",
+            address=None,
+            phone_number="+33 1 23 45 67 89",
+            password="Password123!"
+        )
+        
+        self.save_to_db(user_with_both, user_with_address_only, user_with_phone_only)
+        
+        # Vérifier la persistance en base
+        db_user_both = self.db.session.query(User).filter_by(email="claire@example.com").first()
+        db_user_address = self.db.session.query(User).filter_by(email="david@example.com").first()
+        db_user_phone = self.db.session.query(User).filter_by(email="emma@example.com").first()
+        
+        # Vérifications utilisateur avec les deux
+        self.assertEqual(db_user_both.address, "123 Rue de la Paix, Paris")
+        self.assertEqual(db_user_both.phone_number, "0123456789")
+        
+        # Vérifications utilisateur avec adresse seulement
+        self.assertEqual(db_user_address.address, "456 Avenue des Champs, Lyon")
+        self.assertIsNone(db_user_address.phone_number)
+        
+        # Vérifications utilisateur avec téléphone seulement
+        self.assertIsNone(db_user_phone.address)
+        self.assertEqual(db_user_phone.phone_number, "+33 1 23 45 67 89")
+    
+    def test_user_contact_info_in_relationships(self):
+        """Test que les infos de contact sont préservées dans les relations"""
+        # Créer un utilisateur avec infos complètes
+        user_complete = User(
+            first_name="Sophie",
+            last_name="Bernard",
+            email="sophie@example.com",
+            address="789 Boulevard Saint-Germain, Paris",
+            phone_number="01-23-45-67-89",
+            password="Password123!"
+        )
+        
+        self.save_to_db(user_complete)
+        
+        # Créer des relations avec cet utilisateur
+        review = Review(
+            text="Excellent service, très professionnel",
+            rating=5,
+            user=user_complete,
+            prestation=self.prestation1
+        )
+        
+        appointment = Appointment(
+            subject="RDV Massage complet",
+            message="Rendez-vous pour massage thérapeutique",
+            user=user_complete,
+            prestation=self.prestation1
+        )
+        
+        self.save_to_db(review, appointment)
+        
+        # Vérifier que les infos de contact sont accessibles via les relations
+        self.assertEqual(review.user.address, "789 Boulevard Saint-Germain, Paris")
+        self.assertEqual(review.user.phone_number, "01-23-45-67-89")
+        self.assertEqual(appointment.user.address, "789 Boulevard Saint-Germain, Paris")
+        self.assertEqual(appointment.user.phone_number, "01-23-45-67-89")
+        
+        # Vérifier via les relations inverses
+        user_from_review = self.prestation1.reviews[0].user
+        user_from_appointment = self.prestation1.appointments[0].user
+        
+        self.assertEqual(user_from_review.address, "789 Boulevard Saint-Germain, Paris")
+        self.assertEqual(user_from_review.phone_number, "01-23-45-67-89")
+        self.assertEqual(user_from_appointment.address, "789 Boulevard Saint-Germain, Paris")
+        self.assertEqual(user_from_appointment.phone_number, "01-23-45-67-89")
+    
+    def test_update_user_contact_info(self):
+        """Test de mise à jour des informations de contact"""
+        # Créer un utilisateur sans infos de contact
+        user = User(
+            first_name="Thomas",
+            last_name="Petit",
+            email="thomas@example.com",
+            address=None,
+            phone_number=None,
+            password="Password123!"
+        )
+        
+        self.save_to_db(user)
+        
+        # Ajouter les infos de contact
+        user.address = "321 Rue Neuve, Marseille"
+        user.phone_number = "04 91 23 45 67"
+        self.db.session.commit()
+        
+        # Vérifier la mise à jour
+        updated_user = self.db.session.query(User).filter_by(email="thomas@example.com").first()
+        self.assertEqual(updated_user.address, "321 Rue Neuve, Marseille")
+        self.assertEqual(updated_user.phone_number, "04 91 23 45 67")
+        
+        # Modifier les infos
+        user.address = "654 Place Bellecour, Lyon"
+        user.phone_number = "+33 4 78 12 34 56"
+        self.db.session.commit()
+        
+        # Vérifier les modifications
+        modified_user = self.db.session.query(User).filter_by(email="thomas@example.com").first()
+        self.assertEqual(modified_user.address, "654 Place Bellecour, Lyon")
+        self.assertEqual(modified_user.phone_number, "+33 4 78 12 34 56")
+        
+        # Supprimer les infos (remettre à None)
+        user.address = None
+        user.phone_number = None
+        self.db.session.commit()
+        
+        # Vérifier la suppression
+        final_user = self.db.session.query(User).filter_by(email="thomas@example.com").first()
+        self.assertIsNone(final_user.address)
+        self.assertIsNone(final_user.phone_number)
 
 if __name__ == "__main__":
     unittest.main()

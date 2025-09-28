@@ -10,13 +10,13 @@ class TestAppointment(BaseTest):
     def setUp(self):
         super().setUp()
         self.user = User(first_name="John", last_name="Doe",
-                         email="john@example.com", 
+                         email="john@example.com", address=None, phone_number=None,
                          password="Password123!", is_admin=False)
         self.user2 = User(first_name="Jane", last_name="Smith",
-                         email="jane@example.com", 
+                         email="jane@example.com", address=None, phone_number=None,
                          password="Password123!", is_admin=False)
         self.user3 = User(first_name="Jim", last_name="Brown",
-                         email="jim@example.com", 
+                         email="jim@example.com", address=None, phone_number=None,
                          password="Password123!", is_admin=False)
         self.prestation = Prestation(name="Massage thérapeutique")
         self.save_to_db(self.user, self.user2, self.user3, self.prestation)
