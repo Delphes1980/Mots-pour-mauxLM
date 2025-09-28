@@ -6,9 +6,9 @@ from app import db
 
 class BaseEntity(db.Model):
 	__abstract__ = True
-	id = Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), primary_key=True, nullable=False, unique=True)
-	created_at = Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now(timezone.utc))
-	updated_at = Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+	id: Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), primary_key=True, nullable=False, unique=True)
+	created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now(timezone.utc))
+	updated_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
 	def __init__(self):
 		self.id = str(uuid.uuid4())
