@@ -11,16 +11,16 @@ class TestReview(BaseTest):
     def setUp(self):
         super().setUp()
         self.user = User(first_name="John", last_name="Doe",
-                         email="john@example.com", 
+                         email="john@example.com", address=None, phone_number=None,
                          password="Password123!", is_admin=False)
         self.user2 = User(first_name="Jane", last_name="Doe",
-                         email="jane2@example.com", 
+                         email="jane2@example.com", address=None, phone_number=None,
                          password="Password123!", is_admin=False)
         self.user3 = User(first_name="Jim", last_name="Doe",
-                         email="jim@example.com", 
+                         email="jim@example.com", address=None, phone_number=None,
                          password="Password123!", is_admin=False)
         self.owner = User(first_name="Jane", last_name="McDonald",
-                          email="jane.mcdonald@example.com", 
+                          email="jane.mcdonald@example.com", address=None, phone_number=None,
                           password="Password123!")
         self.prestation = Prestation(name="Massage thérapeutique")
         self.save_to_db(self.user, self.user2, self.user3, self.owner, self.prestation)

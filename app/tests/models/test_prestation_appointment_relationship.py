@@ -10,7 +10,7 @@ class TestPrestationAppointmentRelations(BaseTest):
     def setUp(self):
         super().setUp()
         self.user = User(first_name="John", last_name="Doe",
-                         email="john@example.com", 
+                         email="john@example.com", address=None, phone_number=None,
                          password="Password123!", is_admin=False)
         self.prestation = Prestation(name="Massage suédois")
         self.prestation2 = Prestation(name="Réflexologie plantaire")

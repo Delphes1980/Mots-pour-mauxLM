@@ -60,9 +60,8 @@ class BaseTest(unittest.TestCase):
     
     def setUp(self):
         """Configuration avant chaque test individuel"""
-        # Forcer la création des tables (idempotent)
-        User.__table__
-        User.metadata.create_all(self.db.engine)
+        # Supprimer et recréer toutes les tables pour avoir le schéma à jour
+        self.db.drop_all()
         self.db.create_all()
     
     def tearDown(self):
