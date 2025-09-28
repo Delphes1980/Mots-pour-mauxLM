@@ -1,4 +1,5 @@
 from app.models.baseEntity import (BaseEntity, type_validation, strlen_validation)
+from app.utils import rating_validation
 from sqlalchemy import Integer, String, Text, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -43,16 +44,7 @@ class Review(BaseEntity):
 
 	@rating.setter
 	def rating(self, value):
-		self._rating = self.rating_validation(value)
-
-	def rating_validation(self, rating):
-		""" Validates the review rating """
-		if rating is None:
-			raise ValueError("Rating is required: provide an integer between 1 and 5")
-		type_validation(rating, "rating", int)
-		if not (1 <= rating <= 5):
-			raise ValueError("Rating must be an integer between 1 and 5, both inclusive")
-		return rating
+		self._rating = rating_validation(value)
 
 	@hybrid_property
 	def user(self):
