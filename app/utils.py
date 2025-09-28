@@ -1,3 +1,5 @@
+from app.models.baseEntity import type_validation
+
 """
 apiRessources module.
 
@@ -86,6 +88,25 @@ def compare_data_and_model(data: dict, model):
         raise ValueError(f"Unexpected fields: {', '.join(extra)} are "
                          "present")
 
+def rating_validation(rating):
+    """
+    Validate review rating value.
+    
+    Args:
+        rating: The rating value to validate
+        
+    Returns:
+        int: The validated rating value
+        
+    Raises:
+        ValueError: If rating is invalid (None, wrong type, or out of range)
+    """
+    if rating is None:
+        raise ValueError("Rating is required: provide an integer between 1 and 5")
+    type_validation(rating, "rating", int)
+    if not (1 <= rating <= 5):
+        raise ValueError("Rating must be an integer between 1 and 5, both inclusive")
+    return rating
 
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP
