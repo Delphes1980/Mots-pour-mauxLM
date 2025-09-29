@@ -6,10 +6,22 @@ class UserRepository(BaseRepository):
     def __init__(self):
         super().__init__(User)
 
+    def create(self, **kwargs):
+        """Utilise create_user() avec validations au lieu de create() dans BaseRepository"""
+        return self.create_user(
+            kwargs.get('first_name'),
+            kwargs.get('last_name'),
+            kwargs.get('email'),
+            kwargs.get('password'),
+            kwargs.get('address'),
+            kwargs.get('phone_number'),
+            kwargs.get('is_admin', False)
+        )
+
     def create_user(self, first_name, last_name, email, password, address=None, phone_number=None, is_admin=False):
         try:
             # Vérifier si l'utilisateur existe déjà
-            existing_user = self.get_by_email(email)
+            existing_user = self.get_by_attribute("email", email)
             if existing_user:
                 raise ValueError("Un utilisateur avec cet email existe déjà.")
 
@@ -28,6 +40,3 @@ class UserRepository(BaseRepository):
             return new_user
         except SQLAlchemyError:
             raise ValueError("Erreur lors de la création de l'utilisateur.")
-
-    def get_by_email(self, email):
-        return self.db.session.query(self.model_class).filter_by(email=email).first()

@@ -32,7 +32,7 @@ class TestReviewRepository(BaseTest):
 
     def test_create_review_success(self):
         """Test création avis réussie"""
-        review = self.review_repo.create_review(
+        review = self.review_repo.create(
             text="Excellent service!",
             rating=5,
             user=self.user,
@@ -48,7 +48,7 @@ class TestReviewRepository(BaseTest):
     def test_create_review_invalid_rating(self):
         """Test création avis avec rating invalide"""
         with self.assertRaises(ValueError):
-            self.review_repo.create_review(
+            self.review_repo.create(
                 text="Good service",
                 rating=6,  # Invalid rating
                 user=self.user,
@@ -58,7 +58,7 @@ class TestReviewRepository(BaseTest):
     def test_create_review_no_prestation(self):
         """Test création avis sans prestation"""
         with self.assertRaises(ValueError) as context:
-            self.review_repo.create_review(
+            self.review_repo.create(
                 text="Good service",
                 rating=4,
                 user=self.user,
@@ -70,7 +70,7 @@ class TestReviewRepository(BaseTest):
     def test_create_review_duplicate(self):
         """Test création avis en double pour même utilisateur/prestation"""
         # Créer premier avis
-        self.review_repo.create_review(
+        self.review_repo.create(
             text="First review",
             rating=4,
             user=self.user,
@@ -79,7 +79,7 @@ class TestReviewRepository(BaseTest):
         
         # Tenter de créer un second avis
         with self.assertRaises(ValueError) as context:
-            self.review_repo.create_review(
+            self.review_repo.create(
                 text="Second review",
                 rating=5,
                 user=self.user,
@@ -91,7 +91,7 @@ class TestReviewRepository(BaseTest):
     def test_get_by_user_id(self):
         """Test récupération avis par user_id"""
         # Créer avis
-        created_review = self.review_repo.create_review(
+        created_review = self.review_repo.create(
             text="Great service",
             rating=5,
             user=self.user,
@@ -99,20 +99,20 @@ class TestReviewRepository(BaseTest):
         )
         
         # Récupérer par user_id
-        found_review = self.review_repo.get_by_user_id(self.user.id)
+        found_review = self.review_repo.get_by_attribute("_user_id", self.user.id)
         
         self.assertIsNotNone(found_review)
         self.assertEqual(found_review.id, created_review.id)
 
     def test_get_by_user_id_not_found(self):
         """Test récupération avis par user_id inexistant"""
-        review = self.review_repo.get_by_user_id("nonexistent-id")
+        review = self.review_repo.get_by_attribute("_user_id", "nonexistent-id")
         self.assertIsNone(review)
 
     def test_get_by_prestation_id(self):
         """Test récupération avis par prestation_id"""
         # Créer avis
-        created_review = self.review_repo.create_review(
+        created_review = self.review_repo.create(
             text="Amazing service",
             rating=5,
             user=self.user,
@@ -120,10 +120,10 @@ class TestReviewRepository(BaseTest):
         )
         
         # Récupérer par prestation_id
-        reviews = self.review_repo.get_by_prestation_id(self.prestation.id)
+        review = self.review_repo.get_by_attribute("_prestation_id", self.prestation.id)
         
-        self.assertEqual(len(reviews), 1)
-        self.assertEqual(reviews[0].id, created_review.id)
+        self.assertIsNotNone(review)
+        self.assertEqual(review.id, created_review.id)
 
     def test_get_by_prestation_id_multiple_reviews(self):
         """Test récupération multiple avis pour même prestation"""
@@ -140,32 +140,31 @@ class TestReviewRepository(BaseTest):
         self.db.session.commit()
         
         # Créer deux avis pour même prestation
-        review1 = self.review_repo.create_review(
+        review1 = self.review_repo.create(
             text="Good service",
             rating=4,
             user=self.user,
             prestation=self.prestation
         )
         
-        review2 = self.review_repo.create_review(
+        review2 = self.review_repo.create(
             text="Excellent service",
             rating=5,
             user=user2,
             prestation=self.prestation
         )
         
-        # Récupérer tous les avis
-        reviews = self.review_repo.get_by_prestation_id(self.prestation.id)
+        # Récupérer un avis par prestation (get_by_attribute retourne le premier)
+        review = self.review_repo.get_by_attribute("_prestation_id", self.prestation.id)
         
-        self.assertEqual(len(reviews), 2)
-        review_ids = [r.id for r in reviews]
-        self.assertIn(review1.id, review_ids)
-        self.assertIn(review2.id, review_ids)
+        self.assertIsNotNone(review)
+        # Vérifier que c'est l'un des deux créés
+        self.assertIn(review.id, [review1.id, review2.id])
 
     def test_get_by_user_and_prestation(self):
         """Test récupération avis par utilisateur et prestation"""
         # Créer avis
-        created_review = self.review_repo.create_review(
+        created_review = self.review_repo.create(
             text="Perfect service",
             rating=5,
             user=self.user,
@@ -207,6 +206,51 @@ class TestReviewRepository(BaseTest):
         # Test get_all (méthode héritée)
         all_reviews = self.review_repo.get_all()
         self.assertIn(review, all_reviews)
+
+    def test_get_all_reviews(self):
+        """Test récupération de tous les avis"""
+        # Créer second utilisateur
+        user2 = User(
+            first_name="Jane",
+            last_name="Smith",
+            email="jane@example.com",
+            password="Password123!",
+            address=None,
+            phone_number=None
+        )
+        self.db.session.add(user2)
+        
+        # Créer seconde prestation
+        prestation2 = Prestation(name="Thérapie")
+        self.db.session.add(prestation2)
+        self.db.session.commit()
+        
+        # Créer plusieurs avis
+        review1 = self.review_repo.create(
+            text="Excellent service",
+            rating=5,
+            user=self.user,
+            prestation=self.prestation
+        )
+        review2 = self.review_repo.create(
+            text="Très bien",
+            rating=4,
+            user=user2,
+            prestation=prestation2
+        )
+        
+        # Récupérer tous
+        all_reviews = self.review_repo.get_all()
+        
+        self.assertEqual(len(all_reviews), 2)
+        review_ids = [r.id for r in all_reviews]
+        self.assertIn(review1.id, review_ids)
+        self.assertIn(review2.id, review_ids)
+
+    def test_get_all_empty(self):
+        """Test get_all() quand aucun avis n'existe"""
+        all_reviews = self.review_repo.get_all()
+        self.assertEqual(len(all_reviews), 0)
 
     def test_model_class_consistency(self):
         """Test que model_class est bien configuré"""

@@ -14,7 +14,7 @@ class TestUserRepository(BaseTest):
 
     def test_create_user_success(self):
         """Test création utilisateur réussie"""
-        user = self.user_repo.create_user(
+        user = self.user_repo.create(
             first_name="John",
             last_name="Doe", 
             email="john@example.com",
@@ -33,7 +33,7 @@ class TestUserRepository(BaseTest):
 
     def test_create_user_with_admin_flag(self):
         """Test création utilisateur admin"""
-        user = self.user_repo.create_user(
+        user = self.user_repo.create(
             first_name="Admin",
             last_name="User",
             email="admin@example.com", 
@@ -46,7 +46,7 @@ class TestUserRepository(BaseTest):
     def test_create_user_duplicate_email(self):
         """Test création utilisateur avec email existant"""
         # Créer premier utilisateur
-        self.user_repo.create_user(
+        self.user_repo.create(
             first_name="John",
             last_name="Doe",
             email="john@example.com",
@@ -55,7 +55,7 @@ class TestUserRepository(BaseTest):
         
         # Tenter de créer un autre avec même email
         with self.assertRaises(ValueError) as context:
-            self.user_repo.create_user(
+            self.user_repo.create(
                 first_name="Jane",
                 last_name="Smith", 
                 email="john@example.com",
@@ -67,7 +67,7 @@ class TestUserRepository(BaseTest):
     def test_get_by_email_existing_user(self):
         """Test récupération utilisateur par email existant"""
         # Créer utilisateur
-        created_user = self.user_repo.create_user(
+        created_user = self.user_repo.create(
             first_name="John",
             last_name="Doe",
             email="john@example.com", 
@@ -75,7 +75,7 @@ class TestUserRepository(BaseTest):
         )
         
         # Récupérer par email
-        found_user = self.user_repo.get_by_email("john@example.com")
+        found_user = self.user_repo.get_by_attribute("email", "john@example.com")
         
         self.assertIsNotNone(found_user)
         self.assertEqual(found_user.id, created_user.id)
@@ -83,12 +83,12 @@ class TestUserRepository(BaseTest):
 
     def test_get_by_email_non_existing_user(self):
         """Test récupération utilisateur par email inexistant"""
-        user = self.user_repo.get_by_email("nonexistent@example.com")
+        user = self.user_repo.get_by_attribute("email", "nonexistent@example.com")
         self.assertIsNone(user)
 
     def test_create_user_minimal_data(self):
         """Test création utilisateur avec données minimales"""
-        user = self.user_repo.create_user(
+        user = self.user_repo.create(
             first_name="Jane",
             last_name="Smith",
             email="jane@example.com",
@@ -123,6 +123,35 @@ class TestUserRepository(BaseTest):
         # Test get_all (méthode héritée)
         all_users = self.user_repo.get_all()
         self.assertIn(user, all_users)
+
+    def test_get_all_users(self):
+        """Test récupération de tous les utilisateurs"""
+        # Créer plusieurs utilisateurs
+        user1 = self.user_repo.create(
+            first_name="John",
+            last_name="Doe",
+            email="john@example.com",
+            password="Password123!"
+        )
+        user2 = self.user_repo.create(
+            first_name="Jane",
+            last_name="Smith",
+            email="jane@example.com",
+            password="Password456!"
+        )
+        
+        # Récupérer tous
+        all_users = self.user_repo.get_all()
+        
+        self.assertEqual(len(all_users), 2)
+        user_ids = [u.id for u in all_users]
+        self.assertIn(user1.id, user_ids)
+        self.assertIn(user2.id, user_ids)
+
+    def test_get_all_empty(self):
+        """Test get_all() quand aucun utilisateur n'existe"""
+        all_users = self.user_repo.get_all()
+        self.assertEqual(len(all_users), 0)
 
     def test_model_class_consistency(self):
         """Test que model_class est bien configuré"""
