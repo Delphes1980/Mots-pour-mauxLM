@@ -21,8 +21,7 @@ class TestAllRelations(BaseTest):
     def test_user_with_reviews_and_appointments(self):
         # Un utilisateur peut avoir à la fois des avis et des rendez-vous
         review = Review(text="Excellent service!", rating=5, user=self.user, prestation=self.prestation)
-        appointment = Appointment(subject="Massage suédois", 
-                                message="Nouveau rendez-vous", user=self.user, prestation=self.prestation)
+        appointment = Appointment(message="Nouveau rendez-vous", user=self.user, prestation=self.prestation)
         
         # Vérifier les relations
         self.assertEqual(review.user, self.user)
@@ -36,15 +35,12 @@ class TestAllRelations(BaseTest):
         # User 1: 2 avis + 1 rendez-vous
         review1_u1 = Review(text="Great massage", rating=5, user=self.user, prestation=self.prestation)
         review2_u1 = Review(text="Good reflexology", rating=4, user=self.user, prestation=self.prestation)
-        appointment1_u1 = Appointment(subject="Aromathérapie", 
-                                    message="Séance détente", user=self.user, prestation=self.prestation)
+        appointment1_u1 = Appointment(message="Séance détente", user=self.user, prestation=self.prestation)
         
         # User 2: 1 avis + 2 rendez-vous
         review1_u2 = Review(text="Amazing experience", rating=5, user=self.user2, prestation=self.prestation)
-        appointment1_u2 = Appointment(subject="Massage thérapeutique", 
-                                    message="Soulager douleurs", user=self.user2, prestation=self.prestation)
-        appointment2_u2 = Appointment(subject="Réflexologie", 
-                                    message="Bien-être", user=self.user2, prestation=self.prestation)
+        appointment1_u2 = Appointment(message="Soulager douleurs", user=self.user2, prestation=self.prestation)
+        appointment2_u2 = Appointment(message="Bien-être", user=self.user2, prestation=self.prestation)
         
         # Vérifications User 1
         self.assertEqual(review1_u1.user, self.user)
@@ -61,10 +57,8 @@ class TestAllRelations(BaseTest):
         review_u1 = Review(text="User 1 review", rating=5, user=self.user, prestation=self.prestation)
         review_u2 = Review(text="User 2 review", rating=4, user=self.user2, prestation=self.prestation)
         
-        appointment_u1 = Appointment(subject="User 1 appointment", 
-                                   message="Message 1", user=self.user, prestation=self.prestation)
-        appointment_u2 = Appointment(subject="User 2 appointment", 
-                                   message="Message 2", user=self.user2, prestation=self.prestation)
+        appointment_u1 = Appointment(message="Message 1", user=self.user, prestation=self.prestation)
+        appointment_u2 = Appointment(message="Message 2", user=self.user2, prestation=self.prestation)
         
         # Vérifier l'isolation
         self.assertNotEqual(review_u1._user_id, review_u2._user_id)
@@ -76,16 +70,14 @@ class TestAllRelations(BaseTest):
         # Scénario métier: Un client laisse un avis puis prend un nouveau RDV
         
         # 1. Client prend un premier RDV
-        first_appointment = Appointment(subject="Massage découverte", 
-                                      message="Premier essai", user=self.user, prestation=self.prestation)
+        first_appointment = Appointment(message="Premier essai", user=self.user, prestation=self.prestation)
         
         # 2. Client satisfait laisse un avis
         review = Review(text="Très satisfait de ma première séance!", 
                        rating=5, user=self.user, prestation=self.prestation)
         
         # 3. Client reprend un RDV pour un autre service
-        second_appointment = Appointment(subject="Réflexologie plantaire", 
-                                       message="Suite à mon excellent premier RDV", 
+        second_appointment = Appointment(message="Suite à mon excellent premier RDV", 
                                        user=self.user, prestation=self.prestation)
         
         # Vérifications du parcours client
@@ -95,13 +87,12 @@ class TestAllRelations(BaseTest):
         
         # Vérifier que ce sont bien des entités différentes
         self.assertNotEqual(first_appointment.id, second_appointment.id)
-        self.assertNotEqual(first_appointment.subject, second_appointment.subject)
+        self.assertNotEqual(first_appointment.message, second_appointment.message)
 
     def test_data_consistency_across_relations(self):
         # Cohérence des données à travers les relations
         review = Review(text="Cohérence test", rating=5, user=self.user, prestation=self.prestation)
-        appointment = Appointment(subject="Test cohérence", 
-                                message="Message test", user=self.user, prestation=self.prestation)
+        appointment = Appointment(message="Message test", user=self.user, prestation=self.prestation)
         
         # Les deux entités pointent vers le même utilisateur
         self.assertEqual(review.user.id, appointment.user.id)
@@ -139,7 +130,7 @@ class TestAllRelations(BaseTest):
         self.assertEqual(review.user, self.user2)
         
         # Répéter le même scénario pour les rendez-vous
-        appointment = Appointment(subject="Initial appointment", message="Test", user=self.user, prestation=self.prestation)
+        appointment = Appointment(message="Test", user=self.user, prestation=self.prestation)
         self.save_to_db(appointment)
         self.assertIn(appointment, self.user.appointments)
         
@@ -151,7 +142,7 @@ class TestAllRelations(BaseTest):
     def test_user_reviews_and_appointments_are_separate_lists(self):
         # Un utilisateur peut avoir des avis et des rendez-vous
         review = Review(text="Test distinct lists", rating=5, user=self.user, prestation=self.prestation)
-        appointment = Appointment(subject="Test distinct lists", message="Test", user=self.user, prestation=self.prestation)
+        appointment = Appointment(message="Test", user=self.user, prestation=self.prestation)
         self.save_to_db(review, appointment)
         
         # Les deux entités doivent être dans les listes appropriées de l'utilisateur

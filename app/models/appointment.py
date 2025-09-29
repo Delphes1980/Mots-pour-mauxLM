@@ -9,17 +9,15 @@ from .prestation import Prestation
 
 class Appointment(BaseEntity):
 	__tablename__ = 'appointments'
-	_subject: Mapped[str] = mapped_column("subject", String(50), nullable=False)
 	_message: Mapped[str] = mapped_column("message", Text, nullable=False)
 	_user_id: Mapped[str] = mapped_column("user_id", String(36), ForeignKey('users.id'), nullable=False)
 	_prestation_id: Mapped[str] = mapped_column("prestation_id", String(36), ForeignKey('prestations.id'), nullable=False)
 	_user: Mapped["User"] = relationship("User", back_populates="appointments", lazy=True)
 	_prestation: Mapped["Prestation"] = relationship("Prestation", back_populates="appointments", lazy=True)
 
-	def __init__(self, user: User, subject: str, message: str, prestation: Prestation):
+	def __init__(self, user: User, message: str, prestation: Prestation):
 		super().__init__()
 		self.user = user
-		self.subject = subject
 		self.message = message
 		self.prestation = prestation
 
@@ -44,28 +42,12 @@ class Appointment(BaseEntity):
 		return user
 
 	@hybrid_property
-	def subject(self):
-		return self._subject
-
-	@subject.setter
-	def subject(self, value):
-		self._subject = self.subject_validation(value)
-
-	@hybrid_property
 	def message(self):
 		return self._message
 
 	@message.setter
 	def message(self, value):
 		self._message = self.message_validation(value)
-
-	def subject_validation(self, subject: str):
-		""" Validates the subject """
-		if subject is None:
-			raise ValueError('Expected subject but received None')
-		type_validation(subject, 'subject', str)
-		strlen_validation(subject, 'subject', 1, 50)
-		return subject
 
 	def message_validation(self, message: str):
 		""" Validates the message """

@@ -24,8 +24,7 @@ class TestAllRelationships(BaseTest):
         # Parcours complet : RDV → Avis → Nouveau RDV
         
         # 1. Utilisateur prend un RDV pour une prestation
-        appointment1 = Appointment(user=self.user1, subject="Premier massage", 
-                                 message="Découverte du massage suédois", 
+        appointment1 = Appointment(user=self.user1, message="Découverte du massage suédois", 
                                  prestation=self.prestation1)
         
         # 2. Utilisateur satisfait laisse un avis
@@ -33,8 +32,7 @@ class TestAllRelationships(BaseTest):
                        rating=5, user=self.user1, prestation=self.prestation1)
         
         # 3. Utilisateur reprend RDV pour une autre prestation
-        appointment2 = Appointment(user=self.user1, subject="Réflexologie", 
-                                 message="Suite à mon excellent massage", 
+        appointment2 = Appointment(user=self.user1, message="Suite à mon excellent massage", 
                                  prestation=self.prestation2)
         
         # Vérifications du parcours
@@ -49,16 +47,13 @@ class TestAllRelationships(BaseTest):
         # Plusieurs utilisateurs, plusieurs prestations, plusieurs services
         
         # User1: 2 RDV différents + 1 avis
-        apt1_u1 = Appointment(user=self.user1, subject="Massage suédois", 
-                            message="Détente", prestation=self.prestation1)
-        apt2_u1 = Appointment(user=self.user1, subject="Aromathérapie", 
-                            message="Bien-être", prestation=self.prestation3)
+        apt1_u1 = Appointment(user=self.user1, message="Détente", prestation=self.prestation1)
+        apt2_u1 = Appointment(user=self.user1, message="Bien-être", prestation=self.prestation3)
         review_u1 = Review(text="Service parfait", rating=5, 
                           user=self.user1, prestation=self.prestation1)
         
         # User2: 1 RDV + 2 avis différents
-        apt1_u2 = Appointment(user=self.user2, subject="Réflexologie", 
-                            message="Soulager fatigue", prestation=self.prestation2)
+        apt1_u2 = Appointment(user=self.user2, message="Soulager fatigue", prestation=self.prestation2)
         review1_u2 = Review(text="Très professionnel", rating=4, 
                            user=self.user2, prestation=self.prestation2)
         review2_u2 = Review(text="Aromathérapie apaisante", rating=5, 
@@ -86,13 +81,13 @@ class TestAllRelationships(BaseTest):
         # Analyse de popularité des prestations
         
         # Prestation1: 2 RDV + 2 avis
-        Appointment(user=self.user1, subject="Massage 1", message="Test", prestation=self.prestation1)
-        Appointment(user=self.user2, subject="Massage 2", message="Test", prestation=self.prestation1)
+        Appointment(user=self.user1, message="Test", prestation=self.prestation1)
+        Appointment(user=self.user2, message="Test", prestation=self.prestation1)
         Review(text="Bien", rating=4, user=self.user1, prestation=self.prestation1)
         Review(text="Très bien", rating=5, user=self.user2, prestation=self.prestation1)
         
         # Prestation2: 1 RDV + 1 avis
-        Appointment(user=self.user1, subject="Réflexo", message="Test", prestation=self.prestation2)
+        Appointment(user=self.user1, message="Test", prestation=self.prestation2)
         Review(text="Correct", rating=3, user=self.user1, prestation=self.prestation2)
         
         # Prestation3: 1 avis seulement
@@ -106,8 +101,7 @@ class TestAllRelationships(BaseTest):
     def test_data_consistency_across_all_relations(self):
         # Cohérence des données à travers toutes les relations
         
-        appointment = Appointment(user=self.user1, subject="Test cohérence", 
-                                message="Message test", prestation=self.prestation1)
+        appointment = Appointment(user=self.user1, message="Message test", prestation=self.prestation1)
         review = Review(text="Test cohérence", rating=4, 
                        user=self.user1, prestation=self.prestation1)
         
@@ -134,10 +128,9 @@ class TestAllRelationships(BaseTest):
         appointments = []
         reviews = []
         
-        for i, (prestation, subject, message) in enumerate(services, 1):
+        for i, (prestation, _, message) in enumerate(services, 1):
             # RDV pour chaque prestation
-            apt = Appointment(user=self.user1, subject=subject, 
-                            message=message, prestation=prestation)
+            apt = Appointment(user=self.user1, message=message, prestation=prestation)
             appointments.append(apt)
             
             # Avis positif pour chaque prestation
@@ -161,14 +154,12 @@ class TestAllRelationships(BaseTest):
         # Isolation des entités entre utilisateurs
         
         # Entités User1
-        apt_u1 = Appointment(user=self.user1, subject="User1 RDV", 
-                           message="Message U1", prestation=self.prestation1)
+        apt_u1 = Appointment(user=self.user1, message="Message U1", prestation=self.prestation1)
         review_u1 = Review(text="User1 avis", rating=5, 
                           user=self.user1, prestation=self.prestation1)
         
         # Entités User2
-        apt_u2 = Appointment(user=self.user2, subject="User2 RDV", 
-                           message="Message U2", prestation=self.prestation2)
+        apt_u2 = Appointment(user=self.user2, message="Message U2", prestation=self.prestation2)
         review_u2 = Review(text="User2 avis", rating=4, 
                           user=self.user2, prestation=self.prestation2)
         
