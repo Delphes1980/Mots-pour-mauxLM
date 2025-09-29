@@ -59,7 +59,7 @@ class TestUserReviewRelations(BaseTest):
         self.assertEqual(review.user, self.user)
 
     # Testez la même chose pour les rendez-vous
-        appointment = Appointment(subject="Test back_populates", message="Test", user=self.user, prestation=self.prestation)
+        appointment = Appointment(message="Test", user=self.user, prestation=self.prestation)
         self.save_to_db(appointment)
         self.assertIn(appointment, self.user.appointments)
         self.assertEqual(appointment.user, self.user)

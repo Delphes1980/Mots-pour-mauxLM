@@ -19,18 +19,15 @@ class TestUserAppointmentRelations(BaseTest):
 
     def test_user_can_create_appointment(self):
         # Un utilisateur peut créer un rendez-vous
-        appointment = Appointment(subject="Massage suédois", 
-                                message="Je souhaite un rendez-vous", 
+        appointment = Appointment(message="Je souhaite un rendez-vous", 
                                 user=self.user, prestation=self.prestation)
         self.assertEqual(appointment.user, self.user)
         self.assertEqual(appointment._user_id, self.user.id)
 
     def test_user_multiple_appointments(self):
         # Un utilisateur peut avoir plusieurs rendez-vous
-        appointment1 = Appointment(subject="Massage thérapeutique", 
-                                 message="Première séance", user=self.user, prestation=self.prestation)
-        appointment2 = Appointment(subject="Réflexologie", 
-                                 message="Deuxième séance", user=self.user, prestation=self.prestation)
+        appointment1 = Appointment(message="Première séance", user=self.user, prestation=self.prestation)
+        appointment2 = Appointment(message="Deuxième séance", user=self.user, prestation=self.prestation)
         
         self.assertEqual(appointment1.user, self.user)
         self.assertEqual(appointment2.user, self.user)
@@ -38,8 +35,7 @@ class TestUserAppointmentRelations(BaseTest):
 
     def test_appointment_belongs_to_one_user(self):
         # Un rendez-vous appartient à un seul utilisateur
-        appointment = Appointment(subject="Aromathérapie", 
-                                message="Séance relaxante", user=self.user, prestation=self.prestation)
+        appointment = Appointment(message="Séance relaxante", user=self.user, prestation=self.prestation)
         
         # Changer d'utilisateur (cas de transfert de RDV)
         appointment.user = self.user2
@@ -48,10 +44,8 @@ class TestUserAppointmentRelations(BaseTest):
 
     def test_different_users_different_appointments(self):
         # Différents utilisateurs peuvent prendre des rendez-vous
-        appointment1 = Appointment(subject="Massage californien", 
-                                 message="Détente totale", user=self.user, prestation=self.prestation)
-        appointment2 = Appointment(subject="Massage deep tissue", 
-                                 message="Soulager tensions", user=self.user2, prestation=self.prestation)
+        appointment1 = Appointment(message="Détente totale", user=self.user, prestation=self.prestation)
+        appointment2 = Appointment(message="Soulager tensions", user=self.user2, prestation=self.prestation)
         
         self.assertEqual(appointment1.user, self.user)
         self.assertEqual(appointment2.user, self.user2)
@@ -59,15 +53,15 @@ class TestUserAppointmentRelations(BaseTest):
 
     def test_user_appointment_services_variety(self):
         # Un utilisateur peut réserver différents services
-        services = [
-            ("Massage suédois", "Relaxation"),
-            ("Réflexologie plantaire", "Bien-être des pieds"),
-            ("Aromathérapie", "Huiles essentielles")
+        messages = [
+            "Relaxation",
+            "Bien-être des pieds",
+            "Huiles essentielles"
         ]
         
         appointments = []
-        for subject, message in services:
-            appointment = Appointment(subject=subject, message=message, user=self.user, prestation=self.prestation)
+        for message in messages:
+            appointment = Appointment(message=message, user=self.user, prestation=self.prestation)
             appointments.append(appointment)
         
         # Vérifier que tous appartiennent au même utilisateur
