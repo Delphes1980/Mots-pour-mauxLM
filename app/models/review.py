@@ -1,5 +1,5 @@
-from app.models.baseEntity import (BaseEntity, type_validation, strlen_validation)
-from app.utils import rating_validation
+from app.models.baseEntity import BaseEntity
+from app.utils import (rating_validation, type_validation, strlen_validation)
 from sqlalchemy import Integer, String, Text, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.ext.hybrid import hybrid_property

@@ -1,4 +1,5 @@
-from app.models.baseEntity import (BaseEntity, type_validation, strlen_validation)
+from app.models.baseEntity import BaseEntity
+from app.utils import (type_validation, strlen_validation)
 from app import bcrypt
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Boolean
