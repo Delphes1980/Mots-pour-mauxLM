@@ -1,10 +1,9 @@
 from app.models.baseEntity import BaseEntity
-from app.utils import (type_validation, strlen_validation)
+from app.utils import (type_validation, strlen_validation, name_validation, email_validation)
 from app import bcrypt
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Boolean
 import re
-from validate_email_address import validate_email
 from sqlalchemy.ext.hybrid import hybrid_property
 from typing import List, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
@@ -72,35 +71,13 @@ class User(BaseEntity):
 			raise ValueError('Expected password but received None')
 		return bcrypt.check_password_hash(self.password, plain_password)
 
-	def name_validation(self, names: str, names_name: str):
-		""" Validates first_name and last_name to ensure they contain only valid characters """
-		if names is None:
-			raise ValueError(f'Expected {names_name} but received None')
-		type_validation(names, names_name, str)
-		names = names.strip()
-		strlen_validation(names, names_name, 1, 50)
-		names_list = names.split()
-		for name in names_list:
-			if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
-				raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
-		return " ".join(names_list)
-
-	def email_validation(self, email: str):
-		""" Validates the email address """
-		if email is None:
-			raise ValueError('Expected email but received None')
-		type_validation(email, 'email', str)
-		if not validate_email(email):
-			raise ValueError("Invalid email: email must have format example@axam.ple")
-		return email
-
 	@hybrid_property
 	def first_name(self):
 		return self._first_name
 
 	@first_name.setter
 	def first_name(self, value):
-		self._first_name = self.name_validation(value, 'first_name')
+		self._first_name = name_validation(value, 'first_name')
 
 	@hybrid_property
 	def last_name(self):
@@ -108,7 +85,7 @@ class User(BaseEntity):
 
 	@last_name.setter
 	def last_name(self, value):
-		self._last_name = self.name_validation(value, 'last_name')
+		self._last_name = name_validation(value, 'last_name')
 
 	@hybrid_property
 	def email(self):
@@ -116,7 +93,7 @@ class User(BaseEntity):
 
 	@email.setter
 	def email(self, value: str):
-		self._email = self.email_validation(value)
+		self._email = email_validation(value)
 
 	@hybrid_property
 	def is_admin(self):

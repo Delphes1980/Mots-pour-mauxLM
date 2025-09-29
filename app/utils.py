@@ -1,5 +1,8 @@
 from uuid import UUID
 import inspect
+from validate_email_address import validate_email
+import re
+
 
 """
 Utility functions for validating input data against class constructors,
@@ -24,6 +27,11 @@ Functions:
         Validates review rating value (1-5 range).
     is_valid_uuid4(uuid_str):
         Determines if given string is a valid UUID4.
+    name_validation(self, names, names_name):
+        Validates first_name and last_name to ensure they contain only
+        valid characters.
+    email_validation(self, email):
+        Validates the email address.   
 """
 
 
@@ -153,6 +161,28 @@ def strlen_validation(string: str, string_name: str, min_len, max_len):
 
 	if len(string) < min_len or len(string) > max_len:
 		raise ValueError(f"Invalid {string_name}: {string_name} must be shorter than {max_len} characters and include at least {min_len} no-space characters")
+
+def name_validation(names: str, names_name: str):
+		""" Validates first_name and last_name to ensure they contain only valid characters """
+		if names is None:
+			raise ValueError(f'Expected {names_name} but received None')
+		type_validation(names, names_name, str)
+		names = names.strip()
+		strlen_validation(names, names_name, 1, 50)
+		names_list = names.split()
+		for name in names_list:
+			if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
+				raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
+		return " ".join(names_list)
+
+def email_validation(email: str):
+		""" Validates the email address """
+		if email is None:
+			raise ValueError('Expected email but received None')
+		type_validation(email, 'email', str)
+		if not validate_email(email):
+			raise ValueError("Invalid email: email must have format example@axam.ple")
+		return email
 
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP
