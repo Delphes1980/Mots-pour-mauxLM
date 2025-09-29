@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.appointment import Appointment
 from app.persistence.BaseRepository import BaseRepository
-from app.models.baseEntity import strlen_validation
+from app.utils import strlen_validation
 
 class AppointmentRepository(BaseRepository):
     def __init__(self):

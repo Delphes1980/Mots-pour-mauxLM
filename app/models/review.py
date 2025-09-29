@@ -60,7 +60,7 @@ class Review(BaseEntity):
 		return cls._user
 
 	def set_user(self, user):
-		""" Valides the user object """
+		""" Validates the user object """
 		if user is None:
 			raise ValueError("User is required: provide user who writes the review")
 		type_validation(user, "User", User)
@@ -80,7 +80,7 @@ class Review(BaseEntity):
 		return cls._prestation
 
 	def set_prestation(self, prestation):
-		""" Valides the prestation object """
+		""" Validates the prestation object """
 		if prestation is None:
 			raise ValueError("Prestation is required: provide prestation being reviewed")
 		type_validation(prestation, "Prestation", Prestation)
