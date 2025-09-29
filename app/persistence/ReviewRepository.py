@@ -6,6 +6,15 @@ from app.utils import rating_validation
 class ReviewRepository(BaseRepository):
     def __init__(self):
         super().__init__(Review)
+
+    def create(self, **kwargs):
+        """Utilise create_review() avec validations au lieu de create() dans BaseRepository"""
+        return self.create_review(
+            kwargs.get('text'),
+            kwargs.get('rating'),
+            kwargs.get('user'),
+            kwargs.get('prestation')
+        )
         
     def create_review(self, text, rating, user, prestation):
         try:
@@ -31,13 +40,7 @@ class ReviewRepository(BaseRepository):
             return new_review
         except SQLAlchemyError:
             raise ValueError("Erreur lors de la création du commentaire")
-        
-    def get_by_user_id(self, user_id):
-        return self.db.session.query(self.model_class).filter_by(_user_id=user_id).first()
-    
-    def get_by_prestation_id(self, prestation_id):
-        return self.db.session.query(self.model_class).filter_by(_prestation_id=prestation_id).all()
-    
+
     def get_by_user_and_prestation(self, user_id, prestation_id):
         """Récupérer un avis par utilisateur et prestation"""
         return self.db.session.query(self.model_class).filter_by(

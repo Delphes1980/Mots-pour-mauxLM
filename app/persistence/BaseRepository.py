@@ -21,6 +21,10 @@ class BaseRepository:
         """Récupérer une entité par ID"""
         return self.db.session.query(self.model_class).get(entity_id)
 
+    def get_by_attribute(self, attr_name, attr_value):
+        """Récupérer une entité par attribut spécifique"""
+        return self.db.session.query(self.model_class).filter_by(**{attr_name: attr_value}).first()
+
     def get_all(self):
         """Récupérer toutes les entités"""
         return self.db.session.query(self.model_class).all()
