@@ -1,7 +1,10 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.appointment import Appointment
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import strlen_validation
+from app.utils import (strlen_validation, type_validation)
+from app.models.user import User
+from app.models.prestation import Prestation
+
 
 class AppointmentRepository(BaseRepository):
     def __init__(self):
@@ -20,9 +23,17 @@ class AppointmentRepository(BaseRepository):
             # Vérifier si la prestation existe
             if not prestation:
                 raise ValueError("La prestation spécifiée n'existe pas")
-            # Vérifier la longeur du message
+            type_validation(prestation, 'prestation', Prestation)
+
+            # Vérifier la longueur du message
+            type_validation(message, 'message', str)
             strlen_validation(message, "Message", 1, 500)
-            
+
+            # Vérifier l'utilisateur
+            if not user:
+                raise ValueError("L'utilisateur spécifié n'existe pas")
+            type_validation(user, 'user', User)
+
             # Créer un nouveau rendez-vous
             new_appointment = Appointment(
                 message=message, 

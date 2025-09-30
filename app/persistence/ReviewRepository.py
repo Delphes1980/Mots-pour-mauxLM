@@ -1,7 +1,8 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.review import Review
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import rating_validation
+from app.utils import (rating_validation, type_validation, strlen_validation)
+from app.models.user import User
 
 class ReviewRepository(BaseRepository):
     def __init__(self):
@@ -20,9 +21,20 @@ class ReviewRepository(BaseRepository):
         try:
             # Valider la notation
             rating_validation(rating)
+
+            # Valider le texte
+            type_validation(text, 'text', str)
+            strlen_validation(text, 'text', 2, 500)
+
             # Vérifier si la prestation existe
             if not prestation:
                 raise ValueError("La prestation spécifiée n'existe pas.")
+
+            # Vérifier l'utilisateur
+            if not user:
+                raise ValueError("L'utilisateur spécifié n'existe pas")
+            type_validation(user, 'user', User)
+
             # Vérifier si le commentaire existe déjà pour cette prestation
             existing_review = self.get_by_user_and_prestation(user.id, prestation.id)
             if existing_review:
