@@ -27,11 +27,13 @@ Functions:
         Validates review rating value (1-5 range).
     is_valid_uuid4(uuid_str):
         Determines if given string is a valid UUID4.
-    name_validation(self, names, names_name):
+    name_validation(names, names_name):
         Validates first_name and last_name to ensure they contain only
         valid characters.
-    email_validation(self, email):
-        Validates the email address.   
+    email_validation(email):
+        Validates the email address.
+	validate_password(plain_passwrod):
+		Validates the password.
 """
 
 
@@ -183,6 +185,19 @@ def email_validation(email: str):
 		if not validate_email(email):
 			raise ValueError("Invalid email: email must have format example@axam.ple")
 		return email
+
+def validate_password(plain_password):
+		""" Validates the password to ensure it meets the requirements """
+		if plain_password is None:
+			raise ValueError("Expected password but received None")
+		if len(plain_password) < 8:
+			raise ValueError("Invalid password: password must be at least 8 characters")
+		if not re.search(r'\d', plain_password):
+			raise ValueError("Invalid password: password must contain at least one digit")
+		special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
+		if not re.search(special_chars, plain_password):
+			raise ValueError("Invalid password: password must contain at least one special character")
+		return plain_password
 
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP

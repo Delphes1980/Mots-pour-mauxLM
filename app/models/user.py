@@ -1,5 +1,5 @@
 from app.models.baseEntity import BaseEntity
-from app.utils import (type_validation, strlen_validation, name_validation, email_validation)
+from app.utils import (type_validation, strlen_validation, name_validation, email_validation, validate_password)
 from app import bcrypt
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Boolean
@@ -42,21 +42,8 @@ class User(BaseEntity):
 		if value is None:
 			raise ValueError('Expected password but received None')
 		type_validation(value, 'password', str)
-		validated_password = self.validate_password(value)
+		validated_password = validate_password(value)
 		self._password = self.hash_password(validated_password)
-
-	def validate_password(self, plain_password):
-		""" Validates the password to ensure it meets the requirements """
-		if plain_password is None:
-			raise ValueError("Expected password but received None")
-		if len(plain_password) < 8:
-			raise ValueError("Invalid password: password must be at least 8 characters")
-		if not re.search(r'\d', plain_password):
-			raise ValueError("Invalid password: password must contain at least one digit")
-		special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
-		if not re.search(special_chars, plain_password):
-			raise ValueError("Invalid password: password must contain at least one special character")
-		return plain_password
 
 	def hash_password(self, validated_password):
 		""" Hashes the password before storing it """

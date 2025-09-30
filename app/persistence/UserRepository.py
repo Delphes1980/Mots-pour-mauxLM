@@ -1,6 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.user import User
 from app.persistence.BaseRepository import BaseRepository
+from app.utils import (name_validation, email_validation, validate_password, type_validation)
 
 class UserRepository(BaseRepository):
     def __init__(self):
@@ -20,6 +21,16 @@ class UserRepository(BaseRepository):
 
     def create_user(self, first_name, last_name, email, password, address=None, phone_number=None, is_admin=False):
         try:
+            # Valider les données
+            first_name = name_validation(first_name, 'first_name')
+            last_name = name_validation(last_name, 'last_name')
+            email = email_validation(email)
+            password = validate_password(password)
+            if address is not None:
+                type_validation(address, 'address', str)
+            if phone_number is not None:
+                type_validation(phone_number, 'phone_number', str)
+
             # Vérifier si l'utilisateur existe déjà
             existing_user = self.get_by_attribute("email", email)
             if existing_user:
