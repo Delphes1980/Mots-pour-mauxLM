@@ -32,8 +32,16 @@ Functions:
         valid characters.
     email_validation(email):
         Validates the email address.
-	validate_password(plain_passwrod):
-		Validates the password.
+    validate_password(plain_passwrod):
+        Validates the password.
+    validate_phone_number(phone_number):
+        Validates the phone number format
+    address_validation(address):
+        Validates the address format
+    text_field_validation(value, text_field, min_len, max_len):
+        Validates the text field format
+    admin_validation(is_admin):
+        Validates the is_admin field
 """
 
 
@@ -133,71 +141,116 @@ def is_valid_uuid4(uuid_str):
         return False
 
 def type_validation(arg, arg_name: str, *arg_type):
-	""" Validate if an argument is of the expected type
-	Args:
-		arg: the argument to validate
-		arg_name (str): the name of the argument
-		*arg_type: one or more expected types
-	Raises:
-		TypeError: If the argument's type doesn't match the expected type """
+    """ Validate if an argument is of the expected type
+    Args:
+        arg: the argument to validate
+        arg_name (str): the name of the argument
+        *arg_type: one or more expected types
+    Raises:
+        TypeError: If the argument's type doesn't match the expected type """
 
-	types_to_check = arg_type[0] if isinstance(arg_type[0], tuple) else arg_type
+    types_to_check = arg_type[0] if isinstance(arg_type[0], tuple) else arg_type
 
-	if not isinstance(arg, types_to_check):
-		if isinstance(types_to_check, tuple):
-			type_list = [t.__name__ for t in types_to_check]
-			type_string = " or ".join(type_list)
-		else:
-			type_string = types_to_check.__name__
-		raise TypeError(f"Invalid {arg_name}: {arg_name} must be of type {type_string}")
-		
+    if not isinstance(arg, types_to_check):
+        if isinstance(types_to_check, tuple):
+            type_list = [t.__name__ for t in types_to_check]
+            type_string = " or ".join(type_list)
+        else:
+            type_string = types_to_check.__name__
+        raise TypeError(f"Invalid {arg_name}: {arg_name} must be of type {type_string}")
+        
 def strlen_validation(string: str, string_name: str, min_len, max_len):
-	""" Validate the length of a specific range
-	Args:
-		string (str): the string to validate
-		string_name (str): the name of the string
-		min_len (int): the minimum length allowed for the string
-		max_len (int): the maximum length allowed for the string
-	Raises:
-	ValueError: If the string's length length is outside the specified min_len and max_len """
+    """ Validate the length of a specific range
+    Args:
+        string (str): the string to validate
+        string_name (str): the name of the string
+        min_len (int): the minimum length allowed for the string
+        max_len (int): the maximum length allowed for the string
+    Raises:
+    ValueError: If the string's length length is outside the specified min_len and max_len """
 
-	if len(string) < min_len or len(string) > max_len:
-		raise ValueError(f"Invalid {string_name}: {string_name} must be shorter than {max_len} characters and include at least {min_len} no-space characters")
+    if len(string) < min_len or len(string) > max_len:
+        raise ValueError(f"Invalid {string_name}: {string_name} must be shorter than {max_len} characters and include at least {min_len} no-space characters")
 
 def name_validation(names: str, names_name: str):
-		""" Validates first_name and last_name to ensure they contain only valid characters """
-		if names is None:
-			raise ValueError(f'Expected {names_name} but received None')
-		type_validation(names, names_name, str)
-		names = names.strip()
-		strlen_validation(names, names_name, 1, 50)
-		names_list = names.split()
-		for name in names_list:
-			if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
-				raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
-		return " ".join(names_list)
+        """ Validates first_name and last_name to ensure they contain only valid characters """
+        if names is None:
+            raise ValueError(f'Expected {names_name} but received None')
+        type_validation(names, names_name, str)
+        names = names.strip()
+        strlen_validation(names, names_name, 1, 50)
+        names_list = names.split()
+        for name in names_list:
+            if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
+                raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
+        return " ".join(names_list)
 
 def email_validation(email: str):
-		""" Validates the email address """
-		if email is None:
-			raise ValueError('Expected email but received None')
-		type_validation(email, 'email', str)
-		if not validate_email(email):
-			raise ValueError("Invalid email: email must have format example@axam.ple")
-		return email
+        """ Validates the email address """
+        if email is None:
+            raise ValueError('Expected email but received None')
+        type_validation(email, 'email', str)
+        if not validate_email(email):
+            raise ValueError("Invalid email: email must have format example@axam.ple")
+        return email
 
 def validate_password(plain_password):
-		""" Validates the password to ensure it meets the requirements """
-		if plain_password is None:
-			raise ValueError("Expected password but received None")
-		if len(plain_password) < 8:
-			raise ValueError("Invalid password: password must be at least 8 characters")
-		if not re.search(r'\d', plain_password):
-			raise ValueError("Invalid password: password must contain at least one digit")
-		special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
-		if not re.search(special_chars, plain_password):
-			raise ValueError("Invalid password: password must contain at least one special character")
-		return plain_password
+        """ Validates the password to ensure it meets the requirements """
+        if plain_password is None:
+            raise ValueError("Expected password but received None")
+        if len(plain_password) < 8:
+            raise ValueError("Invalid password: password must be at least 8 characters")
+        if not re.search(r'\d', plain_password):
+            raise ValueError("Invalid password: password must contain at least one digit")
+        special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
+        if not re.search(special_chars, plain_password):
+            raise ValueError("Invalid password: password must contain at least one special character")
+        return plain_password
+
+def validate_phone_number(phone_number: str):
+    """Validate the phone number format"""
+    if phone_number is None:
+        return None
+    type_validation(phone_number, 'phone_number', str)
+    strlen_validation(phone_number, 'phone_number', 0, 20)
+    if not re.fullmatch(r'^\+?[0-9\s\-()]*$', phone_number):
+        raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
+    return phone_number
+
+def address_validation(address: str):
+    """Validate the address format"""
+    if address is None:
+        return None
+    type_validation(address, 'address', str)
+    strlen_validation(address, 'address', 0, 255)
+    return address
+
+def text_field_validation(value, field_name, min_len, max_len):
+    """Validate the text field format
+    Args:
+        value (str): the text to validate
+        field_name (str): the name of the text field
+        min_len (int): the minimum length allowed for the text
+        max_len (int): the maximum length allowed for the text
+
+    Returns:
+        str: The validated text field
+
+    Raises:
+        ValueError: If the text field's length is outside the specified min_len and max_len
+    """
+    if value is None:
+        raise ValueError(f"Expected {field_name} but received None")
+    type_validation(value, field_name, str)
+    strlen_validation(value, field_name, min_len, max_len)
+    return value
+
+def admin_validation(is_admin):
+    """Validates is_admin field"""
+    if is_admin is None:
+        return False
+    type_validation(is_admin, 'is_admin', bool)
+    return is_admin
 
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP

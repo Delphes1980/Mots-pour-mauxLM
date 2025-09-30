@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.appointment import Appointment
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import (strlen_validation, type_validation)
+from app.utils import (text_field_validation, type_validation)
 from app.models.user import User
 from app.models.prestation import Prestation
 
@@ -26,8 +26,7 @@ class AppointmentRepository(BaseRepository):
             type_validation(prestation, 'prestation', Prestation)
 
             # Vérifier la longueur du message
-            type_validation(message, 'message', str)
-            strlen_validation(message, "Message", 1, 500)
+            text_field_validation(message, 'message', 1, 500)
 
             # Vérifier l'utilisateur
             if not user:

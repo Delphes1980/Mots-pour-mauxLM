@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.review import Review
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import (rating_validation, type_validation, strlen_validation)
+from app.utils import (rating_validation, type_validation, text_field_validation)
 from app.models.user import User
 
 class ReviewRepository(BaseRepository):
@@ -23,8 +23,7 @@ class ReviewRepository(BaseRepository):
             rating_validation(rating)
 
             # Valider le texte
-            type_validation(text, 'text', str)
-            strlen_validation(text, 'text', 2, 500)
+            text_field_validation(text, 'text', 2, 500)
 
             # Vérifier si la prestation existe
             if not prestation:

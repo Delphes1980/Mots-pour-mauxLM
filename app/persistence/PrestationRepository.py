@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.prestation import Prestation
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import (type_validation, strlen_validation)
+from app.utils import text_field_validation
 
 class PrestationRepository(BaseRepository):
 	def __init__(self):
@@ -14,10 +14,7 @@ class PrestationRepository(BaseRepository):
 	def create_prestation(self, name):
 		try:
 			# Valider le nom de la prestation
-			if not name:
-				raise ValueError("Le nom de la prestation est requis")
-			type_validation(name, 'name', str)
-			strlen_validation(name, 'name', 1, 50)
+			text_field_validation(name, 'name', 1, 50)
 
 			# Vérifier si la prestation existe déjà
 			existing_prestation = self.get_by_attribute("name", name)
