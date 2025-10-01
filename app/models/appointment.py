@@ -43,6 +43,10 @@ class Appointment(BaseEntity):
 		return user
 
 	@hybrid_property
+	def user_id(self):
+		return self._user_id
+
+	@hybrid_property
 	def message(self):
 		return self._message
 
@@ -77,3 +81,7 @@ class Appointment(BaseEntity):
 			raise ValueError("Prestation is required: provide prestation for the appointment")
 		type_validation(prestation, "Prestation", Prestation)
 		return prestation
+
+	@hybrid_property
+	def prestation_id(self):
+		return self._prestation_id

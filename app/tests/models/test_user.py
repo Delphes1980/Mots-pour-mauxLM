@@ -7,9 +7,7 @@ from app.tests.base_test import BaseTest
 class TestUser(BaseTest):
 
     def test_user_creation(self):
-        user = User(first_name="John", last_name="Doe",
-                    email="john.doe@example.com", address=None, phone_number=None,
-                    password="Password123!")
+        user = User("John", "Doe", "john.doe@example.com", "Password123!")
         self.assertEqual(user.first_name, "John")
         self.assertEqual(user.last_name, "Doe")
         self.assertEqual(user.email, "john.doe@example.com")
@@ -19,8 +17,7 @@ class TestUser(BaseTest):
         self.assertIsInstance(user.updated_at, datetime)
 
     def test_admin_user_creation(self):
-        user = User("Alice", "Smith", "alice@example.com", None, None,
-                    password="Password123!", is_admin=True)
+        user = User("Alice", "Smith", "alice@example.com", "Password123!", is_admin=True)
         self.assertTrue(user.is_admin)
         self.assertEqual(user.first_name, "Alice")
         self.assertEqual(user.last_name, "Smith")
@@ -31,39 +28,38 @@ class TestUser(BaseTest):
 
     def test_empty_string_first_name(self):
         with self.assertRaises(ValueError) as e:
-            User("", "Doe", "john.doe@example.com", None, None,
-                 password="password")
+            User("", "Doe", "john.doe@example.com", "password")
         self.assertIn("Invalid first_name", str(e.exception))
 
     def test_long_first_name(self):
         with self.assertRaises(ValueError) as e:
             User("JohnDuudly do whatever somethin tsknslkslkskind kdi",
-                 "Doe", "email@email.com", None, None, password="password")
+                 "Doe", "email@email.com", "password")
         self.assertIn("Invalid first_name", str(e.exception))
 
     def test_name_not_a_string(self):
         with self.assertRaises(TypeError) as e:
-            User(23, "Doe", "email@email.com", None, None, password="password")
+            User(23, "Doe", "email@email.com", "password")
         self.assertIn("Invalid first_name", str(e.exception))
 
     def test_name_None(self):
         with self.assertRaises(ValueError) as e:
-            User(None, "Doe", "email@email.com", None, None, password="password")
+            User(None, "Doe", "email@email.com", "password")
         self.assertIn("first_name", str(e.exception))
 
     def test_missing_last_name(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "", "john.doe@example.com", None, None, password="password")
+            User("John", "", "john.doe@example.com", "password")
         self.assertIn("Invalid last_name", str(e.exception))
 
     def test_empty_string_last_name(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "", "john.doe@example.com", None, None, password="password")
+            User("John", "", "john.doe@example.com", "password")
         self.assertIn("Invalid last_name", str(e.exception))
 
     def test_long_last_name_but_ok(self):
         user = User("John", "JohnDuudly do whatever somethin tkind",
-                    "email@email.com", None, None, password="Password123!")
+                    "email@email.com", "Password123!")
         self.assertEqual(user.first_name, "John")
         self.assertEqual(user.last_name, "JohnDuudly do whatever somethin tkind")
         self.assertEqual(user.email, "email@email.com")
@@ -73,12 +69,12 @@ class TestUser(BaseTest):
 
     def test_last_name_not_a_string(self):
         with self.assertRaises(TypeError) as e:
-            User("John", 42, "email@email.com", None, None, password="password")
+            User("John", 42, "email@email.com", "password")
         self.assertIn("Invalid last_name", str(e.exception))
 
     def test_last_name_None(self):
         with self.assertRaises(ValueError) as e:
-            User("Jon", None, "email@email.com", None, None, password="password")
+            User("Jon", None, "email@email.com", "password")
         self.assertIn("last_name", str(e.exception))
 
     def test_name_with_accents_and_special_characters(self):
@@ -91,13 +87,9 @@ class TestUser(BaseTest):
             "Pierre Marie de la Rosa"
         ]
         for name in valid_names:
-            user = User(first_name=name, last_name="Doe",
-                        email="test@example.com", address=None, phone_number=None,
-                        password="Password123!")
+            user = User(name, "Doe", "test@example.com", "Password123!")
             self.assertEqual(user.first_name, name)
-            user = User(first_name="John", last_name=name,
-                        email="test@example.com", address=None, phone_number=None,
-                        password="Password123!")
+            user = User("John", name, "test@example.com", "Password123!")
             self.assertEqual(user.last_name, name)
 
         # Names with invalid special characters or numbers should
@@ -109,70 +101,63 @@ class TestUser(BaseTest):
         ]
         for name in invalid_names:
             with self.assertRaises(ValueError):
-                User(first_name=name, last_name="Doe",
-                     email="test@example.com", address=None, phone_number=None,
-                     password="Password123!")
+                User(name, "Doe", "test@example.com", "Password123!")
             with self.assertRaises(ValueError):
-                User(first_name="John", last_name=name,
-                     email="test@example.com", address=None, phone_number=None,
-                     password="Password123!")
+                User("John", name, "test@example.com", "Password123!")
 
     def test_user_creation_bad_email(self):
         with self.assertRaises(ValueError) as cm:
-            User(first_name="Jane", last_name="Doe",
-                 email="invalid-email", address=None, phone_number=None,
-                 password="password")
+            User("Jane", "Doe", "invalid-email", "password")
         self.assertIn("Invalid email", str(cm.exception))
 
     def test_invalid_email_no_at(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "johndoeexample.com", None, None,
-                 password="password")
+            User("John", "Doe", "johndoeexample.com", "password")
         self.assertIn("Invalid email", str(e.exception))
 
     def test_invalid_email_empty(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "", None, None, password="password")
+            User("John", "Doe", "", "password")
         self.assertIn("Invalid email", str(e.exception))
 
     def test_invalid_email_None(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", None, None, None, password="password")
+            User("John", "Doe", None, "password")
         self.assertIn("email", str(e.exception))
 
     # Test de mots de passe
     def test_password_too_short(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", None, None, "1234567")  # < 8 chars
+            User("John", "Doe", "john@example.com", "1234567")  # < 8 chars
         self.assertIn("at least 8 characters", str(e.exception))
 
     def test_password_no_digit(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", None, None, "Password!")
+            User("John", "Doe", "john@example.com", "Password!")
         self.assertIn("at least one digit", str(e.exception))
 
     def test_password_no_special_char(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", None, None, "Password123")
+            User("John", "Doe", "john@example.com", "Password123")
         self.assertIn("special character", str(e.exception))
 
     def test_valid_password(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         self.assertIsNotNone(user.password)
 
     # Tests de hachage et vérification du mot de passe
     def test_password_is_hashed(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         self.assertNotEqual(user.password, "Password123!")
 
     def test_verify_password(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         self.assertTrue(user.verify_password("Password123!"))
         self.assertFalse(user.verify_password("wrongpassword"))
 
     # Tests des propriétés hybrides
     def test_property_setters(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         user.first_name = "Jane"
         user.email = "jane@example.com"
         self.assertEqual(user.first_name, "Jane")
@@ -180,26 +165,26 @@ class TestUser(BaseTest):
 
     # Tests pour address
     def test_user_with_address(self):
-        user = User("John", "Doe", "john@example.com", "123 Main St, Paris", None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!", "123 Main St, Paris")
         self.assertEqual(user.address, "123 Main St, Paris")
 
     def test_user_without_address(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         self.assertIsNone(user.address)
 
     def test_address_too_long(self):
         long_address = "A" * 256  # Plus de 255 caractères
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", long_address, None, "Password123!")
+            User("John", "Doe", "john@example.com", "Password123!", long_address)
         self.assertIn("Invalid address", str(e.exception))
 
     def test_address_wrong_type(self):
         with self.assertRaises(TypeError) as e:
-            User("John", "Doe", "john@example.com", 123, None, "Password123!")
+            User("John", "Doe", "john@example.com", "Password123!", 123)
         self.assertIn("Invalid address", str(e.exception))
 
     def test_address_setter(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         user.address = "456 Oak Ave, Lyon"
         self.assertEqual(user.address, "456 Oak Ave, Lyon")
         user.address = None
@@ -207,11 +192,11 @@ class TestUser(BaseTest):
 
     # Tests pour phone_number
     def test_user_with_phone_number(self):
-        user = User("John", "Doe", "john@example.com", None, "0123456789", "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!", phone_number="0123456789")
         self.assertEqual(user.phone_number, "0123456789")
 
     def test_user_without_phone_number(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         self.assertIsNone(user.phone_number)
 
     def test_phone_number_formats(self):
@@ -224,7 +209,7 @@ class TestUser(BaseTest):
             "+33 1 23 45 67 89"
         ]
         for phone in valid_phones:
-            user = User("John", "Doe", "john@example.com", None, phone, "Password123!")
+            user = User("John", "Doe", "john@example.com", "Password123!", phone_number=phone)
             self.assertEqual(user.phone_number, phone)
 
     def test_phone_number_invalid_format(self):
@@ -237,22 +222,22 @@ class TestUser(BaseTest):
         ]
         for phone in invalid_phones:
             with self.assertRaises(ValueError) as e:
-                User("John", "Doe", "john@example.com", None, phone, "Password123!")
+                User("John", "Doe", "john@example.com", "Password123!", phone_number=phone)
             self.assertIn("Invalid phone number", str(e.exception))
 
     def test_phone_number_too_long(self):
         long_phone = "0" * 21  # Plus de 20 caractères
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", None, long_phone, "Password123!")
+            User("John", "Doe", "john@example.com", "Password123!", phone_number=long_phone)
         self.assertIn("Invalid phone_number", str(e.exception))
 
     def test_phone_number_wrong_type(self):
         with self.assertRaises(TypeError) as e:
-            User("John", "Doe", "john@example.com", None, 123456789, "Password123!")
+            User("John", "Doe", "john@example.com", "Password123!", phone_number=123456789)
         self.assertIn("Invalid phone_number", str(e.exception))
 
     def test_phone_number_setter(self):
-        user = User("John", "Doe", "john@example.com", None, None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!")
         user.phone_number = "0987654321"
         self.assertEqual(user.phone_number, "0987654321")
         user.phone_number = None
@@ -260,17 +245,17 @@ class TestUser(BaseTest):
 
     # Test combinaisons address et phone_number
     def test_user_with_both_address_and_phone(self):
-        user = User("John", "Doe", "john@example.com", "123 Main St", "0123456789", "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!", "123 Main St", "0123456789")
         self.assertEqual(user.address, "123 Main St")
         self.assertEqual(user.phone_number, "0123456789")
 
     def test_user_with_only_address(self):
-        user = User("John", "Doe", "john@example.com", "123 Main St", None, "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!", "123 Main St")
         self.assertEqual(user.address, "123 Main St")
         self.assertIsNone(user.phone_number)
 
     def test_user_with_only_phone(self):
-        user = User("John", "Doe", "john@example.com", None, "0123456789", "Password123!")
+        user = User("John", "Doe", "john@example.com", "Password123!", phone_number="0123456789")
         self.assertIsNone(user.address)
         self.assertEqual(user.phone_number, "0123456789")
 
