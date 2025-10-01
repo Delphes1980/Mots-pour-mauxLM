@@ -60,8 +60,20 @@ class ReviewRepository(BaseRepository):
             raise ValueError("Erreur lors de la création du commentaire")
 
     def get_by_user_and_prestation(self, user_id, prestation_id):
-        """Récupérer un avis par utilisateur et prestation"""
+        """Récupérer l'avis par utilisateur et prestation (un seul par type de prestation)"""
         return self.db.session.query(self.model_class).filter_by(
             _user_id=user_id, 
             _prestation_id=prestation_id
         ).first()
+
+    def get_by_prestation_id(self, prestation_id):
+        """Récupérer les avis par prestation"""
+        return self.db.session.query(self.model_class).filter_by(
+            _prestation_id=prestation_id
+        ).all()
+
+    def get_by_user_id(self, user_id):
+        """Récupérer les avis par utilisateur"""
+        return self.db.session.query(self.model_class).filter_by(
+            _user_id=user_id
+        ).all()

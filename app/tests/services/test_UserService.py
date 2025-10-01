@@ -135,7 +135,7 @@ class TestUserService(BaseTest):
         with self.assertRaises(ValueError) as context:
             self.user_service.get_user_by_id('nonexistent-id')
         
-        self.assertIn('Invalid user ID', str(context.exception))
+        self.assertIn('user_id', str(context.exception).lower())
 
     def test_get_user_by_email_existing(self):
         """Test récupération utilisateur par email existant"""
@@ -510,7 +510,7 @@ class TestUserService(BaseTest):
         with self.assertRaises(ValueError) as context:
             self.user_service.update_user('nonexistent-id', first_name='John')
         
-        self.assertIn('Invalid user ID', str(context.exception))
+        self.assertIn('user_id', str(context.exception).lower())
 
     def test_update_user_invalid_email(self):
         """Test mise à jour avec email invalide"""
@@ -588,7 +588,7 @@ class TestUserService(BaseTest):
         with self.assertRaises(ValueError) as context:
             self.user_service.delete_user('nonexistent-id')
         
-        self.assertIn('Invalid user ID', str(context.exception))
+        self.assertIn('user_id', str(context.exception).lower())
 
     # Tests de mock supprimés car ils ne correspondent pas à l'architecture actuelle
     # du UserService qui fait ses propres vérifications avant d'appeler le repository

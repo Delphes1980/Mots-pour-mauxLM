@@ -142,21 +142,22 @@ class TestAppointmentRepository(BaseTest):
         )
         
         # Récupérer par user + prestation
-        found_appointment = self.appointment_repo.get_by_user_and_prestation(
+        found_appointments = self.appointment_repo.get_by_user_and_prestation(
             self.user.id, 
             self.prestation.id
         )
         
-        self.assertIsNotNone(found_appointment)
-        self.assertEqual(found_appointment.id, created_appointment.id)
+        self.assertIsNotNone(found_appointments)
+        self.assertEqual(len(found_appointments), 1)
+        self.assertEqual(found_appointments[0].id, created_appointment.id)
 
     def test_get_by_user_and_prestation_not_found(self):
         """Test récupération rendez-vous inexistant par user + prestation"""
-        appointment = self.appointment_repo.get_by_user_and_prestation(
+        appointments = self.appointment_repo.get_by_user_and_prestation(
             "nonexistent-user", 
             "nonexistent-prestation"
         )
-        self.assertIsNone(appointment)
+        self.assertEqual(appointments, [])
 
     def test_multiple_appointments_same_user_different_prestations(self):
         """Test utilisateur avec plusieurs rendez-vous pour différentes prestations"""
@@ -179,17 +180,17 @@ class TestAppointmentRepository(BaseTest):
         )
         
         # Vérifier que les deux rendez-vous existent
-        found_appointment1 = self.appointment_repo.get_by_user_and_prestation(
+        found_appointments1 = self.appointment_repo.get_by_user_and_prestation(
             self.user.id, self.prestation.id
         )
-        found_appointment2 = self.appointment_repo.get_by_user_and_prestation(
+        found_appointments2 = self.appointment_repo.get_by_user_and_prestation(
             self.user.id, prestation2.id
         )
         
-        self.assertIsNotNone(found_appointment1)
-        self.assertIsNotNone(found_appointment2)
-        self.assertEqual(found_appointment1.id, appointment1.id)
-        self.assertEqual(found_appointment2.id, appointment2.id)
+        self.assertEqual(len(found_appointments1), 1)
+        self.assertEqual(len(found_appointments2), 1)
+        self.assertEqual(found_appointments1[0].id, appointment1.id)
+        self.assertEqual(found_appointments2[0].id, appointment2.id)
 
     def test_inheritance_from_base_repository(self):
         """Test que AppointmentRepository hérite bien de BaseRepository"""

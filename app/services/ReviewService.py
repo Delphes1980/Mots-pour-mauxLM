@@ -2,7 +2,7 @@ from app.persistence.ReviewRepository import ReviewRepository
 from app.persistence.UserRepository import UserRepository
 from app.persistence.PrestationRepository import PrestationRepository
 from app.models.review import Review
-from app.utils import (rating_validation, text_field_validation, is_valid_uuid4, type_validation)
+from app.utils import (rating_validation, text_field_validation, validate_entity_id, validate_init_args)
 
 
 class ReviewService:
@@ -23,6 +23,7 @@ class ReviewService:
 		Raises:
 			ValueError: if the data are invalids
 		"""
+
 		# Valider les données
 		rating = kwargs.get('rating')
 		rating_validation(rating)
@@ -31,18 +32,10 @@ class ReviewService:
 		text_field_validation(text, 'text', 2, 500)
 
 		user_id = kwargs.get('user_id')
-		if not user_id:
-			raise ValueError("L'identifiant utilisateur est requis")
-		type_validation(user_id, 'user_id', str)
-		if not is_valid_uuid4(user_id):
-			raise ValueError("Format d'identifiant utilisateur invalide")
+		validate_entity_id(user_id, 'user_id')
 
 		prestation_id = kwargs.get('prestation_id')
-		if not prestation_id:
-			raise ValueError("L'identifiant prestation est requis")
-		type_validation(prestation_id, 'prestation_id', str)
-		if not is_valid_uuid4(prestation_id):
-			raise ValueError("Format d'identifiant prestation invalide")
+		validate_entity_id(prestation_id, 'prestation_id')
 
 		# Récupérer les objets depuis la base de données
 		user = self.user_repository.get_by_id(user_id)
@@ -72,11 +65,7 @@ class ReviewService:
 		Raises:
 			ValueError: if the ID is invalid or if the review does not exist
 		"""
-		if not review_id:
-			raise ValueError("L'identifiant du commentaire est requis")
-
-		if not is_valid_uuid4(review_id):
-			raise ValueError("Format d'identifiant commentaire invalide")
+		review_id = validate_entity_id(review_id, 'review_id')
 		
 		review = self.review_repository.get_by_id(review_id)
 		if not review:
@@ -104,17 +93,13 @@ class ReviewService:
 		Raises:
 			ValueError: if the ID is invalid
 		"""
-		if not prestation_id:
-			raise ValueError("L'identifiant de la prestation est requis")
-
-		if not is_valid_uuid4(prestation_id):
-			raise ValueError("Format d'identifiant prestation invalide")
+		prestation_id = validate_entity_id(prestation_id, 'prestation_id')
 
 		prestation = self.prestation_repository.get_by_id(prestation_id)
 		if not prestation:
 			raise ValueError("Prestation non trouvée")
 
-		return self.review_repository.get_by_attribute("prestation_id", prestation_id)
+		return self.review_repository.get_by_prestation_id(prestation_id)
 
 	def get_review_by_user(self, user_id):
 		"""Get reviews by user ID
@@ -128,17 +113,44 @@ class ReviewService:
 		Raises:
 			ValueError: if the ID is invalid
 		"""
-		if not user_id:
-			raise ValueError("L'identifiant de l'utilisateur est requis")
-
-		if not is_valid_uuid4(user_id):
-			raise ValueError("Format d'identifiant utilisateur invalide")
+		user_id = validate_entity_id(user_id, 'user_id')
 
 		user = self.user_repository.get_by_id(user_id)
 		if not user:
 			raise ValueError("Utilisateur non trouvé")
 
-		return self.review_repository.get_by_attribute("user_id", user_id)
+		return self.review_repository.get_by_user_id(user_id)
+	
+	def get_review_by_user_and_prestation(self, user_id, prestation_id):
+		"""Get reviews by user ID and prestation ID
+
+		Args:
+			user_id (str): The ID of the user
+			prestation_id (str): The ID of the prestation
+
+		Returns:
+			Review: The retrieved Reviews
+
+		Raises:
+			ValueError: if the IDs are invalid or if the reviews do not exist
+		"""
+		user_id = validate_entity_id(user_id, 'user_id')
+
+		prestation_id = validate_entity_id(prestation_id, 'prestation_id')
+
+		user = self.user_repository.get_by_id(user_id)
+		if not user:
+			raise ValueError("Utilisateur non trouvé")
+
+		prestation = self.prestation_repository.get_by_id(prestation_id)
+		if not prestation:
+			raise ValueError("Prestation non trouvée")
+
+		review = self.review_repository.get_by_user_and_prestation(user_id, prestation_id)
+		if not review:
+			raise ValueError("Commentaires non trouvés pour cet utilisateur et cette prestation")
+
+		return review
 
 	def update_review(self, review_id, **kwargs):
 		"""Update a review by its ID
@@ -153,11 +165,7 @@ class ReviewService:
 		Raises:
 			ValueError: if the ID is invalid or if the review does not exist
 		"""
-		if not review_id:
-			raise ValueError("L'identifiant du commentaire est requis")
-
-		if not is_valid_uuid4(review_id):
-			raise ValueError("Format d'identifiant commentaire invalide")
+		review_id = validate_entity_id(review_id, 'review_id')
 
 		existing_review = self.review_repository.get_by_id(review_id)
 		if not existing_review:
@@ -188,11 +196,7 @@ class ReviewService:
 		Raises:
 			ValueError: If the ID is invalid or if the review does not exist
 		"""
-		if not review_id:
-			raise ValueError("L'identifiant du commentaire est requis")
-
-		if not is_valid_uuid4(review_id):
-			raise ValueError("Format d'identifiant commentaire invalide")
+		review_id = validate_entity_id(review_id, 'review_id')
 
 		review = self.review_repository.get_by_id(review_id)
 		if not review:

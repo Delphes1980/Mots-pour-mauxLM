@@ -1,5 +1,5 @@
 from app.persistence.UserRepository import UserRepository
-from app.utils import (is_valid_uuid4, admin_validation, name_validation, email_validation, validate_init_args, validate_password, validate_phone_number, address_validation)
+from app.utils import (validate_entity_id, admin_validation, name_validation, email_validation, validate_init_args, validate_password, validate_phone_number, address_validation)
 from app.models.user import User
 
 
@@ -61,11 +61,7 @@ class UserService:
         Raises:
             ValueError: if the ID is invalid or if the user does not exist
         """
-        if not user_id:
-            raise ValueError("User ID is required")
-
-        if not is_valid_uuid4(user_id):
-            raise ValueError("Invalid user ID")
+        user_id = validate_entity_id(user_id, 'user_id')
 
         user = self.user_repository.get_by_id(user_id)
         if not user:
@@ -117,11 +113,7 @@ class UserService:
         Raises:
             ValueError: if the ID is invalid or if the user does not exist
         """
-        if not user_id:
-            raise ValueError("User ID is required")
-
-        if not is_valid_uuid4(user_id):
-            raise ValueError("Invalid user ID")
+        user_id = validate_entity_id(user_id, 'user_id')
 
         user = self.user_repository.get_by_id(user_id)
         if not user:
@@ -176,11 +168,7 @@ class UserService:
         Raises:
             ValueError: if the ID is invalid or if the user does not exist
         """
-        if not user_id:
-            raise ValueError("User ID is required")
-
-        if not is_valid_uuid4(user_id):
-            raise ValueError("Invalid user ID")
+        user_id = validate_entity_id(user_id, 'user_id')
 
         user = self.user_repository.get_by_id(user_id)
         if not user:
