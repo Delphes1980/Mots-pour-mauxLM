@@ -50,8 +50,21 @@ class AppointmentRepository(BaseRepository):
             raise ValueError("Erreur lors de la création du rendez-vous")
 
     def get_by_user_and_prestation(self, user_id, prestation_id):
-        """Récupérer un rendez-vous par utilisateur et prestation"""
+        """Récupérer les rendez-vous par utilisateur et prestation"""
         return self.db.session.query(self.model_class).filter_by(
             _user_id=user_id, 
             _prestation_id=prestation_id
-        ).first()
+        ).all()
+
+    def get_by_prestation_id(self, prestation_id):
+        """Récupérer les rendez-vous par prestation"""
+        return self.db.session.query(self.model_class).filter_by(
+            _prestation_id=prestation_id
+        ).all()
+
+    def get_by_user_id(self, user_id):
+        """Récupérer les rendez-vous par utilisateur"""
+        return self.db.session.query(self.model_class).filter_by(
+            _user_id=user_id
+        ).all()
+

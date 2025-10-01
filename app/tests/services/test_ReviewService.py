@@ -84,7 +84,7 @@ class TestReviewService(BaseTest):
         
         with self.assertRaises(ValueError) as context:
             self.service.create_review(**self.valid_review_data)
-        self.assertIn("utilisateur", str(context.exception).lower())
+        self.assertIn("user_id", str(context.exception).lower())
 
     def test_create_review_invalid_user_id_format(self):
         """Test avec un format d'user_id invalide"""
@@ -152,7 +152,7 @@ class TestReviewService(BaseTest):
         """Test sans ID"""
         with self.assertRaises(ValueError) as context:
             self.service.get_review_by_id(None)
-        self.assertIn("requis", str(context.exception).lower())
+        self.assertIn("review_id", str(context.exception).lower())
 
     def test_get_review_by_id_invalid_format(self):
         """Test avec un format d'ID invalide"""
@@ -222,7 +222,7 @@ class TestReviewService(BaseTest):
         """Test sans prestation_id"""
         with self.assertRaises(ValueError) as context:
             self.service.get_review_by_prestation(None)
-        self.assertIn("prestation", str(context.exception).lower())
+        self.assertIn("prestation_id", str(context.exception).lower())
 
     def test_get_review_by_prestation_invalid_format(self):
         """Test avec un format de prestation_id invalide"""
@@ -250,7 +250,7 @@ class TestReviewService(BaseTest):
         """Test sans user_id"""
         with self.assertRaises(ValueError) as context:
             self.service.get_review_by_user(None)
-        self.assertIn("utilisateur", str(context.exception).lower())
+        self.assertIn("user_id", str(context.exception).lower())
 
     def test_get_review_by_user_invalid_format(self):
         """Test avec un format d'user_id invalide"""
@@ -302,7 +302,7 @@ class TestReviewService(BaseTest):
         """Test sans review_id"""
         with self.assertRaises(ValueError) as context:
             self.service.update_review(None, rating=4)
-        self.assertIn("requis", str(context.exception).lower())
+        self.assertIn("review_id", str(context.exception).lower())
 
     def test_update_review_invalid_id_format(self):
         """Test avec un format d'ID invalide"""
@@ -348,7 +348,7 @@ class TestReviewService(BaseTest):
         """Test sans review_id"""
         with self.assertRaises(ValueError) as context:
             self.service.delete_review(None)
-        self.assertIn("requis", str(context.exception).lower())
+        self.assertIn("review_id", str(context.exception).lower())
 
     def test_delete_review_invalid_id_format(self):
         """Test avec un format d'ID invalide"""

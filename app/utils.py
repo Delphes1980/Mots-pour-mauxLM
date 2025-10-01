@@ -252,6 +252,25 @@ def admin_validation(is_admin):
     type_validation(is_admin, 'is_admin', bool)
     return is_admin
 
+def validate_entity_id(entity_id: str, entity_name: str):
+    """Validate the entity ID format
+    Args:
+        entity_id (str): The ID value
+        entity_name (str): The entity name
+        
+    Returns:
+        str: The validated ID
+        
+    Raises:
+        ValueError: if the ID is missing or if the UUID format is invalid
+    """
+    if not entity_id:
+        raise ValueError(f"L'identifiant {entity_name} est requis")
+    type_validation(entity_id, entity_name, str)
+    if not is_valid_uuid4(entity_id):
+        raise ValueError(f"Format d'identifiant {entity_name} invalide")
+    return entity_id
+
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP
     status code"""

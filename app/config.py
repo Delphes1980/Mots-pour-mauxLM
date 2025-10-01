@@ -5,7 +5,7 @@ load_dotenv("app/.env.dev")
 
 
 class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')
+    SECRET_KEY = os.getenv('SECRET_KEY')
     DEBUG = False
     ERROR_INCLUDE_MESSAGE = False
     BCRYPT_LOG_ROUNDS = 13
