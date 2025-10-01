@@ -2,7 +2,7 @@ from app.persistence.ReviewRepository import ReviewRepository
 from app.persistence.UserRepository import UserRepository
 from app.persistence.PrestationRepository import PrestationRepository
 from app.models.review import Review
-from app.utils import (validate_init_args, rating_validation, text_field_validation, is_valid_uuid4, type_validation)
+from app.utils import (rating_validation, text_field_validation, is_valid_uuid4, type_validation)
 
 
 class ReviewService:
