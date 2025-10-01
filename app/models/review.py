@@ -1,4 +1,5 @@
-from app.models.baseEntity import (BaseEntity, type_validation, strlen_validation)
+from app.models.baseEntity import BaseEntity
+from app.utils import (rating_validation, type_validation, strlen_validation)
 from sqlalchemy import Integer, String, Text, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -43,16 +44,7 @@ class Review(BaseEntity):
 
 	@rating.setter
 	def rating(self, value):
-		self._rating = self.rating_validation(value)
-
-	def rating_validation(self, rating):
-		""" Validates the review rating """
-		if rating is None:
-			raise ValueError("Rating is required: provide an integer between 1 and 5")
-		type_validation(rating, "rating", int)
-		if not (1 <= rating <= 5):
-			raise ValueError("Rating must be an integer between 1 and 5, both inclusive")
-		return rating
+		self._rating = rating_validation(value)
 
 	@hybrid_property
 	def user(self):
@@ -68,11 +60,15 @@ class Review(BaseEntity):
 		return cls._user
 
 	def set_user(self, user):
-		""" Valides the user object """
+		""" Validates the user object """
 		if user is None:
 			raise ValueError("User is required: provide user who writes the review")
 		type_validation(user, "User", User)
 		return user
+
+	@hybrid_property
+	def user_id(self):
+		return self._user_id
 
 	@hybrid_property
 	def prestation(self):
@@ -88,8 +84,12 @@ class Review(BaseEntity):
 		return cls._prestation
 
 	def set_prestation(self, prestation):
-		""" Valides the prestation object """
+		""" Validates the prestation object """
 		if prestation is None:
 			raise ValueError("Prestation is required: provide prestation being reviewed")
 		type_validation(prestation, "Prestation", Prestation)
 		return prestation
+
+	@hybrid_property
+	def prestation_id(self):
+		return self._prestation_id

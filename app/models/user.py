@@ -1,9 +1,9 @@
-from app.models.baseEntity import (BaseEntity, type_validation, strlen_validation)
+from app.models.baseEntity import BaseEntity
+from app.utils import (type_validation, strlen_validation, name_validation, email_validation, validate_password)
 from app import bcrypt
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Boolean
 import re
-from validate_email_address import validate_email
 from sqlalchemy.ext.hybrid import hybrid_property
 from typing import List, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ class User(BaseEntity):
 	reviews: Mapped[List["Review"]] = relationship("Review", back_populates="_user", lazy=True)
 	appointments: Mapped[List["Appointment"]] = relationship("Appointment", back_populates="_user", lazy=True)
 
-	def __init__(self, first_name: str, last_name: str, email: str, address: Optional[str], phone_number: Optional[str], password: str, is_admin: bool = False):
+	def __init__(self, first_name: str, last_name: str, email: str,password: str, address: Optional[str] = None, phone_number: Optional[str] = None, is_admin: bool = False):
 		super().__init__()
 		self.first_name = first_name
 		self.last_name = last_name
@@ -42,21 +42,8 @@ class User(BaseEntity):
 		if value is None:
 			raise ValueError('Expected password but received None')
 		type_validation(value, 'password', str)
-		validated_password = self.validate_password(value)
+		validated_password = validate_password(value)
 		self._password = self.hash_password(validated_password)
-
-	def validate_password(self, plain_password):
-		""" Validates the password to ensure it meets the requirements """
-		if plain_password is None:
-			raise ValueError("Expected password but received None")
-		if len(plain_password) < 8:
-			raise ValueError("Invalid password: password must be at least 8 characters")
-		if not re.search(r'\d', plain_password):
-			raise ValueError("Invalid password: password must contain at least one digit")
-		special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
-		if not re.search(special_chars, plain_password):
-			raise ValueError("Invalid password: password must contain at least one special character")
-		return plain_password
 
 	def hash_password(self, validated_password):
 		""" Hashes the password before storing it """
@@ -71,35 +58,13 @@ class User(BaseEntity):
 			raise ValueError('Expected password but received None')
 		return bcrypt.check_password_hash(self.password, plain_password)
 
-	def name_validation(self, names: str, names_name: str):
-		""" Validates first_name and last_name to ensure they contain only valid characters """
-		if names is None:
-			raise ValueError(f'Expected {names_name} but received None')
-		type_validation(names, names_name, str)
-		names = names.strip()
-		strlen_validation(names, names_name, 1, 50)
-		names_list = names.split()
-		for name in names_list:
-			if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
-				raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
-		return " ".join(names_list)
-
-	def email_validation(self, email: str):
-		""" Validates the email address """
-		if email is None:
-			raise ValueError('Expected email but received None')
-		type_validation(email, 'email', str)
-		if not validate_email(email):
-			raise ValueError("Invalid email: email must have format example@axam.ple")
-		return email
-
 	@hybrid_property
 	def first_name(self):
 		return self._first_name
 
 	@first_name.setter
 	def first_name(self, value):
-		self._first_name = self.name_validation(value, 'first_name')
+		self._first_name = name_validation(value, 'first_name')
 
 	@hybrid_property
 	def last_name(self):
@@ -107,7 +72,7 @@ class User(BaseEntity):
 
 	@last_name.setter
 	def last_name(self, value):
-		self._last_name = self.name_validation(value, 'last_name')
+		self._last_name = name_validation(value, 'last_name')
 
 	@hybrid_property
 	def email(self):
@@ -115,7 +80,7 @@ class User(BaseEntity):
 
 	@email.setter
 	def email(self, value: str):
-		self._email = self.email_validation(value)
+		self._email = email_validation(value)
 
 	@hybrid_property
 	def is_admin(self):
@@ -134,10 +99,12 @@ class User(BaseEntity):
 	
 	@address.setter
 	def address(self, value: Optional[str]):
-		if value is not None:
+		if value is None:
+			self._address = None
+		else:
 			type_validation(value, 'address', str)
 			strlen_validation(value, 'address', 0, 255)
-		self._address = value
+			self._address = value
 
 	@hybrid_property
 	def phone_number(self):
@@ -145,9 +112,11 @@ class User(BaseEntity):
 	
 	@phone_number.setter
 	def phone_number(self, value: Optional[str]):
-		if value is not None:
+		if value is None:
+			self._phone_number = None
+		else:
 			type_validation(value, 'phone_number', str)
 			strlen_validation(value, 'phone_number', 0, 20)
 			if not re.fullmatch(r'^\+?[0-9\s\-()]*$', value):
 				raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
-		self._phone_number = value
+			self._phone_number = value

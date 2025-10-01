@@ -101,14 +101,12 @@ class TestAllEntitiesRelationships(BaseTest):
         """Test des relations Appointment avec User et Prestation"""
         # Créer des rendez-vous
         appointment1 = Appointment(
-            subject="RDV Massage suédois",
             message="Je souhaite un rendez-vous pour un massage relaxant",
             user=self.user1,
             prestation=self.prestation1
         )
         
         appointment2 = Appointment(
-            subject="RDV Réflexologie",
             message="Rendez-vous pour soulager mes pieds",
             user=self.user1,
             prestation=self.prestation2
@@ -147,14 +145,12 @@ class TestAllEntitiesRelationships(BaseTest):
         
         # Plusieurs rendez-vous pour la même prestation
         appointment1 = Appointment(
-            subject="RDV Alice",
             message="Rendez-vous d'Alice",
             user=self.user1,
             prestation=self.prestation1
         )
         
         appointment2 = Appointment(
-            subject="RDV Bob",
             message="Rendez-vous de Bob",
             user=self.user2,
             prestation=self.prestation1
@@ -190,14 +186,12 @@ class TestAllEntitiesRelationships(BaseTest):
         )
         
         appointment1 = Appointment(
-            subject="RDV Massage",
             message="Pour le massage",
             user=self.user1,
             prestation=self.prestation1
         )
         
         appointment2 = Appointment(
-            subject="RDV Réflexologie",
             message="Pour la réflexologie",
             user=self.user1,
             prestation=self.prestation2
@@ -314,7 +308,6 @@ class TestAllEntitiesRelationships(BaseTest):
         )
         
         appointment = Appointment(
-            subject="RDV Massage complet",
             message="Rendez-vous pour massage thérapeutique",
             user=user_complete,
             prestation=self.prestation1
