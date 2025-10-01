@@ -79,9 +79,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Tenter de créer un autre avec même email
@@ -90,9 +88,7 @@ class TestUserService(BaseTest):
                 first_name='Jane',
                 last_name='Smith',
                 email='john@example.com',
-                password='Password456!',
-                address=None,
-                phone_number=None
+                password='Password456!'
             )
         
         self.assertIn('Email already exists', str(context.exception))
@@ -105,9 +101,7 @@ class TestUserService(BaseTest):
                 first_name='John',
                 last_name='Doe',
                 email='invalid-email',
-                password='Password123!',
-                address=None,
-                phone_number=None
+                password='Password123!'
             )
         
         # Test mot de passe invalide
@@ -116,9 +110,7 @@ class TestUserService(BaseTest):
                 first_name='John',
                 last_name='Doe',
                 email='john@example.com',
-                password='weak',
-                address=None,
-                phone_number=None
+                password='weak'
             )
 
     def test_get_user_by_id_existing(self):
@@ -128,9 +120,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Récupérer par ID
@@ -154,9 +144,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Récupérer par email
@@ -180,17 +168,13 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         user2 = self.user_service.create_user(
             first_name='Jane',
             last_name='Smith',
             email='jane@example.com',
-            password='Password456!',
-            address=None,
-            phone_number=None
+            password='Password456!'
         )
         
         # Récupérer tous
@@ -234,9 +218,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Mettre à jour nom seulement
@@ -253,9 +235,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Mettre à jour email seulement
@@ -312,9 +292,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Mettre à jour statut admin seulement
@@ -332,9 +310,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Vérifier ancien mot de passe
@@ -357,9 +333,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Tenter mise à jour avec mot de passe invalide
@@ -373,9 +347,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Test mot de passe trop court
@@ -400,9 +372,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Mettre à jour nom et mot de passe
@@ -521,9 +491,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Ajouter adresse et téléphone
@@ -551,9 +519,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Tenter mise à jour avec email invalide
@@ -567,17 +533,13 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         user2 = self.user_service.create_user(
             first_name='Jane',
             last_name='Smith',
             email='jane@example.com',
-            password='Password456!',
-            address=None,
-            phone_number=None
+            password='Password456!'
         )
         
         # Tenter de donner à user2 l'email de user1
@@ -586,24 +548,21 @@ class TestUserService(BaseTest):
         
         self.assertIn('Email already exists', str(context.exception))
 
-    def test_update_user_no_changes(self):
-        """Test mise à jour sans changements"""
+    def test_update_user_with_no_data_raises_error(self):
+        """Test qu'une erreur est levée si aucune donnée n'est fournie pour la mise à jour"""
         # Créer utilisateur
         user = self.user_service.create_user(
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
-        
-        # Mettre à jour sans changements
-        updated_user = self.user_service.update_user(user.id)
-        
-        self.assertEqual(updated_user.first_name, 'John')
-        self.assertEqual(updated_user.last_name, 'Doe')
-        self.assertEqual(updated_user.email, 'john@example.com')
+
+        # Tenter de mettre à jour sans fournir de données
+        with self.assertRaises(ValueError) as context:
+            self.user_service.update_user(user.id)
+
+        self.assertIn("No data provided for update", str(context.exception))
 
     def test_delete_user_existing(self):
         """Test suppression utilisateur existant"""
@@ -612,9 +571,7 @@ class TestUserService(BaseTest):
             first_name='John',
             last_name='Doe',
             email='john@example.com',
-            password='Password123!',
-            address=None,
-            phone_number=None
+            password='Password123!'
         )
         
         # Supprimer

@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.appointment import Appointment
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import (text_field_validation, type_validation)
+from app.utils import (text_field_validation, type_validation, is_valid_uuid4)
 from app.models.user import User
 from app.models.prestation import Prestation
 
@@ -24,6 +24,8 @@ class AppointmentRepository(BaseRepository):
             if not prestation:
                 raise ValueError("La prestation spécifiée n'existe pas")
             type_validation(prestation, 'prestation', Prestation)
+            if not is_valid_uuid4(prestation.id):
+                raise ValueError("Format d'identifiant de prestation invalide")
 
             # Vérifier la longueur du message
             text_field_validation(message, 'message', 1, 500)
@@ -32,6 +34,8 @@ class AppointmentRepository(BaseRepository):
             if not user:
                 raise ValueError("L'utilisateur spécifié n'existe pas")
             type_validation(user, 'user', User)
+            if not is_valid_uuid4(user.id):
+                raise ValueError("Format d'identifiant utilisateur invalide")
 
             # Créer un nouveau rendez-vous
             new_appointment = Appointment(

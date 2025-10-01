@@ -1,8 +1,10 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.review import Review
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import (rating_validation, type_validation, text_field_validation)
+from app.utils import (rating_validation, type_validation, text_field_validation, is_valid_uuid4)
 from app.models.user import User
+from app.models.prestation import Prestation
+
 
 class ReviewRepository(BaseRepository):
     def __init__(self):
@@ -25,14 +27,19 @@ class ReviewRepository(BaseRepository):
             # Valider le texte
             text_field_validation(text, 'text', 2, 500)
 
-            # Vérifier si la prestation existe
+            # Vérifier la prestation
             if not prestation:
                 raise ValueError("La prestation spécifiée n'existe pas.")
+            type_validation(prestation, 'prestation', Prestation)
+            if not is_valid_uuid4(prestation.id):
+                raise ValueError("Format d'identifiant de prestation invalide")
 
             # Vérifier l'utilisateur
             if not user:
                 raise ValueError("L'utilisateur spécifié n'existe pas")
             type_validation(user, 'user', User)
+            if not is_valid_uuid4(user.id):
+                raise ValueError("Format d'identifiant utilisateur invalide")
 
             # Vérifier si le commentaire existe déjà pour cette prestation
             existing_review = self.get_by_user_and_prestation(user.id, prestation.id)

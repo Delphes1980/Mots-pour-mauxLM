@@ -1,6 +1,5 @@
 from app.persistence.UserRepository import UserRepository
-from app.utils import (is_valid_uuid4, type_validation, strlen_validation, name_validation, email_validation, validate_init_args)
-import re
+from app.utils import (is_valid_uuid4, admin_validation, name_validation, email_validation, validate_init_args, validate_password, validate_phone_number, address_validation)
 from app.models.user import User
 
 
@@ -12,7 +11,7 @@ class UserService:
         """Create a new user with the provided data
         
         Args:
-            **kwargs: User data (first_name, last_name, email, password..)
+            **kwargs: User data (first_name, last_name, email, password, address, phone_number, is_admin)
             
         Returns:
             User: Created User
@@ -22,13 +21,32 @@ class UserService:
         """
         validate_init_args(User, **kwargs)
 
+        # Valider les données
+        first_name = kwargs.get('first_name')
+        name_validation(first_name, 'first_name')
+
+        last_name = kwargs.get('last_name')
+        name_validation(last_name, 'last_name')
+
         email = kwargs.get('email')
         email_validation(email)
+
+        password = kwargs.get('password')
+        validate_password(password)
+
+        address = kwargs.get('address')
+        address_validation(address)
+
+        phone_number = kwargs.get('phone_number')
+        validate_phone_number(phone_number)
+
+        is_admin = kwargs.get('is_admin')
+        admin_validation(is_admin)
 
         existing_user = self.user_repository.get_by_attribute("email", email)
         if existing_user:
             raise ValueError("Email already exists")
-        
+
         return self.user_repository.create_user(**kwargs)
 
     def get_user_by_id(self, user_id):
@@ -43,6 +61,9 @@ class UserService:
         Raises:
             ValueError: if the ID is invalid or if the user does not exist
         """
+        if not user_id:
+            raise ValueError("User ID is required")
+
         if not is_valid_uuid4(user_id):
             raise ValueError("Invalid user ID")
 
@@ -65,6 +86,9 @@ class UserService:
             ValueError: if the email is invalid or if the user does not exist
         """
         email_validation(email)
+
+        if not email:
+            raise ValueError("Email is required")
 
         user = self.user_repository.get_by_attribute("email", email)
         if not user:
@@ -93,12 +117,18 @@ class UserService:
         Raises:
             ValueError: if the ID is invalid or if the user does not exist
         """
+        if not user_id:
+            raise ValueError("User ID is required")
+
         if not is_valid_uuid4(user_id):
             raise ValueError("Invalid user ID")
 
         user = self.user_repository.get_by_id(user_id)
         if not user:
             raise ValueError("User not found")
+
+        if not kwargs:
+            raise ValueError("No data provided for update")
 
         if 'first_name' in kwargs:
             first_name = kwargs.get('first_name')
@@ -118,17 +148,19 @@ class UserService:
 
         if 'address' in kwargs:
             address = kwargs.get('address')
-            if address is not None:
-                type_validation(address, 'address', str)
-                strlen_validation(address, 'address', 0, 255)
+            address_validation(address)
 
         if 'phone_number' in kwargs:
             phone_number = kwargs.get('phone_number')
-            if phone_number is not None:
-                type_validation(phone_number, 'phone_number', str)
-                strlen_validation(phone_number, 'phone_number', 0, 20)
-                if not re.fullmatch(r'^\+?[0-9\s\-()]*$', phone_number):
-                    raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
+            validate_phone_number(phone_number)
+
+        if 'password' in kwargs:
+            password = kwargs.get('password')
+            validate_password(password)
+
+        if 'is_admin' in kwargs:
+            is_admin = kwargs.get('is_admin')
+            admin_validation(is_admin)
 
         return self.user_repository.update(user_id, **kwargs)
 
@@ -144,6 +176,9 @@ class UserService:
         Raises:
             ValueError: if the ID is invalid or if the user does not exist
         """
+        if not user_id:
+            raise ValueError("User ID is required")
+
         if not is_valid_uuid4(user_id):
             raise ValueError("Invalid user ID")
 

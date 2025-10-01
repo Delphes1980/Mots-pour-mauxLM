@@ -67,6 +67,10 @@ class Review(BaseEntity):
 		return user
 
 	@hybrid_property
+	def user_id(self):
+		return self._user_id
+
+	@hybrid_property
 	def prestation(self):
 		return self._prestation
 
@@ -85,3 +89,7 @@ class Review(BaseEntity):
 			raise ValueError("Prestation is required: provide prestation being reviewed")
 		type_validation(prestation, "Prestation", Prestation)
 		return prestation
+
+	@hybrid_property
+	def prestation_id(self):
+		return self._prestation_id

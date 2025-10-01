@@ -23,7 +23,7 @@ class User(BaseEntity):
 	reviews: Mapped[List["Review"]] = relationship("Review", back_populates="_user", lazy=True)
 	appointments: Mapped[List["Appointment"]] = relationship("Appointment", back_populates="_user", lazy=True)
 
-	def __init__(self, first_name: str, last_name: str, email: str, address: Optional[str], phone_number: Optional[str], password: str, is_admin: bool = False):
+	def __init__(self, first_name: str, last_name: str, email: str,password: str, address: Optional[str] = None, phone_number: Optional[str] = None, is_admin: bool = False):
 		super().__init__()
 		self.first_name = first_name
 		self.last_name = last_name
@@ -99,10 +99,12 @@ class User(BaseEntity):
 	
 	@address.setter
 	def address(self, value: Optional[str]):
-		if value is not None:
+		if value is None:
+			self._address = None
+		else:
 			type_validation(value, 'address', str)
 			strlen_validation(value, 'address', 0, 255)
-		self._address = value
+			self._address = value
 
 	@hybrid_property
 	def phone_number(self):
@@ -110,9 +112,11 @@ class User(BaseEntity):
 	
 	@phone_number.setter
 	def phone_number(self, value: Optional[str]):
-		if value is not None:
+		if value is None:
+			self._phone_number = None
+		else:
 			type_validation(value, 'phone_number', str)
 			strlen_validation(value, 'phone_number', 0, 20)
 			if not re.fullmatch(r'^\+?[0-9\s\-()]*$', value):
 				raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
-		self._phone_number = value
+			self._phone_number = value
