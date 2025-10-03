@@ -1,6 +1,8 @@
 # app/services/AuthService.py
 from app.persistence.UserRepository import UserRepository
-from app.utils import (email_validation, validate_password, hash_password, verify_password, validate_entity_id)
+from app.utils import (email_validation, validate_password, verify_password, validate_entity_id)
+from flask_jwt_extended import create_access_token
+
 
 class AuthenticationService:
     def __init__(self):
@@ -9,16 +11,21 @@ class AuthenticationService:
     def login(self, email, password):
         """Authenticate user with email/password"""
         email_validation(email)
-        validate_password(password)
+
+        try:
+            validate_password(password)
+        except ValueError:
+            raise ValueError("Invalid credentials")
         
         user = self.user_repository.get_by_attribute("email", email)
-        if not user:
+        if not user or not verify_password(user.password, password):
             raise ValueError("Invalid credentials")
 
-        if not verify_password(user.password, password):
-            raise ValueError("Invalid credentials")
-
-        return user
+        access_token = create_access_token(
+            identity=user.id,
+            additional_claims={"is_admin": user.is_admin}
+        )
+        return access_token
 
     def change_password(self, user_id, old_password, new_password):
         """Change user password"""

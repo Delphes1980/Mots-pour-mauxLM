@@ -23,10 +23,10 @@ class TestAuthenticationServiceIntegration(BaseTest):
 
     def test_full_authentication_workflow(self):
         """Test workflow complet d'authentification"""
-        # Test login initial
-        user = self.auth_service.login("john@example.com", "Password123!")
-        self.assertEqual(user.email, "john@example.com")
-        self.assertEqual(user.first_name, "John")
+        # Test login initial (retourne un token, pas un user)
+        token = self.auth_service.login("john@example.com", "Password123!")
+        self.assertIsInstance(token, str)
+        self.assertTrue(len(token) > 0)
         
         # Test changement de mot de passe
         updated_user = self.auth_service.change_password(
@@ -38,8 +38,9 @@ class TestAuthenticationServiceIntegration(BaseTest):
         self.assertFalse(verify_password(updated_user.password, "Password123!"))
         
         # Test login avec nouveau mot de passe
-        user_new_password = self.auth_service.login("john@example.com", "NewPassword456!")
-        self.assertEqual(user_new_password.id, self.test_user.id)
+        new_token = self.auth_service.login("john@example.com", "NewPassword456!")
+        self.assertIsInstance(new_token, str)
+        self.assertTrue(len(new_token) > 0)
         
         # Vérifier que l'ancien mot de passe ne fonctionne plus
         with self.assertRaises(ValueError) as context:
@@ -58,8 +59,8 @@ class TestAuthenticationServiceIntegration(BaseTest):
             )
             
             # Vérifier que le nouveau mot de passe fonctionne
-            user = self.auth_service.login("john@example.com", new_password)
-            self.assertEqual(user.id, self.test_user.id)
+            token = self.auth_service.login("john@example.com", new_password)
+            self.assertIsInstance(token, str)
             
             # Vérifier que l'ancien ne fonctionne plus
             with self.assertRaises(ValueError):
@@ -78,11 +79,12 @@ class TestAuthenticationServiceIntegration(BaseTest):
         )
         
         # Test login des deux utilisateurs
-        logged_user1 = self.auth_service.login("john@example.com", "Password123!")
-        logged_user2 = self.auth_service.login("jane@example.com", "JanePassword123!")
+        token1 = self.auth_service.login("john@example.com", "Password123!")
+        token2 = self.auth_service.login("jane@example.com", "JanePassword123!")
         
-        self.assertEqual(logged_user1.first_name, "John")
-        self.assertEqual(logged_user2.first_name, "Jane")
+        self.assertIsInstance(token1, str)
+        self.assertIsInstance(token2, str)
+        self.assertNotEqual(token1, token2)
         
         # Changer mot de passe du premier utilisateur
         self.auth_service.change_password(
@@ -90,12 +92,12 @@ class TestAuthenticationServiceIntegration(BaseTest):
         )
         
         # Vérifier que le second utilisateur peut toujours se connecter
-        still_logged_user2 = self.auth_service.login("jane@example.com", "JanePassword123!")
-        self.assertEqual(still_logged_user2.id, user2.id)
+        token2_still = self.auth_service.login("jane@example.com", "JanePassword123!")
+        self.assertIsInstance(token2_still, str)
         
         # Vérifier que le premier utilisateur utilise le nouveau mot de passe
-        new_logged_user1 = self.auth_service.login("john@example.com", "JohnNewPass123!")
-        self.assertEqual(new_logged_user1.id, self.test_user.id)
+        token1_new = self.auth_service.login("john@example.com", "JohnNewPass123!")
+        self.assertIsInstance(token1_new, str)
 
     def test_password_security_persistence(self):
         """Test sécurité et persistance des mots de passe"""
@@ -120,8 +122,8 @@ class TestAuthenticationServiceIntegration(BaseTest):
         self.assertEqual(fresh_user.password, updated_user.password)
         
         # Vérifier que le login fonctionne avec les données persistées
-        logged_user = self.auth_service.login("john@example.com", "SuperSecure789!")
-        self.assertEqual(logged_user.id, self.test_user.id)
+        token = self.auth_service.login("john@example.com", "SuperSecure789!")
+        self.assertIsInstance(token, str)
 
 
 if __name__ == '__main__':

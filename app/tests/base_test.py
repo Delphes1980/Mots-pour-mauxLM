@@ -15,6 +15,7 @@ Utilise la base de données: therapie_test
 import unittest
 import os
 from flask import Flask
+from flask_jwt_extended import JWTManager
 
 # Import de l'instance db depuis app
 from app import db, mail
@@ -44,6 +45,9 @@ class BaseTest(unittest.TestCase):
         
         # Initialiser Flask-Mail
         mail.init_app(cls.app)
+        
+        # Initialiser JWT Manager
+        jwt = JWTManager(cls.app)
         
         # Contexte d'application
         cls.app_context = cls.app.app_context()
