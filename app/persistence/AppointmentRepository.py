@@ -47,6 +47,7 @@ class AppointmentRepository(BaseRepository):
             self.db.session.commit()
             return new_appointment
         except SQLAlchemyError:
+            self.db.session.rollback()
             raise ValueError("Erreur lors de la création du rendez-vous")
 
     def get_by_user_and_prestation(self, user_id, prestation_id):

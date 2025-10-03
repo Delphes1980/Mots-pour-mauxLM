@@ -17,6 +17,7 @@ class Config:
     MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', '1']
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    MAIL_RECIPIENT_PRACTITIONER = os.getenv('MAIL_RECIPIENT_PRACTITIONER')
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -36,6 +37,13 @@ class TestingConfig(Config):
     BCRYPT_LOG_ROUNDS = 4  # Use fewer rounds for testing to speed up tests
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Configuration email spécifique aux tests
+    MAIL_RECIPIENT_PRACTITIONER = "test-practitioner@example.com"
+    MAIL_USERNAME = "test-sender@example.com"
+    MAIL_SERVER = "localhost"
+    MAIL_PORT = 587
+    MAIL_USE_TLS = False
 
 config = {
     'development': DevelopmentConfig,

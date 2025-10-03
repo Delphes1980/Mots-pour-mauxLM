@@ -57,6 +57,7 @@ class ReviewRepository(BaseRepository):
             self.db.session.commit()
             return new_review
         except SQLAlchemyError:
+            self.db.session.rollback()
             raise ValueError("Erreur lors de la création du commentaire")
 
     def get_by_user_and_prestation(self, user_id, prestation_id):

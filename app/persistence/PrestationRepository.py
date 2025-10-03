@@ -29,4 +29,5 @@ class PrestationRepository(BaseRepository):
 			self.db.session.commit()
 			return new_prestation
 		except SQLAlchemyError:
+			self.db.session.rollback()
 			raise ValueError("Erreur lors de la création de la prestation")

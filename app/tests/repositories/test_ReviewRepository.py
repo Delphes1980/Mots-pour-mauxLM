@@ -5,6 +5,7 @@ from app.models.review import Review
 from app.models.user import User
 from app.models.prestation import Prestation
 from app.persistence.ReviewRepository import ReviewRepository
+from app import db
 
 
 class TestReviewRepository(BaseTest):
