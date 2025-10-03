@@ -2,6 +2,7 @@ from uuid import UUID
 import inspect
 from validate_email_address import validate_email
 import re
+from app import bcrypt
 
 
 """
@@ -42,6 +43,12 @@ Functions:
         Validates the text field format
     admin_validation(is_admin):
         Validates the is_admin field
+    validate_entity_id(entity_id, entity_name):
+        Validates the entity ID format
+    hash_password(validated_password):
+        Hash password before storing it
+    verify_password(hashed_password, plain_password):
+        Verify if the provided password matches the hashed password
 """
 
 
@@ -206,6 +213,19 @@ def validate_password(plain_password):
         if not re.search(special_chars, plain_password):
             raise ValueError("Invalid password: password must contain at least one special character")
         return plain_password
+
+def hash_password(validated_password):
+		""" Hashes the password before storing it """
+		if validated_password is None:
+			raise ValueError('Expected password but received None')
+		type_validation(validated_password, 'password', str)
+		return bcrypt.generate_password_hash(validated_password).decode('utf-8')
+
+def verify_password(hashed_password, plain_password):
+		""" Verifies if the provided password matches the hashed password """
+		if plain_password is None:
+			raise ValueError('Expected password but received None')
+		return bcrypt.check_password_hash(hashed_password, plain_password)
 
 def validate_phone_number(phone_number: str):
     """Validate the phone number format"""

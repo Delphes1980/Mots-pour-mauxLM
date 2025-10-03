@@ -15,7 +15,9 @@ Utilise la base de données: therapie_test
 import unittest
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+
+# Import de l'instance db depuis app
+from app import db
 
 # Import de tous les modèles pour éviter les erreurs de relations
 from app.models.user import User
@@ -36,8 +38,8 @@ class BaseTest(unittest.TestCase):
         cls.app = Flask(__name__)
         cls.app.config.from_object(TestingConfig)
         
-        # Configuration SQLAlchemy
-        cls.db = SQLAlchemy()
+        # Utiliser l'instance db existante
+        cls.db = db
         cls.db.init_app(cls.app)
         
         # Contexte d'application

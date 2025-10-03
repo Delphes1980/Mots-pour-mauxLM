@@ -305,6 +305,8 @@ class TestUserService(BaseTest):
 
     def test_update_user_password_only(self):
         """Test mise à jour du mot de passe seulement"""
+        from app.utils import verify_password
+        
         # Créer utilisateur
         user = self.user_service.create_user(
             first_name='John',
@@ -314,7 +316,7 @@ class TestUserService(BaseTest):
         )
         
         # Vérifier ancien mot de passe
-        self.assertTrue(user.verify_password('Password123!'))
+        self.assertTrue(verify_password(user.password, 'Password123!'))
         
         # Mettre à jour mot de passe seulement
         updated_user = self.user_service.update_user(user.id, password='NewPassword456!')
@@ -323,8 +325,8 @@ class TestUserService(BaseTest):
         self.assertEqual(updated_user.last_name, 'Doe')  # Inchangé
         self.assertEqual(updated_user.email, 'john@example.com')  # Inchangé
         # Vérifier nouveau mot de passe
-        self.assertTrue(updated_user.verify_password('NewPassword456!'))
-        self.assertFalse(updated_user.verify_password('Password123!'))
+        self.assertTrue(verify_password(updated_user.password, 'NewPassword456!'))
+        self.assertFalse(verify_password(updated_user.password, 'Password123!'))
 
     def test_update_user_invalid_password(self):
         """Test mise à jour avec mot de passe invalide"""
@@ -342,6 +344,8 @@ class TestUserService(BaseTest):
 
     def test_update_user_password_validation_requirements(self):
         """Test validation des exigences du mot de passe lors mise à jour"""
+        from app.utils import verify_password
+        
         # Créer utilisateur
         user = self.user_service.create_user(
             first_name='John',
@@ -363,10 +367,12 @@ class TestUserService(BaseTest):
             self.user_service.update_user(user.id, password='NoSpecialChar123')
         
         # Vérifier que l'ancien mot de passe fonctionne toujours
-        self.assertTrue(user.verify_password('Password123!'))
+        self.assertTrue(verify_password(user.password, 'Password123!'))
 
     def test_update_user_password_with_other_fields(self):
         """Test mise à jour du mot de passe avec d'autres champs"""
+        from app.utils import verify_password
+        
         # Créer utilisateur
         user = self.user_service.create_user(
             first_name='John',
@@ -386,11 +392,13 @@ class TestUserService(BaseTest):
         self.assertEqual(updated_user.last_name, 'Doe')  # Inchangé
         self.assertEqual(updated_user.email, 'john@example.com')  # Inchangé
         # Vérifier nouveau mot de passe
-        self.assertTrue(updated_user.verify_password('SuperSecure456!'))
-        self.assertFalse(updated_user.verify_password('Password123!'))
+        self.assertTrue(verify_password(updated_user.password, 'SuperSecure456!'))
+        self.assertFalse(verify_password(updated_user.password, 'Password123!'))
 
     def test_update_user_multiple_fields(self):
         """Test mise à jour de plusieurs champs en même temps"""
+        from app.utils import verify_password
+        
         # Créer utilisateur
         user = self.user_service.create_user(
             first_name='John',
@@ -420,8 +428,8 @@ class TestUserService(BaseTest):
         self.assertEqual(updated_user.phone_number, '0555123456')
         self.assertTrue(updated_user.is_admin)
         # Vérifier nouveau mot de passe
-        self.assertTrue(updated_user.verify_password('NewPassword456!'))
-        self.assertFalse(updated_user.verify_password('Password123!'))
+        self.assertTrue(verify_password(updated_user.password, 'NewPassword456!'))
+        self.assertFalse(verify_password(updated_user.password, 'Password123!'))
 
     def test_update_user_partial_fields(self):
         """Test mise à jour partielle de quelques champs"""

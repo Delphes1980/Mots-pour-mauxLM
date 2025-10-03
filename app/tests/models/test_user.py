@@ -151,9 +151,10 @@ class TestUser(BaseTest):
         self.assertNotEqual(user.password, "Password123!")
 
     def test_verify_password(self):
+        from app.utils import verify_password
         user = User("John", "Doe", "john@example.com", "Password123!")
-        self.assertTrue(user.verify_password("Password123!"))
-        self.assertFalse(user.verify_password("wrongpassword"))
+        self.assertTrue(verify_password(user.password, "Password123!"))
+        self.assertFalse(verify_password(user.password, "wrongpassword"))
 
     # Tests des propriétés hybrides
     def test_property_setters(self):
