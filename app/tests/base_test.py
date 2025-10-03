@@ -17,7 +17,7 @@ import os
 from flask import Flask
 
 # Import de l'instance db depuis app
-from app import db
+from app import db, mail
 
 # Import de tous les modèles pour éviter les erreurs de relations
 from app.models.user import User
@@ -41,6 +41,9 @@ class BaseTest(unittest.TestCase):
         # Utiliser l'instance db existante
         cls.db = db
         cls.db.init_app(cls.app)
+        
+        # Initialiser Flask-Mail
+        mail.init_app(cls.app)
         
         # Contexte d'application
         cls.app_context = cls.app.app_context()

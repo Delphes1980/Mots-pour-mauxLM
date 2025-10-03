@@ -41,7 +41,7 @@ app/
 |	|	|__coordonnees_horaires.html
 |	|	|__en_savoir_plus.html
 |	|	|__formulaire_commentaires.html
-|	|	|__formulaire_avis.html
+|	|	|__formulaire_rdv.html
 |	|	|__login.html
 |	|	|__page_inscription.html
 |	|	|__page_personnelle.html
@@ -65,41 +65,67 @@ app/
 	│   ├── prestation.py
 	|   |__ review.py
 	|	|__ user.py
+	├── persistence/                    
+	|   ├── __init__.py
+	|	|__ AppointmentRepository.py
+	|	|__ BaseRepository.py
+	|	|__ PrestationRepository.py
+	|   ├── ReviewRepository.py  
+	|	|__ UserRepository.py
 	├── services/                       
 	│   ├── __init__.py
-	│   ├── facade.py
 	|   |__ AppointmentService.py
+	|	|__ AuthenticationService.py
+	│   ├── facade.py
+	|	|__ mail_service.py
 	|	|__ PrestationService.py
 	|   |__ ReviewService.py
 	|   |__ UserService.py
-	├── persistence/                    
-	|   ├── __init__.py
-	|   ├── repository.py               
 	|__ images/
 	|   |__ ER Diagram.png              
 	|   |__ ER Diagram_extra.png       
 	|__ tests/  
+	|	|__ __init__.py
 	|	|__ base_test.py
 	|	|__ database/
 	|	|	|__ __init__.py
 	|	|	|__ test_all_entities_relationships.py
 	|	|	|__ test_final_postgresql.py
 	|	|__ models/  
+	|	|	|__ __init__.py
+	|	|	|__ test_all_relationships.py                             
+	|	|   |__ test_appointment.py
+	|	|	|__ test_prestation_appointment_relationship.py
+	|	|	|__ test_prestation_review_relationship.py
+	|	|	|__ test_prestation.py
+	|	|   |__ test_relationships.py
+	|	|   |__ test_review.py
+	|	|	|__ test_user_appointment_relationship.py
+	|	| 	|__ test_user_review_relationship.py
+	|	|   |__ test_user.py
+	|	|__ repositories/
+	|	|	|__ __init__.py
+	|	|	|__ test_AppointmentRepository.py
+	|	|	|__ test_PrestationRepository.py
+	|	|	|__ test_ReviewRepository.py
+	|	|	|__ test_UserRepository.py
+	|	|__ services/
 	|		|__ __init__.py
-	|		|__ test_all_relationships.py                             
-	|	    |__ test_appointment.py
-	|		|__ test_prestation_appointment_relationship.py
-	|		|__ test_prestation_review_relationship.py
-	|		|__ test_prestation.py
-	|	    |__ test_relationships.py
-	|	    |__ test_review.py
-	|		|__ test_user_appointment_relationship.py
-	|	 	|__ test_user_review_relationship.py
-	|	    |__ test_user.py
-	|__ __init__.py
-	|── run.py                             
+	|		|__ test_AppointmentService_integration.py
+	|		|__ test_AppointmentService.py
+	|		|__ test_AuthenticationService_integration.py
+	|		|__ test_AuthenticationService.py
+	|		|__ test_facade.py
+	|		|__ test_mail_service.py
+	|		|__ test_PrestationService_integration.py
+	|		|__ test_PrestationService.py
+	|		|__ test_ReviewService_integration.py
+	|		|__ test_ReviewService.py
+	|		|__ test_UserService_integration.py
+	|		|__ test_UserService.py
+	|__ __init__.py                            
 	├── config.py
 	├── requirements.txt
-	|__ create_tables.sql   
+	|__ run.py
 	|__utils.py               
 ```

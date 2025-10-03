@@ -3,6 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.tests.base_test import BaseTest
 from app.models.user import User
 from app.persistence.UserRepository import UserRepository
+from app import db
 
 
 class TestUserRepository(BaseTest):
