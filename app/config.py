@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
+
 
 load_dotenv("app/.env.dev")
 
@@ -36,6 +38,10 @@ class TestingConfig(Config):
     BCRYPT_LOG_ROUNDS = 4  # Use fewer rounds for testing to speed up tests
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Configuration JWT pour les tests
+    JWT_SECRET_KEY = 'test-jwt-secret-key'
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)  # 15min d'expiration pour les tests
     
     # Configuration email spécifique aux tests
     MAIL_RECIPIENT_PRACTITIONER = "test-practitioner@example.com"

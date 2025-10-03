@@ -23,9 +23,9 @@ class TestAuthenticationService(BaseTest):
     # Tests pour login()
     def test_login_success(self):
         """Test login avec des identifiants valides"""
-        user = self.auth_service.login("john@example.com", "Password123!")
-        self.assertEqual(user.email, "john@example.com")
-        self.assertEqual(user.first_name, "John")
+        token = self.auth_service.login("john@example.com", "Password123!")
+        self.assertIsInstance(token, str)
+        self.assertTrue(len(token) > 0)
 
     def test_login_invalid_email_format(self):
         """Test login avec email invalide"""
@@ -141,8 +141,9 @@ class TestAuthenticationService(BaseTest):
             self.auth_service.login("john@example.com", "Password123!")
 
         # Vérifier que le nouveau mot de passe fonctionne
-        user = self.auth_service.login("john@example.com", "NewPassword456!")
-        self.assertEqual(user.email, "john@example.com")
+        token = self.auth_service.login("john@example.com", "NewPassword456!")
+        self.assertIsInstance(token, str)
+        self.assertTrue(len(token) > 0)
 
     def test_hash_password_creates_different_hashes(self):
         """Test que hash_password génère des hashs différents pour le même mot de passe"""

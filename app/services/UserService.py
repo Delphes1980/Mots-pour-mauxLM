@@ -40,8 +40,8 @@ class UserService:
         phone_number = kwargs.get('phone_number')
         validate_phone_number(phone_number)
 
-        is_admin = kwargs.get('is_admin')
-        admin_validation(is_admin)
+        is_admin_value = kwargs.get('is_admin')
+        kwargs['is_admin'] = admin_validation(is_admin_value)
 
         existing_user = self.user_repository.get_by_attribute("email", email)
         if existing_user:
@@ -151,8 +151,8 @@ class UserService:
             validate_password(password)
 
         if 'is_admin' in kwargs:
-            is_admin = kwargs.get('is_admin')
-            admin_validation(is_admin)
+            is_admin_value = kwargs.get('is_admin')
+            kwargs['is_admin'] = admin_validation(is_admin_value)
 
         return self.user_repository.update(user_id, **kwargs)
 
