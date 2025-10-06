@@ -21,6 +21,7 @@ def create_app():
     bcrypt.init_app(app)
     mail.init_app(app)
 
+
     # Initialize API
     api = Api(app, version='1.0', title='MotsPourMaux API', description='MotsPourMaux Application API', doc='/api/v1/')
 
@@ -35,10 +36,10 @@ def create_app():
     from app.api.v1.auth import api as auth_ns
 
     # Register API namespaces
-    api.add_namespace(users_ns, path='/api/users')
-    api.add_namespace(reviews_ns, path='/api/reviews')
-    api.add_namespace(appointments_ns, path='/api/appointments')
-    api.add_namespace(prestations_ns, path='/api/prestations')
-    api.add_namespace(auth_ns, path='/api/auth')
+    api.add_namespace(users_ns, path='/api/v1/users')
+    api.add_namespace(reviews_ns, path='/api/v1/reviews')
+    api.add_namespace(appointments_ns, path='/api/v1/appointments')
+    api.add_namespace(prestations_ns, path='/api/v1/prestations')
+    api.add_namespace(auth_ns, path='/api/v1/auth')
 
     return app

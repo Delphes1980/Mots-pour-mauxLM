@@ -133,7 +133,8 @@ class TestUserServiceAdminValidation(BaseTest):
 
     def test_create_user_admin_validation_type_error(self):
         """Test validation is_admin avec type invalide"""
-        with self.assertRaises(TypeError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.user_service.create_user(
                 first_name="Test",
                 last_name="User",
@@ -151,7 +152,8 @@ class TestUserServiceAdminValidation(BaseTest):
             password="Password123!"
         )
         
-        with self.assertRaises(TypeError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.user_service.update_user(
                 user.id,
                 is_admin="invalid_type"  # String au lieu de bool

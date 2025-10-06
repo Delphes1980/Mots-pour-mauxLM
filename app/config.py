@@ -5,6 +5,7 @@ from datetime import timedelta
 
 load_dotenv("app/.env.dev")
 
+
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
     DEBUG = False

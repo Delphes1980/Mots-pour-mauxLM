@@ -27,23 +27,27 @@ class TestPrestationService(BaseTest):
         """Test création prestation avec nom existant"""
         self.service.create_prestation(name="Massage")
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_prestation(name="Massage")
         self.assertIn("existe déjà", str(context.exception).lower())
 
     def test_create_prestation_invalid_name_empty(self):
         """Test avec nom vide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.create_prestation(name="")
 
     def test_create_prestation_invalid_name_none(self):
         """Test avec nom None"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.create_prestation(name=None)
 
     def test_create_prestation_invalid_name_too_long(self):
         """Test avec nom trop long"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.create_prestation(name="A" * 51)
 
     def test_create_prestation_missing_name(self):
@@ -64,19 +68,22 @@ class TestPrestationService(BaseTest):
 
     def test_get_prestation_by_id_missing_id(self):
         """Test sans ID"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_prestation_by_id(None)
         self.assertIn("prestation_id", str(context.exception).lower())
 
     def test_get_prestation_by_id_invalid_format(self):
         """Test avec un format d'ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_prestation_by_id('invalid-uuid')
         self.assertIn("format", str(context.exception).lower())
 
     def test_get_prestation_by_id_not_found(self):
         """Test quand la prestation n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_prestation_by_id('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
         self.assertIn("non trouvée", str(context.exception).lower())
 
@@ -112,19 +119,22 @@ class TestPrestationService(BaseTest):
 
     def test_get_prestation_by_name_missing_name(self):
         """Test sans nom"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_prestation_by_name(None)
         self.assertIn("requis", str(context.exception).lower())
 
     def test_get_prestation_by_name_empty_name(self):
         """Test avec nom vide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_prestation_by_name("")
         self.assertIn("requis", str(context.exception).lower())
 
     def test_get_prestation_by_name_not_found(self):
         """Test quand la prestation n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_prestation_by_name("Inexistante")
         self.assertIn("non trouvée", str(context.exception).lower())
 
@@ -141,19 +151,22 @@ class TestPrestationService(BaseTest):
 
     def test_update_prestation_missing_id(self):
         """Test sans prestation_id"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_prestation(None, name="Nouveau nom")
         self.assertIn("prestation_id", str(context.exception).lower())
 
     def test_update_prestation_invalid_id_format(self):
         """Test avec un format d'ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_prestation('invalid-uuid', name="Nouveau nom")
         self.assertIn("format", str(context.exception).lower())
 
     def test_update_prestation_not_found(self):
         """Test quand la prestation n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_prestation('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name="Nouveau nom")
         self.assertIn("non trouvée", str(context.exception).lower())
 
@@ -161,7 +174,8 @@ class TestPrestationService(BaseTest):
         """Test sans données à mettre à jour"""
         created_prestation = self.service.create_prestation(name="Test")
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_prestation(created_prestation.id)
         self.assertIn("aucune donnée", str(context.exception).lower())
 
@@ -170,7 +184,8 @@ class TestPrestationService(BaseTest):
         prestation1 = self.service.create_prestation(name="Massage")
         prestation2 = self.service.create_prestation(name="Thérapie")
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_prestation(prestation2.id, name="Massage")
         self.assertIn("déjà existante", str(context.exception).lower())
 
@@ -187,7 +202,8 @@ class TestPrestationService(BaseTest):
         """Test mise à jour avec nom invalide"""
         created_prestation = self.service.create_prestation(name="Test")
         
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.update_prestation(created_prestation.id, name="")
 
     # ==================== Tests delete_prestation ====================
@@ -201,24 +217,28 @@ class TestPrestationService(BaseTest):
         self.assertTrue(result)
         
         # Vérifier que la prestation n'existe plus
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.get_prestation_by_id(created_prestation.id)
 
     def test_delete_prestation_missing_id(self):
         """Test sans prestation_id"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.delete_prestation(None)
         self.assertIn("prestation_id", str(context.exception).lower())
 
     def test_delete_prestation_invalid_id_format(self):
         """Test avec un format d'ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.delete_prestation('invalid-uuid')
         self.assertIn("format", str(context.exception).lower())
 
     def test_delete_prestation_not_found(self):
         """Test quand la prestation n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.delete_prestation('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
         self.assertIn("non trouvée", str(context.exception).lower())
 

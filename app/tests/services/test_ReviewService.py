@@ -54,35 +54,40 @@ class TestReviewService(BaseTest):
         """Test avec une note trop basse"""
         self.valid_review_data['rating'] = 0
         
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.create_review(**self.valid_review_data)
 
     def test_create_review_invalid_rating_too_high(self):
         """Test avec une note trop haute"""
         self.valid_review_data['rating'] = 6
         
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.create_review(**self.valid_review_data)
 
     def test_create_review_text_too_short(self):
         """Test avec un texte trop court"""
         self.valid_review_data['text'] = 'A'
         
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.create_review(**self.valid_review_data)
 
     def test_create_review_text_too_long(self):
         """Test avec un texte trop long"""
         self.valid_review_data['text'] = 'A' * 501
         
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.create_review(**self.valid_review_data)
 
     def test_create_review_missing_user_id(self):
         """Test sans user_id"""
         self.valid_review_data['user_id'] = None
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(**self.valid_review_data)
         self.assertIn("user_id", str(context.exception).lower())
 
@@ -90,7 +95,8 @@ class TestReviewService(BaseTest):
         """Test avec un format d'user_id invalide"""
         self.valid_review_data['user_id'] = 'invalid-uuid'
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(**self.valid_review_data)
         self.assertIn("format", str(context.exception).lower())
 
@@ -98,7 +104,8 @@ class TestReviewService(BaseTest):
         """Test sans prestation_id"""
         self.valid_review_data['prestation_id'] = None
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(**self.valid_review_data)
         self.assertIn("prestation", str(context.exception).lower())
 
@@ -106,7 +113,8 @@ class TestReviewService(BaseTest):
         """Test avec un format de prestation_id invalide"""
         self.valid_review_data['prestation_id'] = 'invalid-uuid'
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(**self.valid_review_data)
         self.assertIn("format", str(context.exception).lower())
 
@@ -114,7 +122,8 @@ class TestReviewService(BaseTest):
         """Test quand l'utilisateur n'existe pas"""
         self.valid_review_data['user_id'] = '12345678-1234-1234-1234-123456789012'
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(**self.valid_review_data)
         self.assertIn("introuvable", str(context.exception).lower())
 
@@ -122,7 +131,8 @@ class TestReviewService(BaseTest):
         """Test quand la prestation n'existe pas"""
         self.valid_review_data['prestation_id'] = '87654321-4321-4321-4321-210987654321'
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(**self.valid_review_data)
         self.assertIn("prestation", str(context.exception).lower())
 
@@ -132,7 +142,8 @@ class TestReviewService(BaseTest):
         self.service.create_review(**self.valid_review_data)
         
         # Tenter de créer un second avis pour la même combinaison
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(**self.valid_review_data)
         self.assertIn("existe", str(context.exception).lower())
 
@@ -150,19 +161,22 @@ class TestReviewService(BaseTest):
 
     def test_get_review_by_id_missing_id(self):
         """Test sans ID"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_id(None)
         self.assertIn("review_id", str(context.exception).lower())
 
     def test_get_review_by_id_invalid_format(self):
         """Test avec un format d'ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_id('invalid-uuid')
         self.assertIn("format", str(context.exception).lower())
 
     def test_get_review_by_id_not_found(self):
         """Test quand l'avis n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_id('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
         self.assertIn("non trouvé", str(context.exception).lower())
 
@@ -220,13 +234,15 @@ class TestReviewService(BaseTest):
 
     def test_get_review_by_prestation_missing_id(self):
         """Test sans prestation_id"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_prestation(None)
         self.assertIn("prestation_id", str(context.exception).lower())
 
     def test_get_review_by_prestation_invalid_format(self):
         """Test avec un format de prestation_id invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_prestation('invalid-uuid')
         self.assertIn("format", str(context.exception).lower())
 
@@ -248,19 +264,22 @@ class TestReviewService(BaseTest):
 
     def test_get_review_by_user_missing_id(self):
         """Test sans user_id"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_user(None)
         self.assertIn("user_id", str(context.exception).lower())
 
     def test_get_review_by_user_invalid_format(self):
         """Test avec un format d'user_id invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_user('invalid-uuid')
         self.assertIn("format", str(context.exception).lower())
 
     def test_get_review_by_user_not_found(self):
         """Test quand l'utilisateur n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.get_review_by_user('12345678-1234-1234-1234-123456789012')
         self.assertIn("non trouvé", str(context.exception).lower())
 
@@ -300,19 +319,22 @@ class TestReviewService(BaseTest):
 
     def test_update_review_missing_id(self):
         """Test sans review_id"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_review(None, rating=4)
         self.assertIn("review_id", str(context.exception).lower())
 
     def test_update_review_invalid_id_format(self):
         """Test avec un format d'ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_review('invalid-uuid', rating=4)
         self.assertIn("format", str(context.exception).lower())
 
     def test_update_review_not_found(self):
         """Test quand l'avis n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_review('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', rating=4)
         self.assertIn("non trouvé", str(context.exception).lower())
 
@@ -320,14 +342,16 @@ class TestReviewService(BaseTest):
         """Test avec une note invalide"""
         created_review = self.service.create_review(**self.valid_review_data)
         
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.update_review(created_review.id, rating=0)
 
     def test_update_review_invalid_text(self):
         """Test avec un texte invalide"""
         created_review = self.service.create_review(**self.valid_review_data)
         
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.update_review(created_review.id, text='A')
 
     # ==================== Tests delete_review ====================
@@ -341,24 +365,28 @@ class TestReviewService(BaseTest):
         self.assertTrue(result)
         
         # Vérifier que l'avis n'existe plus
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.get_review_by_id(created_review.id)
 
     def test_delete_review_missing_id(self):
         """Test sans review_id"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.delete_review(None)
         self.assertIn("review_id", str(context.exception).lower())
 
     def test_delete_review_invalid_id_format(self):
         """Test avec un format d'ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.delete_review('invalid-uuid')
         self.assertIn("format", str(context.exception).lower())
 
     def test_delete_review_not_found(self):
         """Test quand l'avis n'existe pas"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.delete_review('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')
         self.assertIn("non trouvé", str(context.exception).lower())
 

@@ -29,34 +29,40 @@ class TestAuthenticationService(BaseTest):
 
     def test_login_invalid_email_format(self):
         """Test login avec email invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.login("invalid-email", "Password123!")
         self.assertIn("email", str(context.exception).lower())
 
     def test_login_empty_email(self):
         """Test login avec email vide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.login("", "Password123!")
 
     def test_login_invalid_password_format(self):
         """Test login avec mot de passe invalide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.login("john@example.com", "weak")
 
     def test_login_empty_password(self):
         """Test login avec mot de passe vide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.login("john@example.com", "")
 
     def test_login_user_not_found(self):
         """Test login avec email inexistant"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.login("nonexistent@example.com", "Password123!")
         self.assertEqual(str(context.exception), "Invalid credentials")
 
     def test_login_wrong_password(self):
         """Test login avec mauvais mot de passe"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.login("john@example.com", "WrongPassword123!")
         self.assertEqual(str(context.exception), "Invalid credentials")
 
@@ -88,32 +94,37 @@ class TestAuthenticationService(BaseTest):
 
     def test_change_password_invalid_user_id(self):
         """Test changement de mot de passe avec ID utilisateur invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.change_password("invalid-id", "Password123!", "NewPassword456!")
         self.assertIn("user_id", str(context.exception))
 
     def test_change_password_user_not_found(self):
         """Test changement de mot de passe avec utilisateur inexistant"""
         from uuid import uuid4
+        from app.utils import CustomError
         fake_id = str(uuid4())
 
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(CustomError) as context:
             self.auth_service.change_password(fake_id, "Password123!", "NewPassword456!")
         self.assertEqual(str(context.exception), "User not found")
 
     def test_change_password_invalid_old_password_format(self):
         """Test changement avec ancien mot de passe invalide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.change_password(self.test_user.id, "weak", "NewPassword456!")
 
     def test_change_password_invalid_new_password_format(self):
         """Test changement avec nouveau mot de passe invalide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.change_password(self.test_user.id, "Password123!", "weak")
 
     def test_change_password_wrong_old_password(self):
         """Test changement avec mauvais ancien mot de passe"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.change_password(
                 self.test_user.id, "WrongPassword123!", "NewPassword456!"
             )
@@ -121,12 +132,14 @@ class TestAuthenticationService(BaseTest):
 
     def test_change_password_empty_old_password(self):
         """Test changement avec ancien mot de passe vide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.change_password(self.test_user.id, "", "NewPassword456!")
 
     def test_change_password_empty_new_password(self):
         """Test changement avec nouveau mot de passe vide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.change_password(self.test_user.id, "Password123!", "")
 
     def test_login_after_password_change(self):
@@ -137,7 +150,8 @@ class TestAuthenticationService(BaseTest):
         )
 
         # Vérifier que l'ancien mot de passe ne fonctionne plus
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.auth_service.login("john@example.com", "Password123!")
 
         # Vérifier que le nouveau mot de passe fonctionne

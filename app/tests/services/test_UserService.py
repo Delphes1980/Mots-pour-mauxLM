@@ -83,7 +83,8 @@ class TestUserService(BaseTest):
         )
         
         # Tenter de créer un autre avec même email
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.create_user(
                 first_name='Jane',
                 last_name='Smith',
@@ -96,7 +97,8 @@ class TestUserService(BaseTest):
     def test_create_user_invalid_data(self):
         """Test création utilisateur avec données invalides"""
         # Test email invalide
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.user_service.create_user(
                 first_name='John',
                 last_name='Doe',
@@ -105,7 +107,7 @@ class TestUserService(BaseTest):
             )
         
         # Test mot de passe invalide
-        with self.assertRaises(ValueError):
+        with self.assertRaises(CustomError):
             self.user_service.create_user(
                 first_name='John',
                 last_name='Doe',
@@ -132,7 +134,8 @@ class TestUserService(BaseTest):
 
     def test_get_user_by_id_not_found(self):
         """Test récupération utilisateur par ID inexistant"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.get_user_by_id('nonexistent-id')
         
         self.assertIn('user_id', str(context.exception).lower())
@@ -156,7 +159,8 @@ class TestUserService(BaseTest):
 
     def test_get_user_by_email_not_found(self):
         """Test récupération utilisateur par email inexistant"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.get_user_by_email('nonexistent@example.com')
         
         self.assertIn('User not found', str(context.exception))
@@ -339,7 +343,8 @@ class TestUserService(BaseTest):
         )
         
         # Tenter mise à jour avec mot de passe invalide
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.user_service.update_user(user.id, password='weak')
 
     def test_update_user_password_validation_requirements(self):
@@ -355,15 +360,16 @@ class TestUserService(BaseTest):
         )
         
         # Test mot de passe trop court
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.user_service.update_user(user.id, password='Short1!')
         
         # Test mot de passe sans chiffre
-        with self.assertRaises(ValueError):
+        with self.assertRaises(CustomError):
             self.user_service.update_user(user.id, password='NoDigitPassword!')
         
         # Test mot de passe sans caractère spécial
-        with self.assertRaises(ValueError):
+        with self.assertRaises(CustomError):
             self.user_service.update_user(user.id, password='NoSpecialChar123')
         
         # Vérifier que l'ancien mot de passe fonctionne toujours
@@ -515,7 +521,8 @@ class TestUserService(BaseTest):
 
     def test_update_user_not_found(self):
         """Test mise à jour utilisateur inexistant"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.update_user('nonexistent-id', first_name='John')
         
         self.assertIn('user_id', str(context.exception).lower())
@@ -531,7 +538,8 @@ class TestUserService(BaseTest):
         )
         
         # Tenter mise à jour avec email invalide
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.user_service.update_user(user.id, email='invalid-email')
 
     def test_update_user_duplicate_email(self):
@@ -551,7 +559,8 @@ class TestUserService(BaseTest):
         )
         
         # Tenter de donner à user2 l'email de user1
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.update_user(user2.id, email='john@example.com')
         
         self.assertIn('Email already exists', str(context.exception))
@@ -567,7 +576,8 @@ class TestUserService(BaseTest):
         )
 
         # Tenter de mettre à jour sans fournir de données
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.update_user(user.id)
 
         self.assertIn("No data provided for update", str(context.exception))
@@ -588,12 +598,14 @@ class TestUserService(BaseTest):
         self.assertTrue(result)
         
         # Vérifier suppression
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.user_service.get_user_by_id(user.id)
 
     def test_delete_user_not_found(self):
         """Test suppression utilisateur inexistant"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.delete_user('nonexistent-id')
         
         self.assertIn('user_id', str(context.exception).lower())
