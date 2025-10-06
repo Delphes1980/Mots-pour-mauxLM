@@ -59,7 +59,7 @@ class Facade:
         return self.review_service.get_review_by_user_and_prestation(user_id, prestation_id)
 
     def update_review(self, review_id, **kwargs):
-        return self.review_service.update_review(**kwargs)
+        return self.review_service.update_review(review_id, **kwargs)
 
     def delete_review(self, review_id):
         return self.review_service.delete_review(review_id)
@@ -97,7 +97,7 @@ class Facade:
         return self.prestation_service.get_prestation_by_name(name)
 
     def update_prestation(self, prestation_id, **kwargs):
-        return self.prestation_service.update_prestation(**kwargs)
+        return self.prestation_service.update_prestation(prestation_id, **kwargs)
 
     def delete_prestation(self, prestation_id):
         return self.prestation_service.delete_prestation(prestation_id)

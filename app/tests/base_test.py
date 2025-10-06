@@ -16,6 +16,7 @@ import unittest
 import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
+from flask_restx import Api
 
 # Import de l'instance db depuis app
 from app import db, mail
@@ -52,6 +53,9 @@ class BaseTest(unittest.TestCase):
         # Contexte d'application
         cls.app_context = cls.app.app_context()
         cls.app_context.push()
+        
+        # Compteur pour éviter les conflits d'API
+        cls._api_counter = 0
         
         # Création des tables
         # Forcer l'enregistrement des modèles
@@ -93,3 +97,31 @@ class BaseTest(unittest.TestCase):
         for obj in objects:
             self.db.session.delete(obj)
         self.db.session.commit()
+    
+    def create_test_api(self, title_suffix=''):
+        """Créer une API de test unique pour éviter les conflits d'endpoints"""
+        from flask_jwt_extended import JWTManager
+        
+        self.__class__._api_counter += 1
+        
+        # Créer une nouvelle app Flask pour chaque API de test
+        test_app = Flask(f'test_app_{self.__class__._api_counter}')
+        test_app.config.from_object(TestingConfig)
+        
+        # Initialiser les extensions sur la nouvelle app
+        self.db.init_app(test_app)
+        mail.init_app(test_app)
+        jwt = JWTManager(test_app)
+        
+        # Créer l'API sur la nouvelle app
+        api = Api(
+            test_app,
+            version='1.0', 
+            title=f'Test API {self.__class__._api_counter} {title_suffix}'.strip(),
+            doc=False
+        )
+        
+        # Remplacer l'app principale par la nouvelle pour ce test
+        self.app = test_app
+        
+        return api
