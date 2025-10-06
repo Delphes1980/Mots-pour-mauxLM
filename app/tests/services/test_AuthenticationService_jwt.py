@@ -62,21 +62,24 @@ class TestAuthenticationServiceJWT(BaseTest):
 
     def test_login_invalid_credentials_no_token(self):
         """Test qu'aucun token n'est généré avec des credentials invalides"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.login("regular@example.com", "WrongPassword!")
         
         self.assertIn("Invalid credentials", str(context.exception))
 
     def test_login_invalid_password_format_no_token(self):
         """Test qu'aucun token n'est généré avec un mot de passe mal formaté"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.login("regular@example.com", "weak")
         
         self.assertEqual(str(context.exception), "Invalid credentials")
 
     def test_login_nonexistent_user_no_token(self):
         """Test qu'aucun token n'est généré pour utilisateur inexistant"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.login("nonexistent@example.com", "Password123!")
         
         self.assertIn("Invalid credentials", str(context.exception))

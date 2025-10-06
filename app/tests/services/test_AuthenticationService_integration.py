@@ -43,7 +43,8 @@ class TestAuthenticationServiceIntegration(BaseTest):
         self.assertTrue(len(new_token) > 0)
         
         # Vérifier que l'ancien mot de passe ne fonctionne plus
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.auth_service.login("john@example.com", "Password123!")
         self.assertEqual(str(context.exception), "Invalid credentials")
 
@@ -63,7 +64,8 @@ class TestAuthenticationServiceIntegration(BaseTest):
             self.assertIsInstance(token, str)
             
             # Vérifier que l'ancien ne fonctionne plus
-            with self.assertRaises(ValueError):
+            from app.utils import CustomError
+            with self.assertRaises(CustomError):
                 self.auth_service.login("john@example.com", current_password)
             
             current_password = new_password

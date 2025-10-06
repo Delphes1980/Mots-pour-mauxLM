@@ -132,7 +132,8 @@ class TestAppointmentServiceIntegration(BaseTest):
         """Test d'intégration validation complète"""
         # Test avec message trop long
         long_message = "A" * 501
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.appointment_service.create_appointment(
                 message=long_message,
                 user_id=self.test_user.id,
@@ -141,8 +142,9 @@ class TestAppointmentServiceIntegration(BaseTest):
         
         # Test avec utilisateur inexistant
         from uuid import uuid4
+        from app.utils import CustomError
         fake_user_id = str(uuid4())
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.create_appointment(
                 message="Test message",
                 user_id=fake_user_id,
@@ -152,7 +154,7 @@ class TestAppointmentServiceIntegration(BaseTest):
         
         # Test avec prestation inexistante
         fake_prestation_id = str(uuid4())
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.create_appointment(
                 message="Test message",
                 user_id=self.test_user.id,

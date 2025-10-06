@@ -1,6 +1,6 @@
 from app.persistence.PrestationRepository import PrestationRepository
 from app.models.prestation import Prestation
-from app.utils import (validate_init_args, name_validation, validate_entity_id)
+from app.utils import (validate_init_args, name_validation, validate_entity_id, CustomError)
 
 
 class PrestationService:
@@ -17,17 +17,21 @@ class PrestationService:
 			Prestation: Created Prestation
 
 		Raises:
-			ValueError: if the data are invalids
+			CustomError: if the data are invalids(400), prestation exists(409)
 		"""
 		# Valider que tous les champs requis sont présents
 		validate_init_args(Prestation, **kwargs)
 
 		# Valider les données
 		name = kwargs.get('name')
-		name_validation(name, 'name')
+		try:
+			name_validation(name, 'name')
+		except ValueError as e:
+			raise CustomError(str(e), 400)
+
 		existing_prestation = self.prestation_repository.get_by_attribute("name", name)
 		if existing_prestation:
-			raise ValueError("La prestation existe déjà")
+			raise CustomError("La prestation existe déjà", 409)
 
 		return self.prestation_repository.create_prestation(**kwargs)
 
@@ -41,13 +45,16 @@ class PrestationService:
 			Prestation: The retrieved Prestation
 
 		Raises:
-			ValueError: if the ID is invalid or if the prestation does not exist
+			CustomError: if the ID is invalid(400) or if the prestation is not found(404)
 		"""
-		prestation_id = validate_entity_id(prestation_id, 'prestation_id')
+		try:
+			prestation_id = validate_entity_id(prestation_id, 'prestation_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
 
 		prestation = self.prestation_repository.get_by_id(prestation_id)
 		if not prestation:
-			raise ValueError("Prestation non trouvée")
+			raise CustomError("Prestation non trouvée", 404)
 
 		return prestation
 
@@ -69,16 +76,19 @@ class PrestationService:
 			Prestation: The retrieved Prestation
 
 		Raises:
-			ValueError: if the name is invalid or if the prestation does not exist
+			CustomError: if the name is invalid(400) or if the prestation is not found(404)
 		"""
 		if not name:
-			raise ValueError("Le nom de la prestation est requis")
+			raise CustomError("Le nom de la prestation est requis", 400)
 
-		name_validation(name, 'name')
+		try:
+			name_validation(name, 'name')
+		except ValueError as e:
+			raise CustomError(str(e), 400)
 
 		prestation = self.prestation_repository.get_by_attribute("name", name)
 		if not prestation:
-			raise ValueError("Prestation non trouvée")
+			raise CustomError("Prestation non trouvée", 404)
 
 		return prestation
 
@@ -93,23 +103,30 @@ class PrestationService:
 			Prestation: The updated Prestation
 
 		Raises:
-			ValueError: if the ID is invalid or if the prestation does not exist
+			CustomError: if the ID is invalid(400), if the prestation is not found(404), if the prestation already exists(409)
 		"""
-		prestation_id = validate_entity_id(prestation_id, 'prestation_id')
+		try:
+			prestation_id = validate_entity_id(prestation_id, 'prestation_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
 
 		prestation = self.prestation_repository.get_by_id(prestation_id)
 		if not prestation:
-			raise ValueError("Prestation non trouvée")
+			raise CustomError("Prestation non trouvée", 404)
 
 		if not kwargs:
-			raise ValueError("Aucune donnée à mettre à jour")
+			raise CustomError("Aucune donnée à mettre à jour", 400)
 
 		if 'name' in kwargs:
 			name = kwargs.get('name')
-			name_validation(name, 'name')
+			try:
+				name_validation(name, 'name')
+			except ValueError as e:
+				raise CustomError(str(e), 400)
+
 			existing_prestation = self.prestation_repository.get_by_attribute("name", name)
 			if existing_prestation and existing_prestation.id != prestation_id:
-				raise ValueError("Prestation déjà existante")
+				raise CustomError("Prestation déjà existante", 409)
 
 		return self.prestation_repository.update(prestation_id, **kwargs)
 
@@ -123,12 +140,15 @@ class PrestationService:
 			bool: True if the prestation was deleted, False otherwise
 
 		Raises:
-			ValueError: if the ID is invalid or if the prestation does not exist
+			CustomError: if the ID is invalid(400) or if the prestation is not found(404)
 		"""
-		prestation_id = validate_entity_id(prestation_id, 'prestation_id')
+		try:
+			prestation_id = validate_entity_id(prestation_id, 'prestation_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
 
 		prestation = self.prestation_repository.get_by_id(prestation_id)
 		if not prestation:
-			raise ValueError("Prestation non trouvée")
+			raise CustomError("Prestation non trouvée", 404)
 
 		return self.prestation_repository.delete(prestation_id)

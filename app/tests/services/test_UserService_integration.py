@@ -78,7 +78,8 @@ class TestUserServiceIntegration(BaseTest):
         self.assertTrue(result)
         
         # Vérifier que l'utilisateur est supprimé
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.get_user_by_id(user2.id)
         self.assertIn("User not found", str(context.exception))
 
@@ -130,7 +131,8 @@ class TestUserServiceIntegration(BaseTest):
         self.assertTrue(admin_user.is_admin)
         
         # Vérifier unicité email
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.user_service.create_user(
                 first_name="Duplicate",
                 last_name="Email",

@@ -32,7 +32,8 @@ class TestPrestationServiceIntegration(BaseTest):
         self.assertEqual(updated_prestation.name, "Massage thérapeutique")
         
         # Vérifier que l'ancien nom ne fonctionne plus
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.get_prestation_by_name("Massage suédois")
         
         # Suppression
@@ -40,7 +41,8 @@ class TestPrestationServiceIntegration(BaseTest):
         self.assertTrue(result)
         
         # Vérification suppression
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.get_prestation_by_id(prestation.id)
 
     def test_business_rule_unique_name(self):
@@ -49,7 +51,8 @@ class TestPrestationServiceIntegration(BaseTest):
         self.service.create_prestation(name="Réflexologie")
         
         # Tentative de création avec même nom
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_prestation(name="Réflexologie")
         
         self.assertIn("existe déjà", str(context.exception))
@@ -86,7 +89,8 @@ class TestPrestationServiceIntegration(BaseTest):
         prestation2 = self.service.create_prestation(name="Massage B")
         
         # Tenter de donner à prestation2 le nom de prestation1
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.update_prestation(prestation2.id, name="Massage A")
         
         self.assertIn("déjà existante", str(context.exception))

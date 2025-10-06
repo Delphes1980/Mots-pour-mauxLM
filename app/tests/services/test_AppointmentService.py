@@ -63,7 +63,8 @@ class TestAppointmentService(BaseTest):
     
     def test_create_appointment_missing_message(self):
         """Test création sans message"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.appointment_service.create_appointment(
                 user_id=self.test_user.id,
                 prestation_id=self.test_prestation.id
@@ -71,7 +72,8 @@ class TestAppointmentService(BaseTest):
     
     def test_create_appointment_empty_message(self):
         """Test création avec message vide"""
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.appointment_service.create_appointment(
                 message="",
                 user_id=self.test_user.id,
@@ -81,7 +83,8 @@ class TestAppointmentService(BaseTest):
     def test_create_appointment_message_too_long(self):
         """Test création avec message trop long"""
         long_message = "A" * 501  # Plus de 500 caractères
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.appointment_service.create_appointment(
                 message=long_message,
                 user_id=self.test_user.id,
@@ -90,7 +93,8 @@ class TestAppointmentService(BaseTest):
     
     def test_create_appointment_invalid_user_id(self):
         """Test création avec ID utilisateur invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.create_appointment(
                 message="Test message",
                 user_id="invalid-id",
@@ -103,7 +107,8 @@ class TestAppointmentService(BaseTest):
         from uuid import uuid4
         fake_user_id = str(uuid4())
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.create_appointment(
                 message="Test message",
                 user_id=fake_user_id,
@@ -113,7 +118,8 @@ class TestAppointmentService(BaseTest):
     
     def test_create_appointment_invalid_prestation_id(self):
         """Test création avec ID prestation invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.create_appointment(
                 message="Test message",
                 user_id=self.test_user.id,
@@ -126,7 +132,8 @@ class TestAppointmentService(BaseTest):
         from uuid import uuid4
         fake_prestation_id = str(uuid4())
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.create_appointment(
                 message="Test message",
                 user_id=self.test_user.id,
@@ -156,7 +163,8 @@ class TestAppointmentService(BaseTest):
     
     def test_get_appointment_by_id_invalid_id(self):
         """Test récupération avec ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_id("invalid-id")
         self.assertIn("appointment_id", str(context.exception))
     
@@ -165,7 +173,8 @@ class TestAppointmentService(BaseTest):
         from uuid import uuid4
         fake_id = str(uuid4())
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_id(fake_id)
         self.assertEqual(str(context.exception), "Rendez-vous introuvable")
     
@@ -230,7 +239,8 @@ class TestAppointmentService(BaseTest):
     
     def test_get_appointment_by_prestation_invalid_id(self):
         """Test récupération par prestation avec ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_prestation("invalid-id")
         self.assertIn("prestation_id", str(context.exception))
     
@@ -273,7 +283,8 @@ class TestAppointmentService(BaseTest):
     
     def test_get_appointment_by_user_invalid_id(self):
         """Test récupération par utilisateur avec ID invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_user("invalid-id")
         self.assertIn("user_id", str(context.exception))
     
@@ -302,7 +313,8 @@ class TestAppointmentService(BaseTest):
     
     def test_get_appointment_by_user_and_prestation_invalid_user_id(self):
         """Test récupération avec ID utilisateur invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_user_and_prestation(
                 "invalid-id", 
                 self.test_prestation.id
@@ -311,7 +323,8 @@ class TestAppointmentService(BaseTest):
     
     def test_get_appointment_by_user_and_prestation_invalid_prestation_id(self):
         """Test récupération avec ID prestation invalide"""
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_user_and_prestation(
                 self.test_user.id, 
                 "invalid-id"
@@ -323,7 +336,8 @@ class TestAppointmentService(BaseTest):
         from uuid import uuid4
         fake_user_id = str(uuid4())
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_user_and_prestation(
                 fake_user_id, 
                 self.test_prestation.id
@@ -335,7 +349,8 @@ class TestAppointmentService(BaseTest):
         from uuid import uuid4
         fake_prestation_id = str(uuid4())
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_user_and_prestation(
                 self.test_user.id, 
                 fake_prestation_id
@@ -352,7 +367,8 @@ class TestAppointmentService(BaseTest):
             password="Password123!"
         )
         
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.appointment_service.get_appointment_by_user_and_prestation(
                 user2.id, 
                 self.test_prestation.id

@@ -56,7 +56,8 @@ class TestReviewServiceIntegration(BaseTest):
         self.assertTrue(result)
         
         # Vérification suppression
-        with self.assertRaises(ValueError):
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
             self.service.get_review_by_id(review.id)
 
     def test_business_rule_one_review_per_user_prestation(self):
@@ -70,7 +71,8 @@ class TestReviewServiceIntegration(BaseTest):
         )
         
         # Tentative de second avis
-        with self.assertRaises(ValueError) as context:
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
             self.service.create_review(
                 rating=4,
                 text="Second avis",
