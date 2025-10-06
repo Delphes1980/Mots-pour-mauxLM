@@ -37,6 +37,7 @@ class BaseRepository:
                 for key, value in kwargs.items():
                     setattr(entity, key, value)
                 self.db.session.commit()
+                self.db.session.refresh(entity)
                 return entity
             return None
         except SQLAlchemyError as e:
@@ -50,6 +51,7 @@ class BaseRepository:
             if entity:
                 self.db.session.delete(entity)
                 self.db.session.commit()
+                self.db.session.expire_all()
                 return True
             return False
         except SQLAlchemyError as e:
