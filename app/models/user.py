@@ -1,5 +1,5 @@
 from app.models.baseEntity import BaseEntity
-from app.utils import (type_validation, strlen_validation, name_validation, email_validation, validate_password, hash_password)
+from app.utils import (type_validation, strlen_validation, name_validation, email_validation, validate_password, hash_password, verify_password)
 from app import bcrypt
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Boolean
@@ -44,6 +44,9 @@ class User(BaseEntity):
 		type_validation(value, 'password', str)
 		validated_password = validate_password(value)
 		self._password = hash_password(validated_password)
+
+	def verify_password(self, plain_password):
+		return verify_password(self._password, plain_password)
 
 	@hybrid_property
 	def first_name(self):

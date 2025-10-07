@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token
 
 from app.tests.base_test import BaseTest
 from app.api.v1.prestations import api as prestations_api
+from app.api.v1.authentication import api as auth_api
 from app.models.user import User
 from app.models.prestation import Prestation
 
@@ -20,6 +21,7 @@ class TestPrestationsSecurity(BaseTest):
         
         # Configuration de l'API via BaseTest
         self.api = self.create_test_api('Security')
+        self.api.add_namespace(auth_api, path='/auth')
         self.api.add_namespace(prestations_api, path='/prestations')
         
         # Client de test
@@ -41,26 +43,43 @@ class TestPrestationsSecurity(BaseTest):
             is_admin=False
         )
         self.save_to_db(self.admin_user, self.regular_user)
-        
-        # Tokens JWT
-        with self.app.app_context():
-            self.admin_token = create_access_token(
-                identity=str(self.admin_user.id),
-                additional_claims={'is_admin': True}
-            )
-            self.user_token = create_access_token(
-                identity=str(self.regular_user.id),
-                additional_claims={'is_admin': False}
-            )
-            self.invalid_token = 'invalid.jwt.token'
     
-    def get_auth_headers(self, token):
-        return {'Authorization': f'Bearer {token}'}
+    def login_as_admin(self):
+        """Se connecter en tant qu'admin et garder les cookies"""
+        credentials = {
+            'email': 'admin@test.com',
+            'password': 'Password123!'
+        }
+        response = self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+    
+    def login_as_user(self):
+        """Se connecter en tant qu'utilisateur normal"""
+        # Créer un nouveau client pour l'utilisateur normal
+        self.user_client = self.app.test_client()
+        credentials = {
+            'email': 'user@test.com',
+            'password': 'Password123!'
+        }
+        response = self.user_client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        return self.user_client
     
     def test_all_endpoints_require_authentication(self):
         """Test que tous les endpoints nécessitent une authentification"""
         prestation = Prestation(name='Test Prestation')
         self.save_to_db(prestation)
+        
+        # Client sans authentification
+        no_auth_client = self.app.test_client()
         
         endpoints = [
             ('POST', '/prestations/', {'name': 'Test'}),
@@ -73,21 +92,21 @@ class TestPrestationsSecurity(BaseTest):
         
         for method, url, data in endpoints:
             if method == 'POST':
-                response = self.client.post(
+                response = no_auth_client.post(
                     url,
                     data=json.dumps(data) if data else None,
                     content_type='application/json'
                 )
             elif method == 'PUT':
-                response = self.client.put(
+                response = no_auth_client.put(
                     url,
                     data=json.dumps(data) if data else None,
                     content_type='application/json'
                 )
             elif method == 'DELETE':
-                response = self.client.delete(url)
+                response = no_auth_client.delete(url)
             else:  # GET
-                response = self.client.get(url)
+                response = no_auth_client.get(url)
             
             self.assertEqual(response.status_code, 401, 
                            f"Endpoint {method} {url} devrait retourner 401 sans token")
@@ -97,6 +116,9 @@ class TestPrestationsSecurity(BaseTest):
         prestation = Prestation(name='Test Prestation')
         self.save_to_db(prestation)
         
+        # Se connecter en tant qu'utilisateur normal
+        user_client = self.login_as_user()
+        
         endpoints = [
             ('POST', '/prestations/', {'name': 'Test'}),
             ('GET', '/prestations/', None),
@@ -108,86 +130,60 @@ class TestPrestationsSecurity(BaseTest):
         
         for method, url, data in endpoints:
             if method == 'POST':
-                response = self.client.post(
+                response = user_client.post(
                     url,
                     data=json.dumps(data) if data else None,
-                    content_type='application/json',
-                    headers=self.get_auth_headers(self.user_token)
+                    content_type='application/json'
                 )
             elif method == 'PUT':
-                response = self.client.put(
+                response = user_client.put(
                     url,
                     data=json.dumps(data) if data else None,
-                    content_type='application/json',
-                    headers=self.get_auth_headers(self.user_token)
+                    content_type='application/json'
                 )
             elif method == 'DELETE':
-                response = self.client.delete(
-                    url,
-                    headers=self.get_auth_headers(self.user_token)
-                )
+                response = user_client.delete(url)
             else:  # GET
-                response = self.client.get(
-                    url,
-                    headers=self.get_auth_headers(self.user_token)
-                )
+                response = user_client.get(url)
             
             self.assertEqual(response.status_code, 403, 
                            f"Endpoint {method} {url} devrait retourner 403 pour utilisateur non-admin")
     
     def test_invalid_jwt_token(self):
         """Test avec token JWT invalide"""
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(self.invalid_token)
-        )
+        # Client avec cookie invalide
+        invalid_client = self.app.test_client()
+        invalid_client.set_cookie('access_token_cookie', 'invalid_token')
+        
+        response = invalid_client.get('/prestations/')
         
         self.assertEqual(response.status_code, 422)  # JWT invalide
     
-    def test_malformed_authorization_header(self):
-        """Test avec header Authorization malformé"""
-        malformed_headers = [
-            {'Authorization': 'InvalidFormat'},
-            {'Authorization': 'Bearer'},
-            {'Authorization': f'Basic {self.admin_token}'},
-        ]
-        
-        for headers in malformed_headers:
-            response = self.client.get('/prestations/', headers=headers)
-            self.assertIn(response.status_code, [401, 422])
-    
     def test_admin_can_access_all_endpoints(self):
         """Test que l'admin peut accéder à tous les endpoints"""
+        # Se connecter en tant qu'admin
+        self.login_as_admin()
+        
         prestation = Prestation(name='Test Admin Access')
         self.save_to_db(prestation)
         
         # Test GET all
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/')
         self.assertEqual(response.status_code, 200)
         
         # Test GET by ID
-        response = self.client.get(
-            f'/prestations/{prestation.id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get(f'/prestations/{prestation.id}')
         self.assertEqual(response.status_code, 200)
         
         # Test search
-        response = self.client.get(
-            '/prestations/search?name=Test Admin Access',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/search?name=Test Admin Access')
         self.assertEqual(response.status_code, 200)
         
         # Test PUT
         response = self.client.put(
             f'/prestations/{prestation.id}',
             data=json.dumps({'name': 'Updated Admin Access'}),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
         
@@ -195,43 +191,38 @@ class TestPrestationsSecurity(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps({'name': 'New Admin Prestation'}),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 201)
         
         # Test DELETE
-        response = self.client.delete(
-            f'/prestations/{prestation.id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.delete(f'/prestations/{prestation.id}')
         self.assertEqual(response.status_code, 200)
     
     def test_jwt_claims_validation(self):
         """Test validation des claims JWT"""
-        # Token sans claim is_admin
-        token_no_admin_claim = create_access_token(
-            identity=str(self.admin_user.id)
-        )
+        # Créer un utilisateur admin mais se connecter avec un token sans claim is_admin
+        with self.app.app_context():
+            token_no_admin_claim = create_access_token(
+                identity=str(self.admin_user.id)
+            )
         
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(token_no_admin_claim)
-        )
+        # Client avec token sans claim is_admin
+        no_claim_client = self.app.test_client()
+        no_claim_client.set_cookie('access_token_cookie', token_no_admin_claim)
+        
+        response = no_claim_client.get('/prestations/')
         
         # Devrait être refusé car pas de claim is_admin
         self.assertEqual(response.status_code, 403)
     
     def test_expired_token_handling(self):
         """Test gestion token expiré"""
-        # Créer un token avec durée très courte (nécessite configuration spéciale)
-        # Pour ce test, on simule juste avec un token invalide
-        expired_token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.expired.token'
+        # Simuler un token expiré avec un token invalide
+        expired_client = self.app.test_client()
+        expired_client.set_cookie('access_token_cookie', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.expired.token')
         
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(expired_token)
-        )
+        response = expired_client.get('/prestations/')
         
         self.assertEqual(response.status_code, 422)
 

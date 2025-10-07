@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token
 
 from app.tests.base_test import BaseTest
 from app.api.v1.prestations import api as prestations_api
+from app.api.v1.authentication import api as auth_api
 from app.models.user import User
 from app.models.prestation import Prestation
 
@@ -20,6 +21,7 @@ class TestPrestationsIntegration(BaseTest):
         
         # Configuration de l'API via BaseTest
         self.api = self.create_test_api('Integration')
+        self.api.add_namespace(auth_api, path='/auth')
         self.api.add_namespace(prestations_api, path='/prestations')
         
         # Client de test
@@ -42,19 +44,37 @@ class TestPrestationsIntegration(BaseTest):
         )
         self.save_to_db(self.admin_user, self.regular_user)
         
-        # Tokens JWT
-        with self.app.app_context():
-            self.admin_token = create_access_token(
-                identity=str(self.admin_user.id),
-                additional_claims={'is_admin': True}
-            )
-            self.user_token = create_access_token(
-                identity=str(self.regular_user.id),
-                additional_claims={'is_admin': False}
-            )
+        # Se connecter pour obtenir les cookies JWT
+        self.login_as_admin()
     
-    def get_auth_headers(self, token):
-        return {'Authorization': f'Bearer {token}'}
+    def login_as_admin(self):
+        """Se connecter en tant qu'admin et garder les cookies"""
+        credentials = {
+            'email': 'admin@test.com',
+            'password': 'Password123!'
+        }
+        response = self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+    
+    def login_as_user(self):
+        """Se connecter en tant qu'utilisateur normal"""
+        # Créer un nouveau client pour l'utilisateur normal
+        self.user_client = self.app.test_client()
+        credentials = {
+            'email': 'user@test.com',
+            'password': 'Password123!'
+        }
+        response = self.user_client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        return self.user_client
     
     def test_create_prestation_integration(self):
         """Test création complète d'une prestation"""
@@ -63,8 +83,7 @@ class TestPrestationsIntegration(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 201)
@@ -83,10 +102,7 @@ class TestPrestationsIntegration(BaseTest):
         prestation2 = Prestation(name='Thérapie')
         self.save_to_db(prestation1, prestation2)
         
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -102,10 +118,7 @@ class TestPrestationsIntegration(BaseTest):
         prestation = Prestation(name='Réflexologie')
         self.save_to_db(prestation)
         
-        response = self.client.get(
-            '/prestations/search?name=Réflexologie',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/search?name=Réflexologie')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -116,10 +129,7 @@ class TestPrestationsIntegration(BaseTest):
         prestation = Prestation(name='Acupuncture')
         self.save_to_db(prestation)
         
-        response = self.client.get(
-            f'/prestations/{prestation.id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get(f'/prestations/{prestation.id}')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -134,8 +144,7 @@ class TestPrestationsIntegration(BaseTest):
         response = self.client.put(
             f'/prestations/{prestation.id}',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 200)
@@ -153,10 +162,7 @@ class TestPrestationsIntegration(BaseTest):
         self.save_to_db(prestation)
         prestation_id = prestation.id
         
-        response = self.client.delete(
-            f'/prestations/{prestation_id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.delete(f'/prestations/{prestation_id}')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -174,17 +180,13 @@ class TestPrestationsIntegration(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 201)
         prestation_id = json.loads(response.data)['id']
         
         # 2. Lire
-        response = self.client.get(
-            f'/prestations/{prestation_id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get(f'/prestations/{prestation_id}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.data)['name'], 'Workflow Test')
         
@@ -193,21 +195,20 @@ class TestPrestationsIntegration(BaseTest):
         response = self.client.put(
             f'/prestations/{prestation_id}',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.data)['name'], 'Workflow Test Modifié')
         
         # 4. Supprimer
-        response = self.client.delete(
-            f'/prestations/{prestation_id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.delete(f'/prestations/{prestation_id}')
         self.assertEqual(response.status_code, 200)
     
     def test_security_no_admin_rights(self):
         """Test sécurité : utilisateur non-admin ne peut pas accéder"""
+        # Se connecter en tant qu'utilisateur normal
+        user_client = self.login_as_user()
+        
         endpoints = [
             ('POST', '/prestations/', {'name': 'Test'}),
             ('GET', '/prestations/', None),
@@ -216,23 +217,21 @@ class TestPrestationsIntegration(BaseTest):
         
         for method, url, data in endpoints:
             if method == 'POST':
-                response = self.client.post(
+                response = user_client.post(
                     url,
                     data=json.dumps(data),
-                    content_type='application/json',
-                    headers=self.get_auth_headers(self.user_token)
+                    content_type='application/json'
                 )
             else:
-                response = self.client.get(
-                    url,
-                    headers=self.get_auth_headers(self.user_token)
-                )
+                response = user_client.get(url)
             
             self.assertEqual(response.status_code, 403)
     
     def test_security_no_token(self):
         """Test sécurité : pas de token JWT"""
-        response = self.client.get('/prestations/')
+        # Créer un nouveau client sans authentification
+        no_auth_client = self.app.test_client()
+        response = no_auth_client.get('/prestations/')
         self.assertEqual(response.status_code, 401)
 
 
