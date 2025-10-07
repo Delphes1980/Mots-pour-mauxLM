@@ -33,13 +33,13 @@ def create_app():
     from app.api.v1.reviews import api as reviews_ns
     from app.api.v1.appointments import api as appointments_ns
     from app.api.v1.prestations import api as prestations_ns
-    from app.api.v1.auth import api as auth_ns
+    from app.api.v1.authentication import api as authentication_ns
 
     # Register API namespaces
     api.add_namespace(users_ns, path='/api/v1/users')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(appointments_ns, path='/api/v1/appointments')
     api.add_namespace(prestations_ns, path='/api/v1/prestations')
-    api.add_namespace(auth_ns, path='/api/v1/auth')
+    api.add_namespace(authentication_ns, path='/api/v1/auth')
 
     return app

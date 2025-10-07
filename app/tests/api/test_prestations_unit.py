@@ -9,6 +9,7 @@ from flask_jwt_extended import create_access_token
 
 from app.tests.base_test import BaseTest
 from app.api.v1.prestations import api as prestations_api
+from app.api.v1.authentication import api as auth_api
 from app.models.user import User
 from app.utils import CustomError
 
@@ -21,6 +22,7 @@ class TestPrestationsUnit(BaseTest):
         
         # Configuration de l'API via BaseTest
         self.api = self.create_test_api('Unit')
+        self.api.add_namespace(auth_api, path='/auth')
         self.api.add_namespace(prestations_api, path='/prestations')
         
         # Client de test
@@ -43,19 +45,21 @@ class TestPrestationsUnit(BaseTest):
         )
         self.save_to_db(self.admin_user, self.regular_user)
         
-        # Tokens JWT
-        with self.app.app_context():
-            self.admin_token = create_access_token(
-                identity=str(self.admin_user.id),
-                additional_claims={'is_admin': True}
-            )
-            self.user_token = create_access_token(
-                identity=str(self.regular_user.id),
-                additional_claims={'is_admin': False}
-            )
+        # Se connecter pour obtenir les cookies JWT
+        self.login_as_admin()
     
-    def get_auth_headers(self, token):
-        return {'Authorization': f'Bearer {token}'}
+    def login_as_admin(self):
+        """Se connecter en tant qu'admin et garder les cookies"""
+        credentials = {
+            'email': 'admin@test.com',
+            'password': 'Password123!'
+        }
+        response = self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
     
     @patch('app.services.facade.Facade.create_prestation')
     def test_create_prestation_facade_called(self, mock_create):
@@ -69,8 +73,7 @@ class TestPrestationsUnit(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 201)
@@ -85,8 +88,7 @@ class TestPrestationsUnit(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 409)
@@ -100,8 +102,7 @@ class TestPrestationsUnit(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 400)
@@ -115,8 +116,7 @@ class TestPrestationsUnit(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 500)
@@ -130,10 +130,7 @@ class TestPrestationsUnit(BaseTest):
         ]
         mock_get_all.return_value = mock_prestations
         
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/')
         
         self.assertEqual(response.status_code, 200)
         mock_get_all.assert_called_once()
@@ -144,10 +141,7 @@ class TestPrestationsUnit(BaseTest):
         mock_prestation = MagicMock(id='1', name='Massage')
         mock_get_by_name.return_value = mock_prestation
         
-        response = self.client.get(
-            '/prestations/search?name=Massage',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/search?name=Massage')
         
         self.assertEqual(response.status_code, 200)
         mock_get_by_name.assert_called_once_with('Massage')
@@ -157,19 +151,13 @@ class TestPrestationsUnit(BaseTest):
         """Test gestion prestation non trouvée"""
         mock_get_by_name.side_effect = CustomError('Prestation non trouvée', 404)
         
-        response = self.client.get(
-            '/prestations/search?name=Inexistant',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/search?name=Inexistant')
         
         self.assertEqual(response.status_code, 404)
     
     def test_search_prestation_missing_name_parameter(self):
         """Test paramètre name manquant"""
-        response = self.client.get(
-            '/prestations/search',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/search')
         
         self.assertEqual(response.status_code, 400)
     
@@ -179,10 +167,7 @@ class TestPrestationsUnit(BaseTest):
         mock_prestation = MagicMock(id='test-id', name='Massage')
         mock_get_by_id.return_value = mock_prestation
         
-        response = self.client.get(
-            '/prestations/test-id',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/test-id')
         
         self.assertEqual(response.status_code, 200)
         mock_get_by_id.assert_called_once_with('test-id')
@@ -197,8 +182,7 @@ class TestPrestationsUnit(BaseTest):
         response = self.client.put(
             '/prestations/test-id',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 200)
@@ -209,10 +193,7 @@ class TestPrestationsUnit(BaseTest):
         """Test que facade.delete_prestation est appelé avec bon ID"""
         mock_delete.return_value = None
         
-        response = self.client.delete(
-            '/prestations/test-id',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.delete('/prestations/test-id')
         
         self.assertEqual(response.status_code, 200)
         mock_delete.assert_called_once_with('test-id')
@@ -228,8 +209,7 @@ class TestPrestationsUnit(BaseTest):
             response = self.client.post(
                 '/prestations/',
                 data=json.dumps(data),
-                content_type='application/json',
-                headers=self.get_auth_headers(self.admin_token)
+                content_type='application/json'
             )
             
             self.assertEqual(response.status_code, 201)

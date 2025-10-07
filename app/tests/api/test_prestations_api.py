@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token
 
 from app.tests.base_test import BaseTest
 from app.api.v1.prestations import api as prestations_api
+from app.api.v1.authentication import api as auth_api
 from app.models.user import User
 from app.models.prestation import Prestation
 
@@ -20,6 +21,7 @@ class TestPrestationsAPI(BaseTest):
         
         # Configuration de l'API via BaseTest
         self.api = self.create_test_api('Main')
+        self.api.add_namespace(auth_api, path='/auth')
         self.api.add_namespace(prestations_api, path='/prestations')
         
         # Client de test
@@ -42,19 +44,21 @@ class TestPrestationsAPI(BaseTest):
         )
         self.save_to_db(self.admin_user, self.regular_user)
         
-        # Tokens JWT
-        with self.app.app_context():
-            self.admin_token = create_access_token(
-                identity=str(self.admin_user.id),
-                additional_claims={'is_admin': True}
-            )
-            self.user_token = create_access_token(
-                identity=str(self.regular_user.id),
-                additional_claims={'is_admin': False}
-            )
+        # Se connecter pour obtenir les cookies JWT
+        self.login_as_admin()
     
-    def get_auth_headers(self, token):
-        return {'Authorization': f'Bearer {token}'}
+    def login_as_admin(self):
+        """Se connecter en tant qu'admin et garder les cookies"""
+        credentials = {
+            'email': 'admin@test.com',
+            'password': 'Password123!'
+        }
+        response = self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
     
     def test_create_prestation_success(self):
         """Test création réussie d'une prestation"""
@@ -63,8 +67,7 @@ class TestPrestationsAPI(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 201)
@@ -87,8 +90,7 @@ class TestPrestationsAPI(BaseTest):
         response = self.client.post(
             '/prestations/',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         # Devrait échouer (selon la logique métier)
@@ -107,17 +109,13 @@ class TestPrestationsAPI(BaseTest):
             response = self.client.post(
                 '/prestations/',
                 data=json.dumps(data),
-                content_type='application/json',
-                headers=self.get_auth_headers(self.admin_token)
+                content_type='application/json'
             )
             self.assertEqual(response.status_code, 400)
     
     def test_get_all_prestations_empty(self):
         """Test récupération quand aucune prestation"""
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -132,10 +130,7 @@ class TestPrestationsAPI(BaseTest):
         ]
         self.save_to_db(*prestations)
         
-        response = self.client.get(
-            '/prestations/',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -151,10 +146,7 @@ class TestPrestationsAPI(BaseTest):
         prestation = Prestation(name='Réflexologie Plantaire')
         self.save_to_db(prestation)
         
-        response = self.client.get(
-            '/prestations/search?name=Réflexologie Plantaire',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/search?name=Réflexologie Plantaire')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -162,10 +154,7 @@ class TestPrestationsAPI(BaseTest):
     
     def test_search_prestation_not_found(self):
         """Test recherche prestation inexistante"""
-        response = self.client.get(
-            '/prestations/search?name=Prestation Inexistante',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get('/prestations/search?name=Prestation Inexistante')
         
         self.assertEqual(response.status_code, 404)
     
@@ -174,10 +163,7 @@ class TestPrestationsAPI(BaseTest):
         prestation = Prestation(name='Ostéopathie')
         self.save_to_db(prestation)
         
-        response = self.client.get(
-            f'/prestations/{prestation.id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get(f'/prestations/{prestation.id}')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -188,10 +174,7 @@ class TestPrestationsAPI(BaseTest):
         """Test récupération par ID inexistant"""
         fake_id = '00000000-0000-0000-0000-000000000000'
         
-        response = self.client.get(
-            f'/prestations/{fake_id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.get(f'/prestations/{fake_id}')
         
         self.assertEqual(response.status_code, 404)
     
@@ -204,8 +187,7 @@ class TestPrestationsAPI(BaseTest):
         response = self.client.put(
             f'/prestations/{prestation.id}',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 200)
@@ -225,8 +207,7 @@ class TestPrestationsAPI(BaseTest):
         response = self.client.put(
             f'/prestations/{fake_id}',
             data=json.dumps(data),
-            content_type='application/json',
-            headers=self.get_auth_headers(self.admin_token)
+            content_type='application/json'
         )
         
         self.assertEqual(response.status_code, 404)
@@ -237,10 +218,7 @@ class TestPrestationsAPI(BaseTest):
         self.save_to_db(prestation)
         prestation_id = prestation.id
         
-        response = self.client.delete(
-            f'/prestations/{prestation_id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.delete(f'/prestations/{prestation_id}')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
@@ -255,10 +233,7 @@ class TestPrestationsAPI(BaseTest):
         """Test suppression prestation inexistante"""
         fake_id = '00000000-0000-0000-0000-000000000000'
         
-        response = self.client.delete(
-            f'/prestations/{fake_id}',
-            headers=self.get_auth_headers(self.admin_token)
-        )
+        response = self.client.delete(f'/prestations/{fake_id}')
         
         self.assertEqual(response.status_code, 404)
 
