@@ -54,7 +54,7 @@ app/
 	|	 |__v1/                                
 	|	      ├── __init__.py
 	|	      ├── appointments.py
-	|	  	  |__ auth.py
+	|	  	  |__ authentication.py
 	|	  	  |__ prestations.py
 	|	      ├── reviews.py
 	|	      |__ users.py                 
@@ -87,6 +87,17 @@ app/
 	|__ tests/  
 	|	|__ __init__.py
 	|	|__ base_test.py
+	|	|__ api/
+	|	|	|__ __init__.py
+	|	|	|__ test_authentication_api.py
+	|	|	|__ test_prestations_api.py
+	|	|	|__ test_prestations_integration.py
+	|	|	|__ test_prestations_security.py
+	|	|	|__ test_prestations_unit.py
+	|	|	|__ test_users_api.py
+	|	|	|__ test_users_integration.py
+	|	|	|__ test_users_security.py
+	|	|	|__ test_users_unit.py
 	|	|__ database/
 	|	|	|__ __init__.py
 	|	|	|__ test_all_entities_relationships.py
@@ -113,7 +124,9 @@ app/
 	|		|__ __init__.py
 	|		|__ test_AppointmentService_integration.py
 	|		|__ test_AppointmentService.py
+	|		|__ test_AuthenticationService_admin_reset.py
 	|		|__ test_AuthenticationService_integration.py
+	|		|__ test_AuthenticationService_jwt.py
 	|		|__ test_AuthenticationService.py
 	|		|__ test_facade.py
 	|		|__ test_mail_service.py
@@ -121,8 +134,10 @@ app/
 	|		|__ test_PrestationService.py
 	|		|__ test_ReviewService_integration.py
 	|		|__ test_ReviewService.py
+	|		|__ test_UserService_admin_validation.py
 	|		|__ test_UserService_integration.py
 	|		|__ test_UserService.py
+	|		|__ test_utils_password_validation.py
 	|__ __init__.py                            
 	├── config.py
 	├── requirements.txt

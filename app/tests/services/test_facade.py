@@ -1,154 +1,555 @@
+#!/usr/bin/env python3
+
 import unittest
-from unittest.mock import Mock, patch
+from app.tests.base_test import BaseTest
 from app.services.facade import Facade
+from app.models.user import User
+from app.models.prestation import Prestation
 
 
-class TestFacade(unittest.TestCase):
-    """Tests pour la classe Facade"""
+class TestFacadeSimple(BaseTest):
+    """Tests pour la classe Facade sans mocks - utilise la vraie DB"""
 
     def setUp(self):
+        super().setUp()
         self.facade = Facade()
-        
-        # Mock tous les services
-        self.facade.user_service = Mock()
-        self.facade.review_service = Mock()
-        self.facade.appointment_service = Mock()
-        self.facade.prestation_service = Mock()
-        self.facade.authentication_service = Mock()
-
-    # Tests User operations
-    def test_create_user(self):
-        """Test délégation create_user"""
-        mock_user = Mock()
-        self.facade.user_service.create_user.return_value = mock_user
-        
-        result = self.facade.create_user(first_name="John", last_name="Doe")
-        
-        self.assertEqual(result, mock_user)
-        self.facade.user_service.create_user.assert_called_once_with(first_name="John", last_name="Doe")
-
-    def test_get_user_by_id(self):
-        """Test délégation get_user_by_id"""
-        mock_user = Mock()
-        self.facade.user_service.get_user_by_id.return_value = mock_user
-        
-        result = self.facade.get_user_by_id("user-id")
-        
-        self.assertEqual(result, mock_user)
-        self.facade.user_service.get_user_by_id.assert_called_once_with("user-id")
-
-    def test_update_user(self):
-        """Test délégation update_user"""
-        mock_user = Mock()
-        self.facade.user_service.update_user.return_value = mock_user
-        
-        result = self.facade.update_user("user-id", first_name="Jane")
-        
-        self.assertEqual(result, mock_user)
-        self.facade.user_service.update_user.assert_called_once_with("user-id", first_name="Jane")
-
-    def test_delete_user(self):
-        """Test délégation delete_user"""
-        self.facade.user_service.delete_user.return_value = True
-        
-        result = self.facade.delete_user("user-id")
-        
-        self.assertTrue(result)
-        self.facade.user_service.delete_user.assert_called_once_with("user-id")
-
-    # Tests Authentication operations
-    def test_login(self):
-        """Test délégation login"""
-        mock_user = Mock()
-        self.facade.authentication_service.login.return_value = mock_user
-        
-        result = self.facade.login("test@example.com", "password")
-        
-        self.assertEqual(result, mock_user)
-        self.facade.authentication_service.login.assert_called_once_with("test@example.com", "password")
-
-    def test_change_password(self):
-        """Test délégation change_password"""
-        mock_user = Mock()
-        self.facade.authentication_service.change_password.return_value = mock_user
-        
-        result = self.facade.change_password("user-id", "old", "new")
-        
-        self.assertEqual(result, mock_user)
-        self.facade.authentication_service.change_password.assert_called_once_with("user-id", "old", "new")
-
-    # Tests Review operations
-    def test_create_review(self):
-        """Test délégation create_review"""
-        mock_review = Mock()
-        self.facade.review_service.create_review.return_value = mock_review
-        
-        result = self.facade.create_review(rating=5, text="Great")
-        
-        self.assertEqual(result, mock_review)
-        self.facade.review_service.create_review.assert_called_once_with(rating=5, text="Great")
-
-    def test_get_review_by_prestation(self):
-        """Test délégation get_review_by_prestation"""
-        mock_reviews = [Mock(), Mock()]
-        self.facade.review_service.get_review_by_prestation.return_value = mock_reviews
-        
-        result = self.facade.get_review_by_prestation("prestation-id")
-        
-        self.assertEqual(result, mock_reviews)
-        self.facade.review_service.get_review_by_prestation.assert_called_once_with("prestation-id")
-
-    # Tests Appointment operations
-    def test_create_appointment(self):
-        """Test délégation create_appointment"""
-        mock_appointment = Mock()
-        self.facade.appointment_service.create_appointment.return_value = mock_appointment
-        
-        result = self.facade.create_appointment(message="Test", user_id="user-id")
-        
-        self.assertEqual(result, mock_appointment)
-        self.facade.appointment_service.create_appointment.assert_called_once_with(message="Test", user_id="user-id")
-
-    def test_get_appointment_by_user_and_prestation(self):
-        """Test délégation get_appointment_by_user_and_prestation"""
-        mock_appointments = [Mock()]
-        self.facade.appointment_service.get_appointment_by_user_and_prestation.return_value = mock_appointments
-        
-        result = self.facade.get_appointment_by_user_and_prestation("user-id", "prestation-id")
-        
-        self.assertEqual(result, mock_appointments)
-        self.facade.appointment_service.get_appointment_by_user_and_prestation.assert_called_once_with("user-id", "prestation-id")
-
-    # Tests Prestation operations
-    def test_create_prestation(self):
-        """Test délégation create_prestation"""
-        mock_prestation = Mock()
-        self.facade.prestation_service.create_prestation.return_value = mock_prestation
-        
-        result = self.facade.create_prestation(name="Massage")
-        
-        self.assertEqual(result, mock_prestation)
-        self.facade.prestation_service.create_prestation.assert_called_once_with(name="Massage")
-
-    def test_get_prestation_by_name(self):
-        """Test délégation get_prestation_by_name"""
-        mock_prestation = Mock()
-        self.facade.prestation_service.get_prestation_by_name.return_value = mock_prestation
-        
-        result = self.facade.get_prestation_by_name("Massage")
-        
-        self.assertEqual(result, mock_prestation)
-        self.facade.prestation_service.get_prestation_by_name.assert_called_once_with("Massage")
 
     def test_facade_initialization(self):
         """Test que la façade initialise tous les services"""
-        new_facade = Facade()
+        self.assertIsNotNone(self.facade.user_service)
+        self.assertIsNotNone(self.facade.review_service)
+        self.assertIsNotNone(self.facade.appointment_service)
+        self.assertIsNotNone(self.facade.prestation_service)
+        self.assertIsNotNone(self.facade.authentication_service)
+
+    def test_create_user_delegation(self):
+        """Test délégation create_user"""
+        result = self.facade.create_user(
+            first_name="John",
+            last_name="Doe",
+            email="john@example.com",
+            password="Password123!"
+        )
         
-        self.assertIsNotNone(new_facade.user_service)
-        self.assertIsNotNone(new_facade.review_service)
-        self.assertIsNotNone(new_facade.appointment_service)
-        self.assertIsNotNone(new_facade.prestation_service)
-        self.assertIsNotNone(new_facade.authentication_service)
+        self.assertIsNotNone(result)
+        self.assertEqual(result.first_name, "John")
+        self.assertEqual(result.email, "john@example.com")
+
+    def test_create_prestation_delegation(self):
+        """Test délégation create_prestation"""
+        result = self.facade.create_prestation(name="Massage Relaxant")
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.name, "Massage Relaxant")
+
+    def test_login_delegation(self):
+        """Test délégation login"""
+        # Créer un utilisateur d'abord
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        
+        # Tester le login
+        token = self.facade.login("test@example.com", "Password123!")
+        
+        self.assertIsNotNone(token)
+        self.assertIsInstance(token, str)
+
+    def test_get_user_by_id_delegation(self):
+        """Test délégation get_user_by_id"""
+        # Créer un utilisateur d'abord
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        
+        # Récupérer par ID
+        result = self.facade.get_user_by_id(user.id)
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.id, user.id)
+        self.assertEqual(result.email, "test@example.com")
+
+    def test_get_prestation_by_name_delegation(self):
+        """Test délégation get_prestation_by_name"""
+        # Créer une prestation d'abord
+        prestation = self.facade.create_prestation(name="Massage Thérapeutique")
+        
+        # Récupérer par nom
+        result = self.facade.get_prestation_by_name("Massage Thérapeutique")
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.name, "Massage Thérapeutique")
+
+    def test_update_user_delegation(self):
+        """Test délégation update_user"""
+        # Créer un utilisateur d'abord
+        user = self.facade.create_user(
+            first_name="John",
+            last_name="Doe",
+            email="john@example.com",
+            password="Password123!"
+        )
+        
+        # Mettre à jour
+        result = self.facade.update_user(user.id, first_name="Jane")
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.first_name, "Jane")
+        self.assertEqual(result.last_name, "Doe")  # Inchangé
+
+    def test_delete_user_delegation(self):
+        """Test délégation delete_user"""
+        # Créer un utilisateur d'abord
+        user = self.facade.create_user(
+            first_name="ToDelete",
+            last_name="User",
+            email="delete@example.com",
+            password="Password123!"
+        )
+        
+        # Supprimer
+        result = self.facade.delete_user(user.id)
+        
+        self.assertTrue(result)
+        
+        # Vérifier que l'utilisateur n'existe plus
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
+            self.facade.get_user_by_id(user.id)
+
+    def test_get_user_by_email_delegation(self):
+        """Test délégation get_user_by_email"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        
+        result = self.facade.get_user_by_email("test@example.com")
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.email, "test@example.com")
+
+    def test_get_all_users_delegation(self):
+        """Test délégation get_all_users"""
+        user1 = self.facade.create_user(
+            first_name="Jean",
+            last_name="Dupont",
+            email="user1@example.com",
+            password="Password123!"
+        )
+        user2 = self.facade.create_user(
+            first_name="Marie",
+            last_name="Martin",
+            email="user2@example.com",
+            password="Password123!"
+        )
+        
+        result = self.facade.get_all_users()
+        
+        self.assertEqual(len(result), 2)
+        emails = [u.email for u in result]
+        self.assertIn("user1@example.com", emails)
+        self.assertIn("user2@example.com", emails)
+
+    def test_change_password_delegation(self):
+        """Test délégation change_password"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        
+        result = self.facade.change_password(user.id, "Password123!", "NewPassword456!")
+        
+        self.assertIsNotNone(result)
+        # Vérifier que le nouveau mot de passe fonctionne
+        token = self.facade.login("test@example.com", "NewPassword456!")
+        self.assertIsNotNone(token)
+
+    def test_admin_reset_password_delegation(self):
+        """Test délégation admin_reset_password"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        
+        result = self.facade.admin_reset_password(user.id, "AdminReset456!")
+        
+        self.assertIsNotNone(result)
+        # Vérifier que le nouveau mot de passe fonctionne
+        token = self.facade.login("test@example.com", "AdminReset456!")
+        self.assertIsNotNone(token)
+
+    def test_get_prestation_by_id_delegation(self):
+        """Test délégation get_prestation_by_id"""
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        
+        result = self.facade.get_prestation_by_id(prestation.id)
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.id, prestation.id)
+        self.assertEqual(result.name, "Test Prestation")
+
+    def test_get_all_prestations_delegation(self):
+        """Test délégation get_all_prestations"""
+        prestation1 = self.facade.create_prestation(name="Massage Relaxant")
+        prestation2 = self.facade.create_prestation(name="Massage Thérapeutique")
+        
+        result = self.facade.get_all_prestations()
+        
+        self.assertEqual(len(result), 2)
+        names = [p.name for p in result]
+        self.assertIn("Massage Relaxant", names)
+        self.assertIn("Massage Thérapeutique", names)
+
+    def test_update_prestation_delegation(self):
+        """Test délégation update_prestation"""
+        prestation = self.facade.create_prestation(name="Old Name")
+        
+        result = self.facade.update_prestation(prestation.id, name="New Name")
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.name, "New Name")
+
+    def test_delete_prestation_delegation(self):
+        """Test délégation delete_prestation"""
+        prestation = self.facade.create_prestation(name="To Delete")
+        
+        result = self.facade.delete_prestation(prestation.id)
+        
+        self.assertTrue(result)
+        
+        # Vérifier que la prestation n'existe plus
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
+            self.facade.get_prestation_by_id(prestation.id)
+
+    def test_create_appointment_delegation(self):
+        """Test délégation create_appointment"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        
+        result = self.facade.create_appointment(
+            message="Test appointment",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.message, "Test appointment")
+        self.assertEqual(result.user_id, user.id)
+        self.assertEqual(result.prestation_id, prestation.id)
+
+    def test_get_appointment_by_id_delegation(self):
+        """Test délégation get_appointment_by_id"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        appointment = self.facade.create_appointment(
+            message="Test appointment",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_appointment_by_id(appointment.id)
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.id, appointment.id)
+        self.assertEqual(result.message, "Test appointment")
+
+    def test_get_all_appointments_delegation(self):
+        """Test délégation get_all_appointments"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        appointment1 = self.facade.create_appointment(
+            message="Appointment 1",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        appointment2 = self.facade.create_appointment(
+            message="Appointment 2",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_all_appointments()
+        
+        self.assertEqual(len(result), 2)
+        messages = [a.message for a in result]
+        self.assertIn("Appointment 1", messages)
+        self.assertIn("Appointment 2", messages)
+
+    def test_get_appointment_by_prestation_delegation(self):
+        """Test délégation get_appointment_by_prestation"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        appointment = self.facade.create_appointment(
+            message="Test appointment",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_appointment_by_prestation(prestation.id)
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].id, appointment.id)
+
+    def test_get_appointment_by_user_delegation(self):
+        """Test délégation get_appointment_by_user"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        appointment = self.facade.create_appointment(
+            message="Test appointment",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_appointment_by_user(user.id)
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].id, appointment.id)
+
+    def test_get_appointment_by_user_and_prestation_delegation(self):
+        """Test délégation get_appointment_by_user_and_prestation"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        appointment = self.facade.create_appointment(
+            message="Test appointment",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_appointment_by_user_and_prestation(user.id, prestation.id)
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].id, appointment.id)
+
+    def test_create_review_delegation(self):
+        """Test délégation create_review"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        
+        result = self.facade.create_review(
+            rating=5,
+            text="Excellent service",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.rating, 5)
+        self.assertEqual(result.text, "Excellent service")
+        self.assertEqual(result.user_id, user.id)
+        self.assertEqual(result.prestation_id, prestation.id)
+
+    def test_get_review_by_id_delegation(self):
+        """Test délégation get_review_by_id"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        review = self.facade.create_review(
+            rating=4,
+            text="Good service",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_review_by_id(review.id)
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.id, review.id)
+        self.assertEqual(result.rating, 4)
+        self.assertEqual(result.text, "Good service")
+
+    def test_get_all_reviews_delegation(self):
+        """Test délégation get_all_reviews"""
+        user = self.facade.create_user(
+            first_name="Jean",
+            last_name="Dupont",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation1 = self.facade.create_prestation(name="Massage Relaxant")
+        prestation2 = self.facade.create_prestation(name="Massage Thérapeutique")
+        review1 = self.facade.create_review(
+            rating=5,
+            text="Review 1",
+            user_id=user.id,
+            prestation_id=prestation1.id
+        )
+        review2 = self.facade.create_review(
+            rating=4,
+            text="Review 2",
+            user_id=user.id,
+            prestation_id=prestation2.id
+        )
+        
+        result = self.facade.get_all_reviews()
+        
+        self.assertEqual(len(result), 2)
+        texts = [r.text for r in result]
+        self.assertIn("Review 1", texts)
+        self.assertIn("Review 2", texts)
+
+    def test_get_review_by_prestation_delegation(self):
+        """Test délégation get_review_by_prestation"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        review = self.facade.create_review(
+            rating=5,
+            text="Great service",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_review_by_prestation(prestation.id)
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].id, review.id)
+
+    def test_get_review_by_user_delegation(self):
+        """Test délégation get_review_by_user"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        review = self.facade.create_review(
+            rating=5,
+            text="Great service",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_review_by_user(user.id)
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].id, review.id)
+
+    def test_get_review_by_user_and_prestation_delegation(self):
+        """Test délégation get_review_by_user_and_prestation"""
+        user = self.facade.create_user(
+            first_name="Jean",
+            last_name="Dupont",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Massage Relaxant")
+        review = self.facade.create_review(
+            rating=5,
+            text="Great service",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.get_review_by_user_and_prestation(user.id, prestation.id)
+        
+        # Cette méthode retourne un seul objet Review, pas une liste
+        self.assertIsNotNone(result)
+        self.assertEqual(result.id, review.id)
+
+    def test_update_review_delegation(self):
+        """Test délégation update_review"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        review = self.facade.create_review(
+            rating=4,
+            text="Good service",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.update_review(review.id, rating=5, text="Excellent service")
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.rating, 5)
+        self.assertEqual(result.text, "Excellent service")
+
+    def test_delete_review_delegation(self):
+        """Test délégation delete_review"""
+        user = self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        prestation = self.facade.create_prestation(name="Test Prestation")
+        review = self.facade.create_review(
+            rating=5,
+            text="To delete",
+            user_id=user.id,
+            prestation_id=prestation.id
+        )
+        
+        result = self.facade.delete_review(review.id)
+        
+        self.assertTrue(result)
+        
+        # Vérifier que la review n'existe plus
+        from app.utils import CustomError
+        with self.assertRaises(CustomError):
+            self.facade.get_review_by_id(review.id)
 
 
 if __name__ == '__main__':

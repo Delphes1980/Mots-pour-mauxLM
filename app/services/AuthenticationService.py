@@ -80,3 +80,35 @@ class AuthenticationService:
         updated_user = self.user_repository.update(user_id, password=new_password)
 
         return updated_user
+
+    def admin_reset_password(self, user_id, new_password):
+        """Reset user password by admin
+        
+        Args:
+            user_id (uuid): The ID of the user
+            new_password (str): The user's new password
+            
+        Returns:
+            The updated User object
+            
+        Raises:
+            CustomError: if the data is invalid(400), if the user is not found(404)
+        """
+        try:
+            validate_entity_id(user_id, 'user_id')
+        except (ValueError, TypeError) as e:
+            raise CustomError(str(e), 400)
+
+        # Récupérer l'utilisateur
+        user = self.user_repository.get_by_id(user_id)
+        if not user:
+            raise CustomError("User not found", 404)
+
+        try:
+            validate_password(new_password)
+        except ValueError as e:
+            raise CustomError(str(e), 400)
+
+        # Mettre à jour le mot de passe
+        updated_user = self.user_repository.update(user_id, password=new_password)
+        return updated_user

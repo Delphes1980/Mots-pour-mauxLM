@@ -28,33 +28,33 @@ class TestUser(BaseTest):
 
     def test_empty_string_first_name(self):
         with self.assertRaises(ValueError) as e:
-            User("", "Doe", "john.doe@example.com", "password")
+            User("", "Doe", "john.doe@example.com", "Password123!")
         self.assertIn("Invalid first_name", str(e.exception))
 
     def test_long_first_name(self):
         with self.assertRaises(ValueError) as e:
             User("JohnDuudly do whatever somethin tsknslkslkskind kdi",
-                 "Doe", "email@email.com", "password")
+                 "Doe", "email@email.com", "Password123!")
         self.assertIn("Invalid first_name", str(e.exception))
 
     def test_name_not_a_string(self):
         with self.assertRaises(TypeError) as e:
-            User(23, "Doe", "email@email.com", "password")
+            User(23, "Doe", "email@email.com", "Password123!")
         self.assertIn("Invalid first_name", str(e.exception))
 
     def test_name_None(self):
         with self.assertRaises(ValueError) as e:
-            User(None, "Doe", "email@email.com", "password")
+            User(None, "Doe", "email@email.com", "Password123!")
         self.assertIn("first_name", str(e.exception))
 
     def test_missing_last_name(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "", "john.doe@example.com", "password")
+            User("John", "", "john.doe@example.com", "Password123!")
         self.assertIn("Invalid last_name", str(e.exception))
 
     def test_empty_string_last_name(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "", "john.doe@example.com", "password")
+            User("John", "", "john.doe@example.com", "Password123!")
         self.assertIn("Invalid last_name", str(e.exception))
 
     def test_long_last_name_but_ok(self):
@@ -69,12 +69,12 @@ class TestUser(BaseTest):
 
     def test_last_name_not_a_string(self):
         with self.assertRaises(TypeError) as e:
-            User("John", 42, "email@email.com", "password")
+            User("John", 42, "email@email.com", "Password123!")
         self.assertIn("Invalid last_name", str(e.exception))
 
     def test_last_name_None(self):
         with self.assertRaises(ValueError) as e:
-            User("Jon", None, "email@email.com", "password")
+            User("Jon", None, "email@email.com", "Password123!")
         self.assertIn("last_name", str(e.exception))
 
     def test_name_with_accents_and_special_characters(self):
@@ -107,28 +107,28 @@ class TestUser(BaseTest):
 
     def test_user_creation_bad_email(self):
         with self.assertRaises(ValueError) as cm:
-            User("Jane", "Doe", "invalid-email", "password")
+            User("Jane", "Doe", "invalid-email", "Password123!")
         self.assertIn("Invalid email", str(cm.exception))
 
     def test_invalid_email_no_at(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "johndoeexample.com", "password")
+            User("John", "Doe", "johndoeexample.com", "Password123!")
         self.assertIn("Invalid email", str(e.exception))
 
     def test_invalid_email_empty(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "", "password")
+            User("John", "Doe", "", "Password123!")
         self.assertIn("Invalid email", str(e.exception))
 
     def test_invalid_email_None(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", None, "password")
+            User("John", "Doe", None, "Password123!")
         self.assertIn("email", str(e.exception))
 
     # Test de mots de passe
     def test_password_too_short(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", "1234567")  # < 8 chars
+            User("John", "Doe", "john@example.com", "Pass1!")  # < 8 chars
         self.assertIn("at least 8 characters", str(e.exception))
 
     def test_password_no_digit(self):
@@ -136,14 +136,56 @@ class TestUser(BaseTest):
             User("John", "Doe", "john@example.com", "Password!")
         self.assertIn("at least one digit", str(e.exception))
 
+    def test_password_invalid_variations(self):
+        """Test différentes variations de mots de passe invalides"""
+        invalid_passwords = [
+            "weak",  # Trop court, pas de majuscule, pas de caractère spécial
+            "WeakPassword",  # Pas de chiffre, pas de caractère spécial
+            "weakpassword123",  # Pas de majuscule, pas de caractère spécial
+            "WeakPassword123",  # Pas de caractère spécial
+            "Weak12!",  # Trop court (7 caractères)
+            "password123!",  # Pas de majuscule
+            "PASSWORD123!",  # Pas de minuscule
+        ]
+        
+        for password in invalid_passwords:
+            with self.assertRaises(ValueError):
+                User("John", "Doe", "john@example.com", password)
+
     def test_password_no_special_char(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "john@example.com", "Password123")
         self.assertIn("special character", str(e.exception))
 
+    def test_password_no_uppercase(self):
+        with self.assertRaises(ValueError) as e:
+            User("John", "Doe", "john@example.com", "password123!")
+        self.assertIn("uppercase", str(e.exception))
+
+    def test_password_no_lowercase(self):
+        with self.assertRaises(ValueError) as e:
+            User("John", "Doe", "john@example.com", "PASSWORD123!")
+        self.assertIn("lowercase", str(e.exception))
+
     def test_valid_password(self):
         user = User("John", "Doe", "john@example.com", "Password123!")
         self.assertIsNotNone(user.password)
+
+    def test_valid_password_variations(self):
+        """Test différentes variations de mots de passe valides"""
+        valid_passwords = [
+            "Password123!",
+            "MySecure456@",
+            "Complex789#Pass",
+            "Minimum8!",  # Exactement 8 caractères
+            "VeryLongPasswordWithAllRequirements123!@#",
+        ]
+        
+        for password in valid_passwords:
+            user = User("John", "Doe", "john@example.com", password)
+            self.assertIsNotNone(user.password)
+            # Vérifier que le mot de passe est hashé
+            self.assertNotEqual(user.password, password)
 
     # Tests de hachage et vérification du mot de passe
     def test_password_is_hashed(self):

@@ -3,6 +3,8 @@ import inspect
 from validate_email_address import validate_email
 import re
 from app import bcrypt
+import string
+import secrets
 
 
 """
@@ -35,6 +37,10 @@ Functions:
         Validates the email address.
     validate_password(plain_passwrod):
         Validates the password.
+    hash_password(validated_password):
+        Hash password before storing it
+    verify_password(hashed_password, plain_password):
+        Verify if the provided password matches the hashed password
     validate_phone_number(phone_number):
         Validates the phone number format
     address_validation(address):
@@ -45,10 +51,8 @@ Functions:
         Validates the is_admin field
     validate_entity_id(entity_id, entity_name):
         Validates the entity ID format
-    hash_password(validated_password):
-        Hash password before storing it
-    verify_password(hashed_password, plain_password):
-        Verify if the provided password matches the hashed password
+    generate_temp_password(length=12, max_attempts=20):
+        Generates a temporary password
 """
 
 
@@ -209,6 +213,10 @@ def validate_password(plain_password):
             raise ValueError("Invalid password: password must be at least 8 characters")
         if not re.search(r'\d', plain_password):
             raise ValueError("Invalid password: password must contain at least one digit")
+        if not re.search(r'[A-Z]', plain_password):
+             raise ValueError("Invalid password: password must contain at least one uppercase lettre")
+        if not re.search(r'[a-z]', plain_password):
+            raise ValueError("Invalid password: password must contain at least one lowercase letter")
         special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
         if not re.search(special_chars, plain_password):
             raise ValueError("Invalid password: password must contain at least one special character")
@@ -290,6 +298,24 @@ def validate_entity_id(entity_id: str, entity_name: str):
     if not is_valid_uuid4(entity_id):
         raise ValueError(f"Format d'identifiant {entity_name} invalide")
     return entity_id
+
+def generate_temp_password(length=12, max_attempts=20):
+    """Génère un mot de passe temporaire sécurisé et validé après reset du mot de passe par l'admin"""
+    alphabet = (string.ascii_letters + string.digits + "!@#$%^&*()_+=-{}[]|\\:;\"<,>/?`~")
+
+    for _ in range(max_attempts):
+        temp_password = ''.join(secrets.choice(alphabet) for _ in range(length))
+        try:
+            if (any(c.isupper() for c in temp_password) and
+                any(c.islower() for c in temp_password) and
+                any(c.isdigit() for c in temp_password) and
+                any(c in "!@#$%^&*()_+=-{}[]|\\:;\"<,>/?`~" for c in temp_password)):
+                validate_password(temp_password)
+                return temp_password
+        except ValueError:
+            continue
+
+    raise RuntimeError("Impossible de générer un mot de passe sécurisé après plusieurs tentatives")
 
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP

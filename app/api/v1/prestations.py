@@ -32,7 +32,7 @@ error_model = api.model('Error', {
 
 # Définir le modèle de données pour la réponse de succès
 msg_model = api.model('Message', {
-    'message': fields.String(description='Message')
+    'message': fields.String(description='Message de succès')
 })
 
 @api.route('/')
@@ -71,9 +71,9 @@ class PrestationList(Resource):
 
 
     @api.doc('Get all prestations')
-    @api.marshal_list_with(prestation_response_model, code=_http.HTTPStatus.OK, description='List of prestations retrived successfully')
+    @api.marshal_list_with(prestation_response_model, code=_http.HTTPStatus.OK, description='List of prestations retrieved successfully')
     @jwt_required()
-    @api.response(200, 'Liste des prestations récupérées avec succès', prestation_response_model)
+    @api.response(200, 'Liste des prestations récupérée avec succès', prestation_response_model)
     @api.response(500, 'Erreur interne du serveur', error_model)
     @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
     @api.response(401, 'Vous devez vous connecter', error_model)
@@ -100,6 +100,9 @@ class PrestationSearch(Resource):
     @jwt_required()
     @api.response(200, 'Prestation récupérée avec succès', prestation_response_model)
     @api.response(404, 'Prestation non trouvée', error_model)
+    @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
     def get(self):
         """Récupérer une prestation par son nom"""
         name = request.args.get('name')
@@ -158,6 +161,7 @@ class Prestation(Resource):
     @api.response(400, 'Données invalides', error_model)
     @api.response(401, 'Vous devez vous connecter', error_model)
     @api.response(404, 'Prestation non trouvée', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
     def put(self, prestation_id):
         """Mettre à jour une prestation"""
         current_user = get_jwt()
