@@ -39,6 +39,9 @@ class Facade:
     def change_password(self, user_id, old_password, new_password):
         return self.authentication_service.change_password(user_id, old_password, new_password)
 
+    def admin_reset_password(self, user_id, new_password):
+        return self.authentication_service.admin_reset_password(user_id, new_password)
+
     # Review CRUD operations
     def create_review(self, **kwargs):
         return self.review_service.create_review(**kwargs)
