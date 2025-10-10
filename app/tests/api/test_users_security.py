@@ -10,6 +10,9 @@ from app.tests.base_test import BaseTest
 from app.api.v1.users import api as users_api
 from app.api.v1.authentication import api as auth_api
 from app.models.user import User
+from app.models.prestation import Prestation
+from app.models.review import Review
+from app.models.appointment import Appointment
 
 
 class TestUsersSecurity(BaseTest):
@@ -43,6 +46,16 @@ class TestUsersSecurity(BaseTest):
         )
         self.save_to_db(self.admin_user, self.regular_user)
     
+    def test_base_is_clean(self):
+        users = User.query.all()
+        prestations = Prestation.query.all()
+        reviews = Review.query.all()
+        appointments = Appointment.query.all()
+        self.assertEqual(len(users), 0)
+        self.assertEqual(len(prestations), 0)
+        self.assertEqual(len(reviews), 0)
+        self.assertEqual(len(appointments), 0)
+
     def login_as_admin(self):
         """Se connecter en tant qu'admin et garder les cookies"""
         credentials = {

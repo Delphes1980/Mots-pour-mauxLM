@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields, _http
 from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, generate_temp_password)
+from app.utils import (compare_data_and_model, CustomError, generate_temp_password, validate_entity_id)
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from flask import request
 from app.services.mail_service import send_password_reset_notification
@@ -98,6 +98,7 @@ class UserList(Resource):
         try:
             users = facade.get_all_users()
             return users, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -129,13 +130,14 @@ class UserSearch(Resource):
         try:
             user = facade.get_user_by_email(email)
             return user, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
             api.abort(400, error=str(e))
 
 
-@api.route('/<string:user_id>')
+@api.route('/<user_id>')
 class User(Resource):
     @api.doc('Get user by ID')
     @api.marshal_with(user_response_model, code=_http.HTTPStatus.OK, description='User retrieved successfully')
@@ -154,10 +156,14 @@ class User(Resource):
             api.abort(403, error='Vous n\'avez pas les droits administrateur')
 
         try:
+            validate_entity_id(user_id, 'user_id')
             user = facade.get_user_by_id(user_id)
             return user, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
+        except ValueError as e:
+            api.abort(400, error=str(e))
         except Exception as e:
             api.abort(400, error=str(e))
 
@@ -178,6 +184,7 @@ class User(Resource):
 
         try:
             compare_data_and_model(user_data, user_update_model)
+            validate_entity_id(user_id, 'user_id')
 
             current_user = get_jwt_identity()
             is_admin = get_jwt().get('is_admin', False)
@@ -202,6 +209,8 @@ class User(Resource):
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
+        except ValueError as e:
+            api.abort(400, error=str(e))
         except Exception as e:
             api.abort(400, error=str(e))
 
@@ -223,15 +232,19 @@ class User(Resource):
             api.abort(403, error='Vous n\'avez pas les droits administrateur')
 
         try:
+            validate_entity_id(user_id, 'user_id')
             facade.delete_user(user_id)
             return {'message': 'Utilisateur supprimé avec succès'}, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
+        except ValueError as e:
+            api.abort(400, error=str(e))
         except Exception as e:
             api.abort(400, error=str(e))
 
 
-@api.route('/<string:user_id>/reset-password')
+@api.route('/<user_id>/reset-password')
 class AdminResetPassword(Resource):
     @api.doc('Admin reset user password')
     @api.marshal_with(msg_model, code=_http.HTTPStatus.OK, description='Password reset successfully')

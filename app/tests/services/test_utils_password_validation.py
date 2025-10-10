@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import unittest
+from app.tests.base_test import BaseTest
+
 from app.utils import validate_password, hash_password, verify_password, generate_temp_password
 
 
-class TestPasswordValidation(unittest.TestCase):
+class TestPasswordValidation(BaseTest):
     """Tests pour la validation des mots de passe avec nouvelles exigences"""
 
     def test_validate_password_success(self):

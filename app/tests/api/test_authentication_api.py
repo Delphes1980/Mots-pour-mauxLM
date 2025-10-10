@@ -7,6 +7,9 @@ from flask_jwt_extended import create_access_token
 from app.tests.base_test import BaseTest
 from app.api.v1.authentication import api as auth_api
 from app.models.user import User
+from app.models.prestation import Prestation
+from app.models.review import Review
+from app.models.appointment import Appointment
 from app.utils import verify_password
 
 
@@ -40,6 +43,24 @@ class TestAuthenticationAPI(BaseTest):
         )
         self.save_to_db(self.test_user, self.admin_user)
     
+    def test_base_is_clean(self):
+        # Faire un nettoyage complet avant de tester
+        self.db.session.rollback()
+        for model in [Appointment, Review, Prestation, User]:
+            self.db.session.query(model).delete()
+        self.db.session.commit()
+        
+        # Maintenant tester que la base est vraiment vide
+        users = User.query.all()
+        prestations = Prestation.query.all()
+        reviews = Review.query.all()
+        appointments = Appointment.query.all()
+        self.assertEqual(len(users), 0)
+        self.assertEqual(len(prestations), 0)
+        self.assertEqual(len(reviews), 0)
+        self.assertEqual(len(appointments), 0)
+
+
     def test_login_success_regular_user(self):
         """Test connexion réussie utilisateur normal"""
         credentials = {
