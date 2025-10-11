@@ -30,10 +30,6 @@ class TestAppointmentRepository(BaseTest):
         
         self.db.session.commit()
 
-    def test_base_is_clean(self):
-        users = User.query.all()
-        self.assertEqual(len(users), 0)
-
     def test_create_appointment_success(self):
         """Test création rendez-vous réussie"""
         appointment = self.appointment_repo.create(

@@ -38,17 +38,11 @@ class DevelopmentConfig(Config):
     BCRYPT_LOG_ROUNDS = 4  # Use fewer rounds in development for speed
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'connect_args': {'client_encoding': 'utf8'}
-    }
     JWT_COOKIE_SECURE = False # Sécurité par CSRF désactivée
 
 class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'connect_args': {'client_encoding': 'utf8'}
-    }
     JWT_COOKIE_SECURE = True  # Sécurité CSRF activée
 
 class TestingConfig(Config):
