@@ -16,6 +16,7 @@ from app.models.appointment import Appointment
 class TestReviewsAPI(BaseTest):
     """Tests API reviews - Tests de bout en bout avec vraie DB"""
     def test_base_is_clean(self):
+        self.tearDown()
         users = User.query.all()
         prestations = Prestation.query.all()
         reviews = Review.query.all()
@@ -24,6 +25,7 @@ class TestReviewsAPI(BaseTest):
         self.assertEqual(len(prestations), 0)
         self.assertEqual(len(reviews), 0)
         self.assertEqual(len(appointments), 0)
+        self.setUp()
 
     def setUp(self):
         super().setUp()

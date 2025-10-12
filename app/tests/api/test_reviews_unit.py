@@ -16,6 +16,18 @@ from app.models.appointment import Appointment
 class TestReviewsUnit(BaseTest):
     """Tests unitaires pour l'API reviews - Tests isolés de fonctionnalités spécifiques"""
     
+    def test_base_is_clean(self):
+        self.tearDown()
+        users = User.query.all()
+        prestations = Prestation.query.all()
+        reviews = Review.query.all()
+        appointments = Appointment.query.all()
+        self.assertEqual(len(users), 0)
+        self.assertEqual(len(prestations), 0)
+        self.assertEqual(len(reviews), 0)
+        self.assertEqual(len(appointments), 0)
+        self.setUp()
+
     def setUp(self):
         super().setUp()
         
@@ -50,16 +62,6 @@ class TestReviewsUnit(BaseTest):
         
         # Se connecter par défaut en tant qu'utilisateur régulier
         self.login_as_regular_user()
-    
-    def test_base_is_clean(self):
-        users = User.query.all()
-        prestations = Prestation.query.all()
-        reviews = Review.query.all()
-        appointments = Appointment.query.all()
-        self.assertEqual(len(users), 0)
-        self.assertEqual(len(prestations), 0)
-        self.assertEqual(len(reviews), 0)
-        self.assertEqual(len(appointments), 0)
 
     def login_as_regular_user(self):
         """Se connecter en tant qu'utilisateur régulier et garder les cookies"""

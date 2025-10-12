@@ -16,6 +16,18 @@ from app.models.appointment import Appointment
 class TestReviewsSecurity(BaseTest):
     """Tests de sécurité pour l'API reviews"""
     
+    def test_base_is_clean(self):
+        self.tearDown()
+        users = User.query.all()
+        prestations = Prestation.query.all()
+        reviews = Review.query.all()
+        appointments = Appointment.query.all()
+        self.assertEqual(len(users), 0)
+        self.assertEqual(len(prestations), 0)
+        self.assertEqual(len(reviews), 0)
+        self.assertEqual(len(appointments), 0)
+        self.setUp()
+
     def setUp(self):
         super().setUp()
         
@@ -54,16 +66,6 @@ class TestReviewsSecurity(BaseTest):
         # Créer prestation
         self.prestation = Prestation(name='Test Prestation')
         self.save_to_db(self.prestation)
-    
-    def test_base_is_clean(self):
-        users = User.query.all()
-        prestations = Prestation.query.all()
-        reviews = Review.query.all()
-        appointments = Appointment.query.all()
-        self.assertEqual(len(users), 0)
-        self.assertEqual(len(prestations), 0)
-        self.assertEqual(len(reviews), 0)
-        self.assertEqual(len(appointments), 0)
 
     def login_as_user(self, user_email, password):
         """Se connecter en tant qu'utilisateur et garder les cookies"""
