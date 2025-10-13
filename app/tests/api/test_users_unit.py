@@ -9,11 +9,26 @@ from app.tests.base_test import BaseTest
 from app.api.v1.users import api as users_api
 from app.api.v1.authentication import api as auth_api
 from app.models.user import User
+from app.models.prestation import Prestation
+from app.models.review import Review
+from app.models.appointment import Appointment
 
 
 class TestUsersUnitSimple(BaseTest):
     """Tests unitaires pour l'API users sans mocks - utilise la vraie DB"""
     
+    def test_base_is_clean(self):
+        self.tearDown()
+        users = User.query.all()
+        prestations = Prestation.query.all()
+        reviews = Review.query.all()
+        appointments = Appointment.query.all()
+        self.assertEqual(len(users), 0)
+        self.assertEqual(len(prestations), 0)
+        self.assertEqual(len(reviews), 0)
+        self.assertEqual(len(appointments), 0)
+        self.setUp()
+
     def setUp(self):
         super().setUp()
         
@@ -44,7 +59,7 @@ class TestUsersUnitSimple(BaseTest):
         
         # Se connecter pour obtenir les cookies JWT
         self.login_as_admin()
-    
+
     def login_as_admin(self):
         """Se connecter en tant qu'admin et garder les cookies"""
         credentials = {

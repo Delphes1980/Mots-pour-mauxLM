@@ -31,8 +31,7 @@ Functions:
     is_valid_uuid4(uuid_str):
         Determines if given string is a valid UUID4.
     name_validation(names, names_name):
-        Validates first_name and last_name to ensure they contain only
-        valid characters.
+        Validates first_name and last_name to ensure they contain only valid characters.
     email_validation(email):
         Validates the email address.
     validate_password(plain_passwrod):

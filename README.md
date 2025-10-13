@@ -89,11 +89,19 @@ app/
 	|	|__ base_test.py
 	|	|__ api/
 	|	|	|__ __init__.py
+	|	|	|__ test_appointments_api.py
+	|	|	|__ test_appointments_integration.py
+	|	|	|__ test_appointments_security.py
+	|	|	|__ test_appointments_unit.py
 	|	|	|__ test_authentication_api.py
 	|	|	|__ test_prestations_api.py
 	|	|	|__ test_prestations_integration.py
 	|	|	|__ test_prestations_security.py
 	|	|	|__ test_prestations_unit.py
+	|	|	|__ test_reviews_api.py
+	|	|	|__ test_reviews_integration.py
+	|	|	|__ test_reviews_security.py
+	|	|	|__ test_reviews_unit.py
 	|	|	|__ test_users_api.py
 	|	|	|__ test_users_integration.py
 	|	|	|__ test_users_security.py
@@ -144,3 +152,6 @@ app/
 	|__ run.py
 	|__utils.py               
 ```
+
+Lancer l'appli:
+PYTHONPATH=. python app/run.py

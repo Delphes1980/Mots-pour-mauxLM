@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields, _http
 from app.services import facade
-from app.utils import (compare_data_and_model, CustomError)
+from app.utils import (compare_data_and_model, CustomError, name_validation, validate_entity_id)
 from flask_jwt_extended import jwt_required, get_jwt
 from flask import request
 
@@ -59,6 +59,7 @@ class PrestationList(Resource):
         try:
             compare_data_and_model(prestation_data, prestation_model)
             new_prestation = facade.create_prestation(**prestation_data)
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -88,6 +89,7 @@ class PrestationList(Resource):
         try:
             prestations = facade.get_all_prestations()
             return prestations, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -118,13 +120,14 @@ class PrestationSearch(Resource):
         try:
             prestation = facade.get_prestation_by_name(name)
             return prestation, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
             api.abort(400, error=str(e))
 
 
-@api.route('/<string:prestation_id>')
+@api.route('/<prestation_id>')
 class Prestation(Resource):
     @api.doc('Get prestation by ID')
     @api.marshal_with(prestation_response_model, code=_http.HTTPStatus.OK, description='Prestation retrieved successfully')
@@ -143,7 +146,11 @@ class Prestation(Resource):
             api.abort(403, error='Vous n\'avez pas les droits administrateur')
 
         try:
+            validate_entity_id(prestation_id, 'prestation_id')
             prestation = facade.get_prestation_by_id(prestation_id)
+            if not prestation:
+                raise CustomError('La prestation n\'existe pas', 404)
+
             return prestation, 200
 
         except CustomError as e:
@@ -174,8 +181,18 @@ class Prestation(Resource):
 
         try:
             compare_data_and_model(prestation_data, prestation_update_model)
+            validate_entity_id(prestation_id, 'prestation_id')
+
+            if 'name' in prestation_data:
+                name = prestation_data.get('name')
+            try:
+                name_validation(name, 'name')
+            except ValueError as e:
+                raise CustomError(str(e), 400)
+
             updated_prestation = facade.update_prestation(prestation_id, **prestation_data)
             return updated_prestation, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -199,9 +216,13 @@ class Prestation(Resource):
             api.abort(403, error='Vous n\'avez pas les droits administrateur')
 
         try:
+            validate_entity_id(prestation_id, 'prestation_id')
             facade.delete_prestation(prestation_id)
             return {'message': 'Prestation supprimée avec succès'}, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
+        except ValueError as e:
+            api.abort(400, error=str(e))
         except Exception as e:
             api.abort(400, error=str(e))

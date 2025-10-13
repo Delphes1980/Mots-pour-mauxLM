@@ -10,11 +10,26 @@ from app.tests.base_test import BaseTest
 from app.api.v1.users import api as users_api
 from app.api.v1.authentication import api as auth_api
 from app.models.user import User
+from app.models.prestation import Prestation
+from app.models.review import Review
+from app.models.appointment import Appointment
 
 
 class TestUsersAPI(BaseTest):
     """Tests API users - Tests de bout en bout avec vraie DB"""
-    
+
+    def test_base_is_clean(self):
+        self.tearDown()
+        users = User.query.all()
+        prestations = Prestation.query.all()
+        reviews = Review.query.all()
+        appointments = Appointment.query.all()
+        self.assertEqual(len(users), 0)
+        self.assertEqual(len(prestations), 0)
+        self.assertEqual(len(reviews), 0)
+        self.assertEqual(len(appointments), 0)
+        self.setUp()
+
     def setUp(self):
         super().setUp()
         
@@ -45,7 +60,7 @@ class TestUsersAPI(BaseTest):
         
         # Se connecter pour obtenir les cookies JWT
         self.login_as_admin()
-    
+
     def login_as_admin(self):
         """Se connecter en tant qu'admin et garder les cookies"""
         credentials = {
@@ -57,6 +72,20 @@ class TestUsersAPI(BaseTest):
             data=json.dumps(credentials),
             content_type='application/json'
         )
+        if response.status_code != 200:
+            error_data = response.get_json()
+            # Si c'est une erreur UTF-8, recréer l'API
+            if error_data and 'utf-8' in str(error_data.get('error', '')):
+                self.api = self.create_test_api('Retry')
+                self.api.add_namespace(auth_api, path='/auth')
+                self.api.add_namespace(users_api, path='/users')
+                self.client = self.app.test_client()
+                # Retry login
+                response = self.client.post(
+                    '/auth/login',
+                    data=json.dumps(credentials),
+                    content_type='application/json'
+                )
         self.assertEqual(response.status_code, 200)
     
     def login_as_user(self):
