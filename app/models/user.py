@@ -1,5 +1,5 @@
 from app.models.baseEntity import BaseEntity
-from app.utils import (type_validation, strlen_validation, name_validation, email_validation, validate_password)
+from app.utils import (type_validation, strlen_validation, name_validation, email_validation, validate_password, hash_password, verify_password)
 from app import bcrypt
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, Boolean
@@ -43,20 +43,10 @@ class User(BaseEntity):
 			raise ValueError('Expected password but received None')
 		type_validation(value, 'password', str)
 		validated_password = validate_password(value)
-		self._password = self.hash_password(validated_password)
-
-	def hash_password(self, validated_password):
-		""" Hashes the password before storing it """
-		if validated_password is None:
-			raise ValueError('Expected password but received None')
-		type_validation(validated_password, 'password', str)
-		return bcrypt.generate_password_hash(validated_password).decode('utf-8')
+		self._password = hash_password(validated_password)
 
 	def verify_password(self, plain_password):
-		""" Verifies if the provided password matches the hashed password """
-		if plain_password is None:
-			raise ValueError('Expected password but received None')
-		return bcrypt.check_password_hash(self.password, plain_password)
+		return verify_password(self._password, plain_password)
 
 	@hybrid_property
 	def first_name(self):

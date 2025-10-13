@@ -2,6 +2,7 @@ from app.services.UserService import UserService
 from app.services.ReviewService import ReviewService
 from app.services.AppointmentService import AppointmentService
 from app.services.PrestationService import PrestationService
+from app.services.AuthenticationService import AuthenticationService
 
 
 class Facade:
@@ -10,6 +11,7 @@ class Facade:
         self.review_service = ReviewService()
         self.appointment_service = AppointmentService()
         self.prestation_service = PrestationService()
+        self.authentication_service = AuthenticationService()
 
     # User CRUD operations
     def create_user(self, **kwargs):
@@ -30,8 +32,15 @@ class Facade:
     def delete_user(self, user_id):
         return self.user_service.delete_user(user_id)
 
+    # Authentification
     def login(self, email, password):
-        return self.user_service.login(email, password)
+        return self.authentication_service.login(email, password)
+
+    def change_password(self, user_id, old_password, new_password):
+        return self.authentication_service.change_password(user_id, old_password, new_password)
+
+    def admin_reset_password(self, user_id, new_password):
+        return self.authentication_service.admin_reset_password(user_id, new_password)
 
     # Review CRUD operations
     def create_review(self, **kwargs):
@@ -49,8 +58,11 @@ class Facade:
     def get_review_by_user(self, user_id):
         return self.review_service.get_review_by_user(user_id)
 
-    def update_review(self, **kwargs):
-        return self.review_service.update_review(**kwargs)
+    def get_review_by_user_and_prestation(self, user_id, prestation_id):
+        return self.review_service.get_review_by_user_and_prestation(user_id, prestation_id)
+
+    def update_review(self, review_id, **kwargs):
+        return self.review_service.update_review(review_id, **kwargs)
 
     def delete_review(self, review_id):
         return self.review_service.delete_review(review_id)
@@ -71,6 +83,9 @@ class Facade:
     def get_appointment_by_user(self, user_id):
         return self.appointment_service.get_appointment_by_user(user_id)
 
+    def get_appointment_by_user_and_prestation(self, user_id, prestation_id):
+        return self.appointment_service.get_appointment_by_user_and_prestation(user_id, prestation_id)
+
     # Prestation CRUD operations
     def create_prestation(self, **kwargs):
         return self.prestation_service.create_prestation(**kwargs)
@@ -84,8 +99,8 @@ class Facade:
     def get_prestation_by_name(self, name):
         return self.prestation_service.get_prestation_by_name(name)
 
-    def update_prestation(self, **kwargs):
-        return self.prestation_service.update_prestation(**kwargs)
+    def update_prestation(self, prestation_id, **kwargs):
+        return self.prestation_service.update_prestation(prestation_id, **kwargs)
 
     def delete_prestation(self, prestation_id):
         return self.prestation_service.delete_prestation(prestation_id)
