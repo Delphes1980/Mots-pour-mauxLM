@@ -107,7 +107,7 @@ class UserList(Resource):
 
 @api.route('/search')
 class UserSearch(Resource):
-    @api.doc('Get a user by mail')
+    @api.doc('Get a user by mail', params={'email': 'Email de l\'utilisateur'})
     @api.marshal_with(user_response_model, code=_http.HTTPStatus.OK, description='User retrieved successfully')
     @jwt_required()
     @api.response(200, 'Utilisateur récupéré avec succès', user_response_model)

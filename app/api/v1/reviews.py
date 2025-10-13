@@ -1,8 +1,7 @@
 from flask_restx import Namespace, Resource, fields, _http
 from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, validate_entity_id)
+from app.utils import (compare_data_and_model, CustomError, validate_entity_id, rating_validation, text_field_validation)
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from app.utils import (rating_validation, text_field_validation)
 
 
 # Créer une instance de façade
