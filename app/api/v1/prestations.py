@@ -97,7 +97,7 @@ class PrestationList(Resource):
 
 @api.route('/search')
 class PrestationSearch(Resource):
-    @api.doc('Get prestation by name')
+    @api.doc('Get prestation by name', params={'name': 'Le nom de la prestation à rechercher'})
     @api.marshal_with(prestation_response_model, code=_http.HTTPStatus.OK, description='Prestation retrieved successfully')
     @jwt_required()
     @api.response(200, 'Prestation récupérée avec succès', prestation_response_model)

@@ -14,12 +14,14 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Flask-Mail
-    MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.example.com')
-    MAIL_PORT = int(os.getenv('MAIL_PORT', 587))
+    MAIL_SERVER = os.getenv('MAIL_SERVER')
+    MAIL_PORT = int(os.getenv('MAIL_PORT'))
     MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', '1']
+    MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', 'false').lower() in ['true', '1']
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
     MAIL_RECIPIENT_PRACTITIONER = os.getenv('MAIL_RECIPIENT_PRACTITIONER')
+    MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER')
 
     # JWT
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)
@@ -29,7 +31,7 @@ class Config:
     JWT_TOKEN_LOCATION = ['cookies']  # Définir le type de stockage des tokens
     JWT_COOKIE_HTTPONLY = True  # Rendre les cookies HTTP seulement, rend le cookie inacessible au JS (protection XSS)
     JWT_COOKIE_SAMESITE = 'Lax'  # Le cookie est renvoyé seulement pour le même site
-    JWT_COOKIE_CSRF_PROTECT = True  # Active la protection CSRF pour les cookies
+    JWT_COOKIE_CSRF_PROTECT = False  # Active la protection CSRF pour les cookies
     JWT_ACCESS_CSRF_COOKIE_NAME = 'csrf_access_token'  # Nom du cookie CSRF pour les tokens d'accès (utile pour la détection du token par le front)
 
 class DevelopmentConfig(Config):

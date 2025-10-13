@@ -63,10 +63,12 @@ class Login(Resource):
             additional_claims={'id': str(user.id), 'is_admin': user.is_admin}
         )
 
-        response = jsonify({'message': 'Authentification réussie'})
+        response = jsonify({
+            'message': 'Authentification réussie',
+            'access_token': access_token
+            })
         set_access_cookies(response, access_token)
         return response
-        # return {'access_token': access_token}, 200
 
 
 @api.route('/logout')

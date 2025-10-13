@@ -1,6 +1,9 @@
 from app import create_app
 from dotenv import load_dotenv
+import socket
 
+
+socket.getfqdn = lambda host=None: "localhost.localdomain"
 
 load_dotenv("app/.env.dev")
 
