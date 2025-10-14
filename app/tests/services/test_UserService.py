@@ -14,6 +14,14 @@ class TestUserServiceSimple(BaseTest):
         super().setUp()
         self.user_service = UserService()
 
+        self.ghost_user = self.user_service.create_user(
+            first_name='Ghost',
+            last_name='User',
+            email='deleted@system.local',
+            password='Ghost#2025!',
+            is_admin=False
+        )
+
     def test_create_user_success(self):
         """Test création utilisateur réussie"""
         user = self.user_service.create_user(

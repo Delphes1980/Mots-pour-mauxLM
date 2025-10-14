@@ -242,3 +242,41 @@ class ReviewService:
 			raise CustomError("Commentaire non trouvé", 404)
 
 		return self.review_repository.delete(review_id)
+
+	def reassign_reviews(self, old_user_id, new_user_id):
+		"""Reassign reviews from an old user to a new user
+
+		Args:
+			old_user_id (str): The ID of the old user
+			new_user_id (str): The ID of the new user
+
+		Returns:
+			list: List of reassigned reviews
+
+		Raises:
+			CustomError: If the IDs are invalid(400) or if the users are not found(404)
+		"""
+		try:
+			old_user_id = validate_entity_id(old_user_id, 'old_user_id')
+			new_user_id = validate_entity_id(new_user_id, 'new_user_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
+
+		old_user = self.user_repository.get_by_id(old_user_id)
+		if not old_user:
+			raise CustomError("Ancien utilisateur non trouvé", 404)
+
+		new_user = self.user_repository.get_by_id(new_user_id)
+		if not new_user:
+			raise CustomError("Nouvel utilisateur non trouvé", 404)
+
+		reviews = self.review_repository.get_by_user_id(old_user_id)
+		reassigned_reviews = []
+
+		for review in reviews:
+			review.user = new_user
+			reassigned_reviews.append(review)
+
+		self.review_repository.db.session.commit()
+
+		return reassigned_reviews

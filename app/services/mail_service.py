@@ -14,7 +14,7 @@ def send_mail_async(message):
 
 def send_appointment_notifications(user_email, practitioner_email, **context):
     """Envoie un email de notification au practicien et un email de confirmation à l'utilisateur"""
-    sender_email = current_app.config.get("MAIL_USERNAME")
+    sender_email = current_app.config.get('MAIL_DEFAULT_SENDER')
 
     # Vérification des clés attendues
     required_keys = ["user_full_name", "prestation_name", "message"]
@@ -60,6 +60,9 @@ def send_appointment_notifications(user_email, practitioner_email, **context):
 
     Votre demande de rendez-vous pour {prestation_name} a été enregistrée avec succès.
     Je vous contacterai prochainement pour confirmer la date et l'heure.
+
+    Rappel de votre message:
+    {message}.
 
     Merci de votre confiance.
     Mélanie Laborda

@@ -54,10 +54,19 @@ class TestUserServiceIntegration(BaseTest):
             password="Password456!",
             is_admin=True
         )
-        
-        # Récupérer tous les utilisateurs
+
+        self.ghost_user = self.user_service.create_user(
+            first_name="Ghost",
+            last_name="User",
+            email="deleted@system.local",
+            password="Ghost#2025!",
+            is_admin=False
+        )
+
+        # Récupérer tous les utilisateurs sauf ghost
         all_users = self.user_service.get_all_users()
-        self.assertEqual(len(all_users), 2)
+        non_ghost_users = [user for user in all_users if user.email != "deleted@system.local"]
+        self.assertEqual(len(non_ghost_users), 2)
         
         # Récupérer par email
         found_user = self.user_service.get_user_by_email("marie@example.com")

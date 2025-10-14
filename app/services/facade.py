@@ -67,6 +67,9 @@ class Facade:
     def delete_review(self, review_id):
         return self.review_service.delete_review(review_id)
 
+    def reassign_reviews(self, old_user_id, new_user_id):
+        return self.review_service.reassign_reviews(old_user_id, new_user_id)
+
     # Appointment CRUD operations
     def create_appointment(self, **kwargs):
         return self.appointment_service.create_appointment(**kwargs)
