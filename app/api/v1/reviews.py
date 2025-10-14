@@ -281,7 +281,14 @@ class Review(Resource):
             review_data = api.payload
             compare_data_and_model(review_data, review_update_model)
 
+            is_admin = get_jwt()
+
+            # Vérifier que l'utilisateur a les droits admin
+            if is_admin.get('is_admin'):
+                api.abort(403, error='Action non autorisée: l\'administrateur ne peut pas modifier les commentaires')
+
             current_user_id = get_jwt_identity()
+            validate_entity_id(current_user_id, 'current_user_id')
 
             # Récupérer le commentaire
             review = facade.get_review_by_id(review_id)
@@ -324,7 +331,10 @@ class Review(Resource):
             if 'text' in review_data:
                 updated_data['text'] = review_data['text']
 
-            updated_review = facade.update_review(review_id, **updated_data)
+            if not updated_data:
+                raise CustomError('Aucune donnée fournie pour la miseà jour', 400)
+
+            updated_review = facade.update_review(review_id, current_user_id=current_user_id, **updated_data)
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
