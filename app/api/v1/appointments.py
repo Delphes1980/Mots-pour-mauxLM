@@ -82,21 +82,21 @@ class AppointmentList(Resource):
 			# Créer le rendez-vous
 			new_appointment = facade.create_appointment(**appointment_data)
 
-			# Récupérer le mail de l'utilisateur et du praticien
-			try:
-				sender_email = current_app.config.get('MAIL_USERNAME')
-				if not sender_email:
-					raise CustomError('L\'adresse email de l\'utilisateur n\'est pas définie', 500)
+			# # Récupérer le mail de l'utilisateur et du praticien
+			# try:
+			# 	sender_email = current_app.config.get('MAIL_USERNAME')
+			# 	if not sender_email:
+			# 		raise CustomError('L\'adresse email de l\'utilisateur n\'est pas définie', 500)
 
-				practitioner_email = current_app.config.get('MAIL_RECIPIENT_PRACTITIONER')
-				if not practitioner_email:
-					raise CustomError('L\'adresse email du praticien n\'est pas définie', 500)
+			# 	practitioner_email = current_app.config.get('MAIL_RECIPIENT_PRACTITIONER')
+			# 	if not practitioner_email:
+			# 		raise CustomError('L\'adresse email du praticien n\'est pas définie', 500)
 
-				# Envoyer la notification par mail à l'utilisateur et au praticien
-				send_appointment_notifications(sender_email, practitioner_email, **appointment_data)
+			# 	# Envoyer la notification par mail à l'utilisateur et au praticien
+			# 	send_appointment_notifications(sender_email, practitioner_email, **appointment_data)
 
-			except Exception as e:
-				api.abort(500, error=str(e))
+			# except Exception as e:
+			# 	api.abort(500, error=str(e))
 
 			return new_appointment, 201
 

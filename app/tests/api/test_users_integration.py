@@ -220,6 +220,15 @@ class TestUsersIntegration(BaseTest):
     
     def test_delete_user_integration(self):
         """Test suppression utilisateur"""
+        # Créer le ghost user nécessaire à la suppression
+        ghost_data = {
+            'first_name': 'Ghost',
+            'last_name': 'User',
+            'email': 'deleted@system.local',
+            'password': 'Ghost#2025!'
+        }
+        self.client.post('/users/', data=json.dumps(ghost_data), content_type='application/json')
+
         # Créer utilisateur
         data = {
             'first_name': 'John',
@@ -244,6 +253,15 @@ class TestUsersIntegration(BaseTest):
     def test_workflow_complet_user(self):
         """Test workflow complet : créer -> lire -> modifier -> supprimer"""
         # 1. Créer
+        # Créer le ghost user nécessaire à la suppression
+        ghost_data = {
+            'first_name': 'Ghost',
+            'last_name': 'User',
+            'email': 'deleted@system.local',
+            'password': 'Ghost#2025!'
+        }
+        self.client.post('/users/', data=json.dumps(ghost_data), content_type='application/json')
+
         data = {
             'first_name': 'Workflow',
             'last_name': 'Test',

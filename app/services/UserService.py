@@ -1,4 +1,5 @@
 from app.persistence.UserRepository import UserRepository
+from app.persistence.ReviewRepository import ReviewRepository
 from app.utils import (validate_entity_id, admin_validation, name_validation, email_validation, validate_init_args, validate_password, validate_phone_number, address_validation, CustomError)
 from app.models.user import User
 
@@ -6,6 +7,7 @@ from app.models.user import User
 class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
+        self.review_repository = ReviewRepository()
 
     def create_user(self, **kwargs):
         """Create a new user with the provided data
@@ -219,6 +221,7 @@ class UserService:
         Raises:
             CustomError: if the ID is invalid(400) or if the user is not found(404)
         """
+        # Valider les identifiants
         try:
             user_id = validate_entity_id(user_id, 'user_id')
         except (ValueError, TypeError) as e:
@@ -227,5 +230,17 @@ class UserService:
         user = self.user_repository.get_by_id(user_id)
         if not user:
             raise CustomError("User not found", 404)
+        
+        if user.email == 'deleted@system.local':
+            raise CustomError('You can not delete ghost user', 403)
+    
+        ghost_user = self.user_repository.get_by_attribute('email', 'deleted@system.local')
+        if not ghost_user:
+            raise CustomError("Ghost user not found", 404)
+        
+        # Vérifier si des avis existent pour cet utilisateur
+        reviews = self.review_repository.get_by_user_id(user_id)
+        if reviews:
+            self.review_repository.reassign_reviews(user.id, ghost_user.id)
 
         return self.user_repository.delete(user_id)

@@ -4,6 +4,8 @@ from app.utils import (compare_data_and_model, CustomError, generate_temp_passwo
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from flask import request
 from app.services.mail_service import send_password_reset_notification
+from werkzeug.exceptions import HTTPException
+
 
 
 # Créer une instance de façade
@@ -233,6 +235,22 @@ class User(Resource):
 
         try:
             validate_entity_id(user_id, 'user_id')
+
+            user = facade.get_user_by_id(user_id)
+            if not user:
+                api.abort(404, error='Utilisateur non trouvé')
+
+            if user.email == 'deleted@system.local':
+                api.abort(403, error='Vous ne pouvez pas supprimer l\'utilisateur fantôme')
+
+            ghost_user = facade.get_user_by_email('deleted@system.local')
+            if not ghost_user:
+                api.abort(404, error='Ghost user non trouvé')
+
+            reviews = facade.get_review_by_user(user_id)
+            if reviews:
+                facade.reassign_reviews(user_id, ghost_user.id)
+
             facade.delete_user(user_id)
             return {'message': 'Utilisateur supprimé avec succès'}, 200
 
@@ -240,6 +258,8 @@ class User(Resource):
             api.abort(e.status_code, error=str(e))
         except ValueError as e:
             api.abort(400, error=str(e))
+        except HTTPException as e:
+            raise e
         except Exception as e:
             api.abort(400, error=str(e))
 
