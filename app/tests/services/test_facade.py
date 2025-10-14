@@ -105,6 +105,15 @@ class TestFacadeSimple(BaseTest):
 
     def test_delete_user_delegation(self):
         """Test délégation delete_user"""
+        # Créer le ghost user nécessaire à la suppression
+        self.facade.create_user(
+            first_name="Ghost",
+            last_name="User",
+            email="deleted@system.local",
+            password="Ghost#2025!",
+            is_admin=False
+        )
+
         # Créer un utilisateur d'abord
         user = self.facade.create_user(
             first_name="ToDelete",

@@ -78,3 +78,32 @@ class ReviewRepository(BaseRepository):
         return self.db.session.query(self.model_class).filter_by(
             _user_id=user_id
         ).all()
+
+    def reassign_reviews(self, old_user_id, new_user_id):
+        """Réassigner les avis d'un utilisateur supprimé à un utilisateur fantôme, pour conserver les avis"""
+        # Vérifier la validité des identifiants
+        if not is_valid_uuid4(old_user_id):
+            raise ValueError("Format d'identifiant utilisateur à supprimer non valide")
+        if not is_valid_uuid4(new_user_id):
+            raise ValueError("Format d'identifiant utilisateur fantôme non valide")
+
+        # Vérifier que les utilisateurs existent
+        old_user = self.db.session.query(User).get(old_user_id)
+        new_user = self.db.session.query(User).get(new_user_id)
+
+        if not old_user:
+            raise ValueError("L'utilisateur à supprimer n'a pas été trouvé")
+        if not new_user:
+            raise ValueError("Le nouvel utilisateur n'a pas été trouvé")
+        
+        # Vérifier s'il y a des avis à réassigner
+        reviews = self.get_by_user_id(old_user_id)
+        if not reviews:
+            return 0
+
+        # Réassigner les avis
+        for review in reviews:
+            review.user_id= new_user_id
+        self.db.session.commit()
+
+        return len(reviews)

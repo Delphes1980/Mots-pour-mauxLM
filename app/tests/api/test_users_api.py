@@ -408,6 +408,15 @@ class TestUsersAPI(BaseTest):
     
     def test_delete_user_success(self):
         """Test suppression réussie"""
+        # Créer le ghost user nécessaire à la suppression
+        ghost_data = {
+            'first_name': 'Ghost',
+            'last_name': 'User',
+            'email': 'deleted@system.local',
+            'password': 'Ghost#2025!'
+        }
+        self.client.post('/users/', data=json.dumps(ghost_data), content_type='application/json')
+
         # Créer utilisateur
         data = {
             'first_name': 'John',

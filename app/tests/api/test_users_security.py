@@ -281,6 +281,15 @@ class TestUsersSecurity(BaseTest):
         # Se connecter en tant qu'admin
         self.login_as_admin()
         
+        # Créer le ghost user nécessaire à la suppression
+        ghost_data = {
+            'first_name': 'Ghost',
+            'last_name': 'User',
+            'email': 'deleted@system.local',
+            'password': 'Ghost#2025!'
+        }
+        self.client.post('/users/', data=json.dumps(ghost_data), content_type='application/json')
+
         # Créer un utilisateur test
         data = {
             'first_name': 'Test',
