@@ -179,11 +179,12 @@ class ReviewService:
 
 		return review
 
-	def update_review(self, review_id, **kwargs):
+	def update_review(self, review_id, current_user_id, **kwargs):
 		"""Update a review by its ID
 
 		Args:
 			review_id (str): The ID of the review to update
+			current_user_id (str): The ID of the current user
 			**kwargs: Review data to update (rating, text)
 
 		Returns:
@@ -197,9 +198,28 @@ class ReviewService:
 		except (ValueError, TypeError) as e:
 			raise CustomError(str(e), 400)
 
+		try:
+			current_user_id = validate_entity_id(current_user_id, 'current_user_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
+
 		existing_review = self.review_repository.get_by_id(review_id)
 		if not existing_review:
 			raise CustomError("Commentaire non trouvé", 404)
+
+		existing_prestation = self.prestation_repository.get_by_id(existing_review.prestation_id)
+		if not existing_prestation:
+			raise CustomError('La prestation associée au commentaire n\'a pas été trouvée', 404)
+
+		current_user = self.user_repository.get_by_id(current_user_id)
+		if not current_user:
+			raise CustomError('L\'utilisateur n\a pas été trouvé', 404)
+		
+		if current_user.is_admin:
+			raise CustomError('L\'administrateur ne peut pas modifier un commentaire', 403)
+		
+		if str(existing_review.user_id) != str(current_user_id):
+			raise CustomError('Vous ne pouvez pas modifier le commentaire de quelqu\'un d\'autre', 403)
 
 		if not kwargs:
 			raise CustomError("Aucune donnée fournie pour la mise à jour", 400)
