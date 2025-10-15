@@ -36,7 +36,9 @@
 					<a href="../templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
 					<a href="../templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
 					<a href="../templates/avis.html" id="avis_link">Avis</a>
+					<a href="../templates/page_personnelle.html" id="espace_link" style="display: none;">Mon espace</a>
 					<a href="../templates/login.html" id="login_link">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
@@ -45,20 +47,32 @@
 			<div class="hero-box"><p>Connexion</p></div>
 			<hr class="line">
 			<section class="login-container">
-				<form class="login-form" action="/login" method="post">
+				<form class="login-form" id="loginForm">
+
+					<!-- Champ pour l'email -->
 					<div class="form-field">
 						<input type="email" id="email" name="email" placeholder="Email" required>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
+
+					<!-- Champ pour le mot de passe -->
 					<div class="form-field">
 						<input type="password" id="password" name="password" placeholder="Mot de passe" required>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
+
+					<!-- Message d'erreur -->
+					<p id="errorMessage" class="error-message" style="color: red; margin-top: 10px; text-align: center; display: none"></p>
+
 					<a href="../templates/page_inscription.html">Créer un compte</a>
 					<button type="submit">Se connecter</button>
 				</form>
 			</section>
     	</main>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="../static/js_files/login.js"></script>
+		<script>console.log("Page chargée :", window.location.pathname);</script>
 
 		<hr class="line">
     	<footer class="footer">

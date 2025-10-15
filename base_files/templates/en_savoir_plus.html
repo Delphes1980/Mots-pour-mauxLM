@@ -34,7 +34,9 @@
 					<a href="../templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
 					<a href="../templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
 					<a href="../templates/avis.html" id="avis_link">Avis</a>
+					<a href="../templates/page_personnelle.html" id="espace_link" style="display: none;">Mon espace</a>
 					<a href="../templates/login.html" id="login_link">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
@@ -66,6 +68,10 @@
 				</div>
 			</div>
     	</main>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="../static/js_files/login.js"></script>
+		<script>console.log("Page chargée :", window.location.pathname);</script>
 
 		<hr class="line">
     	<footer class="footer">
