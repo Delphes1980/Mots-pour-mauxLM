@@ -1,6 +1,6 @@
 from flask import jsonify
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import (create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies)
+from flask_jwt_extended import (create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies, get_jwt_identity)
 from app.services import facade
 from app.utils import (compare_data_and_model, CustomError)
 
@@ -28,7 +28,8 @@ error_model = api.model('Error', {
 
 # Définir le modèle de données pour la réponse de succès
 msg_model = api.model('Message', {
-    'message': fields.String(description='Message')
+    'message': fields.String(description='Message'),
+    'user': fields.String(description='Utilisateur')
 })
 
 
@@ -83,3 +84,14 @@ class Logout(Resource):
         response = jsonify({'message': 'Déconnexion réussie'})
         unset_jwt_cookies(response)  # Retire les cookies JWT du navigateur
         return response
+
+
+@api.route('/status')
+class AuthenticationStatus(Resource):
+    @api.doc('Connection status')
+    @jwt_required()
+    @api.response(200, 'Connecté', msg_model)
+    def get(self):
+        """Vérifier l'état de la connexion"""
+        current_user = get_jwt_identity()
+        return {'message': 'Connecté', 'user': current_user}, 200
