@@ -1,5 +1,6 @@
 console.log("Script chargé");
 const API_USERS_BASE_URL = 'http://localhost:5000/api/v1/users';
+const API_REVIEWS_BASE_URL = 'http://localhost:5000/api/v1/reviews';
 
 
 // Fonction utilitaire: fait correspondre les noms des inputs HTML aux clés API
@@ -78,7 +79,7 @@ async function loadUserData() {
 	}
 }
 
-// Gère le clic sur le bouton Modifier
+// Gère le clic sur le bouton Modifier côté informations personnelles
 function setupModifierButton(modifierButton, inputFields) {
 	modifierButton.addEventListener('click', function(e) {
 		e.preventDefault();
@@ -93,7 +94,7 @@ function setupModifierButton(modifierButton, inputFields) {
 }
 
 
-// Active ou désactive le champ du formulaire
+// Active ou désactive le champ du formulaire côté informations personnelles
 function toggleEditMode(modifierButton, inputFields) {
 	const isEditing = modifierButton.textContent === 'Modifier';
 
@@ -113,7 +114,7 @@ function toggleEditMode(modifierButton, inputFields) {
 }
 
 
-// Envoie les données modifiées à l'API
+// Envoie les données modifiées à l'API des informations modifiées
 function saveUserData(inputFields) {
 	const updateData = {};
 
@@ -164,6 +165,91 @@ function saveUserData(inputFields) {
 }
 
 
+// Fonction qui récupère les commentaires laissés par l'utilisateur
+async function loadUserReviews() {
+	const reviewsContainer = document.querySelector('.review-container-grid');
+	if (!reviewsContainer) {
+		console.error("Conteneur des commentaires introuvables");
+		return;
+	}
+
+	try {
+		const response = await fetch(`${API_USERS_BASE_URL}/me/reviews`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP ${response.status}`);
+		}
+
+		const reviews = await response.json();
+		reviewsContainer.innerHTML = '';
+
+		// S'il n'y a aucun commentaire de laissé
+		if (!reviews || reviews.length === 0) {
+			const emptyMessage = document.createElement('p');
+			emptyMessage.textContent = 'Vous n\'avez pas encore laissé de commentaires';
+			emptyMessage.className = 'empty-message';
+			reviewsContainer.appendChild(emptyMessage);
+			return;
+		}
+
+		for (const review of reviews) {
+			const box = document.createElement('div');
+			box.className = 'review-box';
+
+			// Etoiles visibles
+			const stars = document.createElement('div');
+			stars.className = 'rating-stars';
+			for (let i = 0; i < 5; i++) {
+				const star = document.createElement('i');
+				star.className = i < review.rating ? 'bx bxs-star' : 'bx bx-star';
+				stars.appendChild(star);
+			}
+
+			// Texte visible
+			const text = document.createElement('div');
+			text.className = 'review-text';
+			text.innerHTML = `<p>${review.text || "(Commentaire vide)"}</p>`;
+
+			// Champs cachés pour modification
+			const ratingInput = document.createElement('input');
+			ratingInput.type = 'number';
+			ratingInput.min = 1;
+			ratingInput.max = 5;
+			ratingInput.value = review.rating;
+			ratingInput.readOnly = true;
+			ratingInput.className = 'review-rating review-field';
+			ratingInput.dataset.reviewId = review.id;
+			ratingInput.style.display ='none';
+
+			const commentInput = document.createElement('textarea');
+			commentInput.value = review.text || '';
+			commentInput.readOnly = true;
+			commentInput.className = 'review-textarea review-field';
+			commentInput.dataset.reviewId = review.id;
+			commentInput.style.display = 'none';
+
+			box.appendChild(stars);
+			box.appendChild(text);
+			box.appendChild(ratingInput);
+			box.appendChild(commentInput);
+			reviewsContainer.appendChild(box);
+		}
+	} catch (error) {
+		console.error("Erreur lors du chargement des commentaires: ", error);
+		const errorMessage = document.createElement('p');
+		errorMessage.textContent = "Impossible de charger les commentaires";
+		errorMessage.className = 'error-review-message';
+		reviewsContainer.appendChild(errorMessage);
+	}
+}
+
+
 // Vérifie que les champs obligatoires sont valides
 function validateUserData(data) {
 	const requiredFields = ['first_name', 'last_name'];
@@ -175,9 +261,90 @@ function validateUserData(data) {
 }
 
 
+// Gère le clic sur le bouton Modifier côté commentaires laissés par l'utilisateur
+function setupReviewModifierButton(modifierReviewButton) {
+	modifierReviewButton.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		const isEditing = modifierReviewButton.textContent === 'Modifier';
+		const ratingFields = document.querySelectorAll('.review-rating');
+		const textFields = document.querySelectorAll('.review-textarea');
+
+		toggleReviewEditMode(modifierReviewButton, ratingFields, textFields);
+
+		if (!isEditing) {
+			saveAllReviewData(ratingFields, textFields);
+		}
+	});
+}
+
+
+// Active ou désactive le champ du formulaire côté commentaires laissés par l'utilisateur
+function toggleReviewEditMode(modifierReviewButton, ratingFields, textFields) {
+	const isEditing = modifierReviewButton.textContent === 'Modifier';
+
+	ratingFields.forEach(input => {
+		input.readOnly = !isEditing;
+		input.style.display = isEditing ? 'block' : 'none';
+	});
+
+	textFields.forEach(textarea => {
+		textarea.readOnly = !isEditing;
+		textarea.style.display = isEditing ? 'block' : 'none';
+	});
+
+	// Masquer les étoiles et textes statiques
+	const reviewBoxes = document.querySelectorAll('.review-box');
+	reviewBoxes.forEach(box => {
+		const stars = box.querySelector('.rating-stars');
+		const text = box.querySelector('.review-text');
+		if (stars) stars.style.display = isEditing ? 'none' : 'flex';
+		if (text) text.style.display = isEditing ? 'none' : 'block';
+	});
+
+	modifierReviewButton.textContent = isEditing ? 'Enregistrer' : 'Modifier';
+	modifierReviewButton.style.backgroundColor = isEditing ? 'var(--writing-light)' : 'var(--background-button)';
+	modifierReviewButton.style.color = isEditing ? 'var(--writing-dark)' : 'var(--background-card)';
+}
+
+
+// Envoie les données modifiées à l'API des commentaires modifiés
+async function saveAllReviewData(ratingFields, textFields) {
+	for (let i = 0; i < ratingFields.length; i++) {
+		const ratingInput = ratingFields[i];
+		const textInput = textFields[i];
+
+		const reviewId = ratingInput.dataset.reviewId;
+		const rating = parseInt(ratingInput.value);
+		const text = textInput.value;
+
+		try {
+			const response = await fetch(`${API_REVIEWS_BASE_URL}/${reviewId}`, {
+				method: 'PATCH', 
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ rating, text })
+			});
+
+			if (!response.ok) {
+				throw new Error(`Erreur pour le commentaire ${reviewId}`);
+			}
+		} catch (error) {
+			console.error(`Erreur lors de la mise à jour du commentire ${reviewId}`, error);
+		}
+	}
+
+	alert('Tous les commentaires ont été mis à jour !');
+	loadUserReviews();
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
 	console.log("DOM entièrement chargé !");
 
+	// Infos personnelles
 	const modifierButton = document.getElementById('modifier-button');
 	const infoForm = document.getElementById('personal-info-form');
 
@@ -195,6 +362,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	loadUserData(inputFields);
 	setupModifierButton(modifierButton, inputFields);
+
+	// Commentaires
+	const modifierReviewButton = document.getElementById('modifier-review-button');
+	if (!modifierReviewButton) {
+		console.error("Bouton de modification des commentaires introuvrable");
+		return;
+	}
+
+	loadUserReviews();
+	setupReviewModifierButton(modifierReviewButton);
 });
 
 window.addEventListener('error', function (e) {
