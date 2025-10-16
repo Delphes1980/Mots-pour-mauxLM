@@ -201,7 +201,7 @@ def email_validation(email: str):
             raise ValueError('Expected email but received None')
         type_validation(email, 'email', str)
         if not validate_email(email):
-            raise ValueError("Invalid email: email must have format example@axam.ple")
+            raise ValueError("Invalid email: email must have format exemple@exemple.com")
         return email
 
 def validate_password(plain_password):

@@ -451,6 +451,31 @@ class TestUsersIntegration(BaseTest):
             
             self.assertEqual(response.status_code, 401)
 
+    def test_get_me_returns_complete_user_data(self):
+        """Test que /users/me retourne toutes les données utilisateur"""
+        # Mise à jour du user avec des infos supplémentaires
+        self.regular_user.address = '123 rue de la paix'
+        self.regular_user.phone_number = '0601020304'
+        self.save_to_db(self.regular_user)
+
+        credentials = {
+            'email': 'user@test.com',
+            'password': 'Password123!'
+        }
+        login_response = self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(login_response.status_code, 200)
+
+        response = self.client.get('/users/me')
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.data)
+        self.assertEqual(data['address'], '123 rue de la paix')
+        self.assertEqual(data['phone_number'], '0601020304')
+
 
 if __name__ == '__main__':
     unittest.main()

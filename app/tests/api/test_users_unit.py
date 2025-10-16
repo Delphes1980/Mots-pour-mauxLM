@@ -139,6 +139,76 @@ class TestUsersUnitSimple(BaseTest):
         response_data = json.loads(response.data)
         self.assertEqual(response_data['message'], 'Mot de passe réinitialisé avec succès')
 
+    def test_get_me_returns_current_user(self):
+        """Test que /users/me retourne les infos de l'utilisateur connecté via cookie JWT"""
+        credentials = {
+            'email': 'user@test.com',
+            'password': 'UserPass123!'
+        }
+
+        # Connexion → le cookie JWT est stocké dans self.client
+        login_response = self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+        self.assertEqual(login_response.status_code, 200)
+
+        # Appel direct à /users/me avec le même client
+        response = self.client.get('/users/me')
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.data)
+        self.assertEqual(data['email'], 'user@test.com')
+        self.assertEqual(data['first_name'], 'User')
+        self.assertEqual(data['last_name'], 'Test')
+
+    def test_search_user_by_email_success(self):
+        """Test que /users/search retourne un utilisateur existant (admin requis)"""
+        # Se connecter en tant qu'admin
+        credentials = {
+            'email': 'admin@test.com',
+            'password': 'AdminPass123!'
+        }
+        self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+
+        # Créer un utilisateur à rechercher
+        user = User(
+            email='john.doe@example.com',
+            password='Secure123!',
+            first_name='John',
+            last_name='Doe'
+        )
+        self.save_to_db(user)
+
+        response = self.client.get('/users/search?email=john.doe@example.com')
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.data)
+        self.assertEqual(data['email'], 'john.doe@example.com')
+        self.assertEqual(data['first_name'], 'John')
+        self.assertEqual(data['last_name'], 'Doe')
+
+    def test_search_user_by_email_not_found(self):
+        """Test que /users/search retourne 404 si l'utilisateur n'existe pas"""
+        # Se connecter en tant qu'admin
+        credentials = {
+            'email': 'admin@test.com',
+            'password': 'AdminPass123!'
+        }
+        self.client.post(
+            '/auth/login',
+            data=json.dumps(credentials),
+            content_type='application/json'
+        )
+
+        response = self.client.get('/users/search?email=unknown@example.com')
+        self.assertEqual(response.status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()

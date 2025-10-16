@@ -201,7 +201,6 @@ class BaseTest(unittest.TestCase):
         try:
             # 1. Delete data from tables that were populated in setUp.
             # This is critical to clear committed data.
-            # Make sure to import the necessary models (e.g., User, Prestation).
             
             # Delete all users
             self.db.session.query(Appointment).delete()

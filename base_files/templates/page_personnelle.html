@@ -44,8 +44,11 @@
     	</header>
 
     	<main>
-			<div class="hero-box"><p>Ravie de vous revoir Jean</p></div>
+			<div class="hero-box">
+				<p>Ravie de vous revoir <span id="user_firstname"></span></p>
+			</div>
 			<hr class="line">
+
             <div class="main-content">
 				<!-- Partie gauche de la page -->
                 <div class="client-info">
@@ -54,31 +57,32 @@
 						<form id="personal-info-form">
 							<div class="form-field">
 								<label for="firstName">Prénom</label>
-								<input type="text" id="firstName" name="firstName" value="Jean" readonly>
+								<input type="text" id="firstName" name="firstName" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="lastName">Nom</label>
-								<input type="text" id="lastName" name="lastName" value="PIERRE"readonly>
+								<input type="text" id="lastName" name="lastName" value=""readonly>
 							</div>
 							<div class="form-field">
 								<label for="address">Adresse</label>
-								<input type="text" id="address" name="address" placeholder="Adresse (facultatif)" readonly>
+								<input type="text" id="address" name="address" placeholder="Adresse (facultatif)" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="phone">Téléphone</label>
-								<input type="tel" id="phone" name="phone" placeholder="Téléphone (facultatif)" readonly>
+								<input type="tel" id="phone" name="phone" placeholder="Téléphone (facultatif)" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="email">E-mail</label>
-								<input type="email" id="email" name="email" value="jean@pierre.com" readonly>
+								<input type="email" id="email" name="email" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="password">Mot de passe</label>
-								<input type="password" id="password" name="password" value="password" readonly>
+								<input type="password" id="password" name="password" value="" readonly disabled>
 							</div>
 							<button type="submit" class="modify-info-button" id="modifier-button">Modifier</button>
 						</form>
                     </div>
+
 					<div class="button-container">
 						<a href="../templates/formulaire_rdv.html" class="contact-button">Prendre rendez-vous</a>
 						<a href="../templates/formulaire_commentaires.html" class="contact-button">Laisser un commentaire</a>
@@ -121,12 +125,14 @@
 
 		<!-- Liens pour les fichiers JS -->
         <script src="../static/js_files/login.js"></script>
+		<script src="../static/js_files/page_personnelle.js"></script>
+		<script src="../static/js_files/avis.js"></script>
 		<script>console.log("Page chargée :", window.location.pathname);</script>
 
 		<hr class="line">
     	<footer class="footer">
         	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
     	</footer>
-		<script src="../static/js_files/avis.js"></script>
+
 </body>
 </html>
