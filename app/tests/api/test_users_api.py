@@ -494,6 +494,90 @@ class TestUsersAPI(BaseTest):
         response_data = json.loads(response.data)
         self.assertIn('error', response_data)
 
+    def test_get_me_after_admin_login_returns_admin_data(self):
+        """Test que /users/me retourne les infos de l'admin après login"""
+
+        # Données de connexion basées sur le setup
+        login_data = {
+            "email": self.admin_user.email,
+            "password": "Password123!"
+        }
+
+        # Nouveau client pour conserver les cookies JWT
+        admin_client = self.app.test_client()
+
+        # Connexion via /auth/login
+        login_response = admin_client.post(
+            "/auth/login",
+            json=login_data
+        )
+
+        # Vérification que le login a réussi
+        self.assertEqual(
+            login_response.status_code,
+            200,
+            f"Échec de la connexion Admin dans le test: {login_response.data.decode()}"
+        )
+
+        # Appel de la route /users/me avec le même client (cookie JWT conservé)
+        response = admin_client.get("/users/me")
+
+        # Vérification du statut HTTP
+        self.assertEqual(
+            response.status_code,
+            200,
+            f"Erreur status code sur /users/me: {response.status_code}. Réponse: {response.data.decode()}"
+        )
+
+        # Vérification des données retournées
+        data = response.get_json()
+        self.assertEqual(data["email"], self.admin_user.email)
+        self.assertTrue(data["is_admin"])
+        self.assertEqual(data["id"], str(self.admin_user.id))
+        self.assertNotIn("password", data)
+
+    def test_get_me_after_user_login_returns_user_data(self):
+        """Test que /users/me retourne les infos de l'utilisateur normal après login"""
+
+        # Données de connexion basées sur le setup
+        login_data = {
+            "email": self.regular_user.email,
+            "password": "Password123!"
+        }
+
+        # Nouveau client pour conserver les cookies JWT
+        user_client = self.app.test_client()
+
+        # Connexion via /auth/login
+        login_response = user_client.post(
+            "/auth/login",
+            json=login_data
+        )
+
+        # Vérification que le login a réussi
+        self.assertEqual(
+            login_response.status_code,
+            200,
+            f"Échec de la connexion utilisateur dans le test: {login_response.data.decode()}"
+        )
+
+        # Appel de la route /users/me avec le même client (cookie JWT conservé)
+        response = user_client.get("/users/me")
+
+        # Vérification du statut HTTP
+        self.assertEqual(
+            response.status_code,
+            200,
+            f"Erreur status code sur /users/me: {response.status_code}. Réponse: {response.data.decode()}"
+        )
+
+        # Vérification des données retournées
+        data = response.get_json()
+        self.assertEqual(data["email"], self.regular_user.email)
+        self.assertFalse(data["is_admin"])
+        self.assertEqual(data["id"], str(self.regular_user.id))
+        self.assertNotIn("password", data)
+
 
 if __name__ == '__main__':
     unittest.main()
