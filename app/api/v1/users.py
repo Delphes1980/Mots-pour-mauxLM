@@ -55,6 +55,13 @@ user_me_response_model = api.model('UserMeResponse', {
 	'is_admin': fields.Boolean(required=True, description='Si l\'utilisateur est admin')
 })
 
+# Définir le modèle de données pour la réponse de user/me/review
+user_me_reviews_response_model = api.model ('UserMeReviewsResponse', {
+	'id': fields.String(required=True, description='ID de l\'utilisateur'),
+	'rating': fields.Integer(required=True, description='La note du commentaire'),
+	'text': fields.String(required=True, description='Le texte du commentaire'),
+})
+
 # Définir le modèle de données pour l'erreur
 error_model = api.model('Error', {
     'error': fields.String(description='Message d\'erreur')
@@ -175,6 +182,38 @@ class CurrentUser(Resource):
                 api.abort(404, error='Utilisateur non trouvé')
 
             return user, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
+@api.route('/me/reviews')
+class CurrentUserReviews(Resource):
+    @api.doc('Get all the reviews left by the current user')
+    @api.marshal_list_with(user_me_reviews_response_model, code=_http.HTTPStatus.OK, description='User reviews retrieved successfully')
+    @jwt_required()
+    @api.response(200, 'Commentaires récupérés avec succès', user_me_reviews_response_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(404, 'Aucun commentaire trouvé', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def get(self):
+        """Récupérer tous les commentaires de l'utilisateur actuel"""
+        try:
+            current_user = get_jwt_identity()
+
+            try:
+                validate_entity_id(current_user, 'user_id')
+            except ValueError as e:
+                api.abort(400, error=str(e))
+
+            reviews = facade.get_review_by_user(current_user)
+
+            if not reviews:
+                return [], 200
+
+            return reviews, 200
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))

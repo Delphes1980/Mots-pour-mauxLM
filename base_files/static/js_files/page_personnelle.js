@@ -164,6 +164,69 @@ function saveUserData(inputFields) {
 }
 
 
+// Fonction qui récupère les commentaires laissés par l'utilisateur
+async function loadUserReviews() {
+	const reviewsContainer = document.querySelector('.review-container-grid');
+	if (!reviewsContainer) {
+		console.error("Conteneur des commentaires introuvables");
+		return;
+	}
+
+	try {
+		const response = await fetch(`${API_USERS_BASE_URL}/me/reviews`, {
+			method: 'GET',
+			credentials: 'include',
+			header: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP ${response.status}`);
+		}
+
+		const reviews = await response.json();
+		reviewsContainer.innerHTML = '';
+
+		// S'il n'y a aucun commentaire de laissé
+		if (!reviews || reviews.length === 0) {
+			const emptyMessage = document.createElement('p');
+			emptyMessage.textContent = 'Vous n\'avez pas encore laissé de commentaires';
+			emptyMessage.className = 'empty-message';
+			reviewsContainer.appendChild(emptyMessage);
+			return;
+		}
+
+		for (const review of reviews) {
+			const box = document.createElement('div');
+			box.className = 'review-box';
+
+			const stars = document.createElement('div');
+			stars.className = 'rating-stars';
+			for (let i = 0; i < 5; i++) {
+				const star = document.createElement('i');
+				star.className = i < review.rating ? 'bx bxs-star' : 'bx bx-star';
+				stars.appendChild(star);
+			}
+
+			const text = document.createElement('div');
+			text.className = 'review-text';
+			text.innerHTML = `<p>${review.text || "(Commentaire vide)"}</p>`;
+
+			box.appendChild(stars);
+			box.appendChild(text);
+			reviewsContainer.appendChild(box);
+		}
+	} catch (error) {
+		console.error("Erreur lors du chargement des commentaires: ", error);
+		const errorMessage = document.createElement('p');
+		errorMessage.textContent = "Impossible de charger les commentaires";
+		errorMessage.className = 'error-review-message';
+		reviewsContainer.appendChild(errorMessage);
+	}
+}
+
+
 // Vérifie que les champs obligatoires sont valides
 function validateUserData(data) {
 	const requiredFields = ['first_name', 'last_name'];
@@ -195,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	loadUserData(inputFields);
 	setupModifierButton(modifierButton, inputFields);
+	loadUserReviews();
 });
 
 window.addEventListener('error', function (e) {
