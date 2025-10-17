@@ -79,7 +79,7 @@ class ReviewRepository(BaseRepository):
             _user_id=user_id
         ).all()
 
-    def reassign_reviews(self, old_user_id, new_user_id):
+    def reassign_reviews_from_user(self, old_user_id, new_user_id):
         """Réassigner les avis d'un utilisateur supprimé à un utilisateur fantôme, pour conserver les avis"""
         # Vérifier la validité des identifiants
         if not is_valid_uuid4(old_user_id):
@@ -103,7 +103,36 @@ class ReviewRepository(BaseRepository):
 
         # Réassigner les avis
         for review in reviews:
-            review.user_id= new_user_id
+            review.user= new_user
+        self.db.session.commit()
+
+        return len(reviews)
+
+    def reassign_reviews_from_prestation(self, old_prestation_id, new_prestation_id):
+        """Réassigner les avis d'une prestation supprimée à une prestation fantôme, pour conserver les avis"""
+        # Vérifier la validité des identifiants
+        if not is_valid_uuid4(old_prestation_id):
+            raise ValueError("Format d'identifiant prestation à supprimer non valide")
+        if not is_valid_uuid4(new_prestation_id):
+            raise ValueError("Format d'identifiant prestation fantôme non valide")
+
+        # Vérifier que les prestations existent
+        old_prestation = self.db.session.query(Prestation).get(old_prestation_id)
+        new_prestation = self.db.session.query(Prestation).get(new_prestation_id)
+
+        if not old_prestation:
+            raise ValueError("La prestation à supprimer n'a pas été trouvée")
+        if not new_prestation:
+            raise ValueError("La nouvelle prestation n'a pas été trouvée")
+        
+        # Vérifier s'il y a des avis à réassigner
+        reviews = self.get_by_prestation_id(old_prestation_id)
+        if not reviews:
+            return 0
+
+        # Réassigner les avis
+        for review in reviews:
+            review.prestation_id= new_prestation_id
         self.db.session.commit()
 
         return len(reviews)

@@ -159,6 +159,9 @@ class TestPrestationsUnitSimple(BaseTest):
     def test_delete_prestation_success(self):
         """Test suppression réussie"""
         # Créer une prestation
+        ghost = Prestation(name='Ghost prestation')
+        self.save_to_db(ghost)
+
         prestation = Prestation(name='À Supprimer')
         self.save_to_db(prestation)
         

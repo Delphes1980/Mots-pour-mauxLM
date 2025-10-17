@@ -172,6 +172,9 @@ class TestPrestationsIntegration(BaseTest):
     
     def test_delete_prestation_integration(self):
         """Test suppression prestation"""
+        ghost = Prestation(name='Ghost prestation')
+        self.save_to_db(ghost)
+
         prestation = Prestation(name='Prestation à supprimer')
         self.save_to_db(prestation)
         prestation_id = prestation.id
@@ -189,6 +192,9 @@ class TestPrestationsIntegration(BaseTest):
     
     def test_workflow_complet_prestation(self):
         """Test workflow complet : créer -> lire -> modifier -> supprimer"""
+        ghost = Prestation(name='Ghost prestation')
+        self.save_to_db(ghost)
+        
         # 1. Créer
         data = {'name': 'Workflow Test'}
         response = self.client.post(

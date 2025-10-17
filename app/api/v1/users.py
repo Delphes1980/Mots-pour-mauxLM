@@ -331,7 +331,7 @@ class User(Resource):
 
             reviews = facade.get_review_by_user(user_id)
             if reviews:
-                facade.reassign_reviews(user_id, ghost_user.id)
+                facade.reassign_reviews_from_user(user_id, ghost_user.id)
 
             facade.delete_user(user_id)
             return {'message': 'Utilisateur supprimé avec succès'}, 200

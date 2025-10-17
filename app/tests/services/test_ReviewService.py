@@ -294,7 +294,10 @@ class TestReviewService(BaseTest):
         """Test de mise à jour réussie de la note"""
         created_review = self.service.create_review(**self.valid_review_data)
         
-        result = self.service.update_review(created_review.id, rating=4)
+        result = self.service.update_review(
+            created_review.id,
+            current_user_id=self.valid_review_data["user_id"],
+            rating=4)
         
         self.assertEqual(result.rating, 4)
         self.assertEqual(result.text, 'Excellent service')  # Inchangé
@@ -303,7 +306,10 @@ class TestReviewService(BaseTest):
         """Test de mise à jour réussie du texte"""
         created_review = self.service.create_review(**self.valid_review_data)
         
-        result = self.service.update_review(created_review.id, text='Nouveau commentaire')
+        result = self.service.update_review(
+            created_review.id,
+            current_user_id=self.valid_review_data["user_id"],
+            text='Nouveau commentaire')
         
         self.assertEqual(result.text, 'Nouveau commentaire')
         self.assertEqual(result.rating, 5)  # Inchangé
@@ -312,7 +318,11 @@ class TestReviewService(BaseTest):
         """Test de mise à jour réussie des deux champs"""
         created_review = self.service.create_review(**self.valid_review_data)
         
-        result = self.service.update_review(created_review.id, rating=3, text='Commentaire modifié')
+        result = self.service.update_review(
+            created_review.id,
+            current_user_id=self.valid_review_data["user_id"],
+            rating=3,
+            text='Commentaire modifié')
         
         self.assertEqual(result.rating, 3)
         self.assertEqual(result.text, 'Commentaire modifié')
@@ -321,21 +331,30 @@ class TestReviewService(BaseTest):
         """Test sans review_id"""
         from app.utils import CustomError
         with self.assertRaises(CustomError) as context:
-            self.service.update_review(None, rating=4)
+            self.service.update_review(
+                None,
+                current_user_id=self.valid_review_data["user_id"],
+                rating=4)
         self.assertIn("review_id", str(context.exception).lower())
 
     def test_update_review_invalid_id_format(self):
         """Test avec un format d'ID invalide"""
         from app.utils import CustomError
         with self.assertRaises(CustomError) as context:
-            self.service.update_review('invalid-uuid', rating=4)
+            self.service.update_review(
+                'invalid-uuid',
+                current_user_id=self.valid_review_data["user_id"],
+                rating=4)
         self.assertIn("format", str(context.exception).lower())
 
     def test_update_review_not_found(self):
         """Test quand l'avis n'existe pas"""
         from app.utils import CustomError
         with self.assertRaises(CustomError) as context:
-            self.service.update_review('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', rating=4)
+            self.service.update_review(
+                'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                current_user_id=self.valid_review_data["user_id"],
+                rating=4)
         self.assertIn("non trouvé", str(context.exception).lower())
 
     def test_update_review_invalid_rating(self):
@@ -344,7 +363,10 @@ class TestReviewService(BaseTest):
         
         from app.utils import CustomError
         with self.assertRaises(CustomError):
-            self.service.update_review(created_review.id, rating=0)
+            self.service.update_review(
+                created_review.id,
+                current_user_id=self.valid_review_data["user_id"],
+                rating=0)
 
     def test_update_review_invalid_text(self):
         """Test avec un texte invalide"""
@@ -352,7 +374,10 @@ class TestReviewService(BaseTest):
         
         from app.utils import CustomError
         with self.assertRaises(CustomError):
-            self.service.update_review(created_review.id, text='A')
+            self.service.update_review(
+                created_review.id,
+                current_user_id=self.valid_review_data["user_id"],
+                text='A')
 
     # ==================== Tests delete_review ====================
 

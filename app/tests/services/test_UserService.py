@@ -170,7 +170,10 @@ class TestUserServiceSimple(BaseTest):
             password='Password456!'
         )
         
-        all_users = self.user_service.get_all_users()
+        all_users = [
+        u for u in self.user_service.get_all_users()
+        if u.email != 'deleted@system.local'
+        ]
         
         self.assertEqual(len(all_users), 2)
         user_ids = [u.id for u in all_users]
@@ -179,7 +182,10 @@ class TestUserServiceSimple(BaseTest):
 
     def test_get_all_users_empty(self):
         """Test get_all_users quand aucun utilisateur"""
-        all_users = self.user_service.get_all_users()
+        all_users = [
+        u for u in self.user_service.get_all_users()
+        if u.email != 'deleted@system.local'
+        ]
         self.assertEqual(len(all_users), 0)
 
     def test_update_user_single_field(self):

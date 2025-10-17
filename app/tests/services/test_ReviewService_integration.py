@@ -47,7 +47,11 @@ class TestReviewServiceIntegration(BaseTest):
         self.assertEqual(retrieved_review.text, "Excellent service")
         
         # Mise à jour
-        updated_review = self.service.update_review(review.id, rating=4, text="Très bien")
+        updated_review = self.service.update_review(
+            review.id,
+            current_user_id=self.user.id,
+            rating=4,
+            text="Très bien")
         self.assertEqual(updated_review.rating, 4)
         self.assertEqual(updated_review.text, "Très bien")
         

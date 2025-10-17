@@ -1,4 +1,5 @@
 from app.persistence.PrestationRepository import PrestationRepository
+from app.persistence.ReviewRepository import ReviewRepository
 from app.models.prestation import Prestation
 from app.utils import (validate_init_args, name_validation, validate_entity_id, CustomError)
 
@@ -6,6 +7,7 @@ from app.utils import (validate_init_args, name_validation, validate_entity_id, 
 class PrestationService:
     def __init__(self):
         self.prestation_repository = PrestationRepository()
+        self.review_repository = ReviewRepository()
 
     def create_prestation(self, **kwargs):
         """Create a new prestation with the provided data
@@ -150,5 +152,17 @@ class PrestationService:
         prestation = self.prestation_repository.get_by_id(prestation_id)
         if not prestation:
             raise CustomError("Prestation non trouvée", 404)
+
+        if prestation.name.strip().lower() == 'ghost prestation':
+            raise CustomError('Vous ne pouvez pas supprimer la prestation fantôme', 403)
+
+        ghost_prestation = self.prestation_repository.get_by_attribute('name', 'Ghost prestation')
+        if not ghost_prestation:
+            raise CustomError('Prestation fantôme non trouvée', 404)
+
+        # Vérifier si des avis existent pour cette prestation
+        reviews = self.review_repository.get_by_prestation_id(prestation_id)
+        if reviews:
+            self.review_repository.reassign_reviews_from_prestation(prestation.id, ghost_prestation.id)
 
         return self.prestation_repository.delete(prestation_id)
