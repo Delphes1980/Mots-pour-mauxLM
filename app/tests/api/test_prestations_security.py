@@ -178,6 +178,9 @@ class TestPrestationsSecurity(BaseTest):
         # Se connecter en tant qu'admin
         self.login_as_admin()
         
+        ghost = Prestation(name='Ghost prestation')
+        self.save_to_db(ghost)
+
         prestation = Prestation(name='Test Admin Access')
         self.save_to_db(prestation)
         

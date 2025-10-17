@@ -57,7 +57,7 @@ class TestPrestationsAPI(BaseTest):
             is_admin=False
         )
         self.save_to_db(self.admin_user, self.regular_user)
-        
+
         # Se connecter pour obtenir les cookies JWT
         self.login_as_admin()
 
@@ -228,6 +228,9 @@ class TestPrestationsAPI(BaseTest):
     
     def test_delete_prestation_success(self):
         """Test suppression réussie"""
+        ghost = Prestation(name='Ghost prestation')
+        self.save_to_db(ghost)
+
         prestation = Prestation(name='Prestation à Supprimer')
         self.save_to_db(prestation)
         prestation_id = prestation.id

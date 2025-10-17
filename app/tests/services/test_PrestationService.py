@@ -210,6 +210,10 @@ class TestPrestationService(BaseTest):
 
     def test_delete_prestation_success(self):
         """Test de suppression réussie d'une prestation"""
+        # Créer la prestation fantôme nécessaire à la suppression
+        ghost = Prestation(name="Ghost prestation")
+        self.save_to_db(ghost)
+
         created_prestation = self.service.create_prestation(name="À supprimer")
         
         result = self.service.delete_prestation(created_prestation.id)

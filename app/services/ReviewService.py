@@ -263,7 +263,7 @@ class ReviewService:
 
 		return self.review_repository.delete(review_id)
 
-	def reassign_reviews(self, old_user_id, new_user_id):
+	def reassign_reviews_from_user(self, old_user_id, new_user_id):
 		"""Reassign reviews from an old user to a new user
 
 		Args:
@@ -295,6 +295,44 @@ class ReviewService:
 
 		for review in reviews:
 			review.user = new_user
+			reassigned_reviews.append(review)
+
+		self.review_repository.db.session.commit()
+
+		return reassigned_reviews
+
+	def reassign_reviews_from_prestation(self, old_prestation_id, new_prestation_id):
+		"""Reassign reviews from an old prestation to a new prestation
+
+		Args:
+			old_prestation_id (str): The ID of the old prestation
+			new_prestation_id (str): The ID of the new prestation
+
+		Returns:
+			list: List of reassigned reviews
+
+		Raises:
+			CustomError: If the IDs are invalid(400) or if the prestations are not found(404)
+		"""
+		try:
+			old_prestation_id = validate_entity_id(old_prestation_id, 'old_prestation_id')
+			new_prestation_id = validate_entity_id(new_prestation_id, 'new_prestation_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
+
+		old_prestation = self.prestation_repository.get_by_id(old_prestation_id)
+		if not old_prestation:
+			raise CustomError("Ancienne prestation non trouvée", 404)
+
+		new_prestation = self.prestation_repository.get_by_id(new_prestation_id)
+		if not new_prestation:
+			raise CustomError("Nouvelle prestation non trouvée", 404)
+
+		reviews = self.review_repository.get_by_prestation_id(old_prestation_id)
+		reassigned_reviews = []
+
+		for review in reviews:
+			review.prestation = new_prestation
 			reassigned_reviews.append(review)
 
 		self.review_repository.db.session.commit()

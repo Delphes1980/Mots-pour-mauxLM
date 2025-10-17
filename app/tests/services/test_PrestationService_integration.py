@@ -1,6 +1,7 @@
 import unittest
 from app.tests.base_test import BaseTest
 from app.services.PrestationService import PrestationService
+from app.models.prestation import Prestation
 
 
 class TestPrestationServiceIntegration(BaseTest):
@@ -13,6 +14,10 @@ class TestPrestationServiceIntegration(BaseTest):
 
     def test_full_prestation_lifecycle(self):
         """Test cycle complet : création, lecture, mise à jour, suppression"""
+        # Créer la prestation fantôme nécessaire à la suppression
+        ghost = Prestation(name="Ghost prestation")
+        self.save_to_db(ghost)
+        
         # Création
         prestation = self.service.create_prestation(name="Massage suédois")
         
@@ -59,14 +64,17 @@ class TestPrestationServiceIntegration(BaseTest):
 
     def test_multiple_prestations_management(self):
         """Test gestion de plusieurs prestations"""
+        # Créer la prestation fantôme
+        ghost = Prestation(name="Ghost prestation")
+        self.save_to_db(ghost)
+
         # Créer plusieurs prestations
         prestation1 = self.service.create_prestation(name="Massage californien")
         prestation2 = self.service.create_prestation(name="Aromathérapie")
         prestation3 = self.service.create_prestation(name="Shiatsu")
         
         # Récupérer toutes les prestations
-        all_prestations = self.service.get_all_prestations()
-        
+        all_prestations = [p for p in self.service.get_all_prestations() if p.name != "Ghost prestation"]        
         self.assertEqual(len(all_prestations), 3)
         names = [p.name for p in all_prestations]
         self.assertIn("Massage californien", names)
@@ -76,8 +84,8 @@ class TestPrestationServiceIntegration(BaseTest):
         # Supprimer une prestation
         self.service.delete_prestation(prestation2.id)
         
-        # Vérifier qu'il en reste 2
-        remaining_prestations = self.service.get_all_prestations()
+        # Vérifier qu'il en reste 2 (hors fantôme)
+        remaining_prestations = [p for p in self.service.get_all_prestations() if p.name != "Ghost prestation"]
         self.assertEqual(len(remaining_prestations), 2)
         remaining_names = [p.name for p in remaining_prestations]
         self.assertNotIn("Aromathérapie", remaining_names)

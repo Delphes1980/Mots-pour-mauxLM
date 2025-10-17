@@ -217,6 +217,22 @@ class Prestation(Resource):
 
         try:
             validate_entity_id(prestation_id, 'prestation_id')
+
+            prestation = facade.get_prestation_by_id(prestation_id)
+            if not prestation:
+                api.abort(404, error='Prestation non trouvée')
+
+            if prestation.name == 'Ghost prestation':
+                api.abort(403, error='Vous ne pouvez pas supprimer la prestation fantôme')
+
+            ghost_prestation = facade.get_prestation_by_name('Ghost prestation')
+            if not ghost_prestation:
+                api.abort(404, error='Prestation fantôme non trouvée')
+
+            reviews = facade.get_review_by_prestation(prestation_id)
+            if reviews:
+                facade.reassign_reviews_from_prestation(prestation_id, ghost_prestation.id)
+
             facade.delete_prestation(prestation_id)
             return {'message': 'Prestation supprimée avec succès'}, 200
 
