@@ -51,6 +51,9 @@ class Facade:
 
     def get_all_reviews(self):
         return self.review_service.get_all_reviews()
+    
+    def get_all_public_reviews(self):
+        return self.review_service.get_all_public_reviews()
 
     def get_review_by_prestation(self, prestation_id):
         return self.review_service.get_review_by_prestation(prestation_id)
