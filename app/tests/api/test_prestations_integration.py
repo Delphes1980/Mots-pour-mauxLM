@@ -231,7 +231,6 @@ class TestPrestationsIntegration(BaseTest):
         
         endpoints = [
             ('POST', '/prestations/', {'name': 'Test'}),
-            ('GET', '/prestations/', None),
             ('GET', '/prestations/search?name=Test', None),
         ]
         
@@ -246,6 +245,8 @@ class TestPrestationsIntegration(BaseTest):
                 response = user_client.get(url)
             
             self.assertEqual(response.status_code, 403)
+        response = user_client.get('/prestations/')
+        self.assertEqual(response.status_code, 200)
     
     def test_security_no_token(self):
         """Test sécurité : pas de token JWT"""
@@ -253,6 +254,34 @@ class TestPrestationsIntegration(BaseTest):
         no_auth_client = self.app.test_client()
         response = no_auth_client.get('/prestations/')
         self.assertEqual(response.status_code, 401)
+
+    def test_user_sees_only_visible_prestations(self):
+        """Test utilisateur : ne voit pas la prestation fantôme"""
+        self.save_to_db(
+            Prestation(name='Massage'),
+            Prestation(name='Ghost prestation'),
+            Prestation(name='Hypnose')
+        )
+
+        user_client = self.login_as_user()
+        response = user_client.get('/prestations/')
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.data)
+        names = [p['name'] for p in data]
+
+        self.assertIn('Massage', names)
+        self.assertIn('Hypnose', names)
+        self.assertNotIn('Ghost prestation', names)
+
+    def test_user_can_access_prestations_route(self):
+        """Test isolé : accès utilisateur à /prestations/"""
+        user_client = self.login_as_user()
+        response = user_client.get('/prestations/')
+        print("→ Status code reçu :", response.status_code)
+        print("→ Contenu :", response.data.decode())
+        self.assertEqual(response.status_code, 200)
+
 
 
 if __name__ == '__main__':

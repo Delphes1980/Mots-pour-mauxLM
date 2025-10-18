@@ -61,12 +61,25 @@ class PrestationService:
         return prestation
 
     def get_all_prestations(self):
-        """Get all prestations
+        """Get all prestations for admin
 
         Returns:
             list: List of all prestations
         """
         return self.prestation_repository.get_all()
+
+    def get_all_prestations_for_user(self):
+        """Get all prestations for user
+        
+        Returns:
+            list: List of all prestations
+        """
+        try:
+            prestations = self.prestation_repository.get_all_prestations_for_user()
+            return prestations
+
+        except Exception as e:
+            raise CustomError(str(e), 500)
 
     def get_prestation_by_name(self, name):
         """Get a prestation by its name

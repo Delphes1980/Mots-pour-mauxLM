@@ -101,6 +101,9 @@ class Facade:
 
     def get_all_prestations(self):
         return self.prestation_service.get_all_prestations()
+    
+    def get_all_prestations_for_user(self):
+        return self.prestation_service.get_all_prestations_for_user()
 
     def get_prestation_by_name(self, name):
         return self.prestation_service.get_prestation_by_name(name)

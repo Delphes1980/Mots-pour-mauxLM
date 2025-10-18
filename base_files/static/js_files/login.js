@@ -35,7 +35,6 @@ function setupLogin() {
   const errorMessageElement = document.getElementById('errorMessage');
 
   if(!loginForm) {
-    console.error("Erreur: L'ID 'loginForm' est introuvable");
     return;
   }
 
@@ -75,12 +74,9 @@ function setupLogin() {
       const result = await response.json();
 
       if (response.ok) {
-        console.log("Authentification réussie. Les cookies JWT sont définis.");
         window.location.href = '../templates/page_personnelle.html';
 
       } else {
-        console.error("Echec de l'authentification: ", result);
-
         // Afficher le message d'erreur
         const errorMessage = result.error || "Email ou mot de passe invalide";
 
@@ -90,7 +86,6 @@ function setupLogin() {
         }
       }
     } catch (error) {
-      console.error("Erreur lors de la requête: ", error);
       if (errorMessageElement) {
         errorMessageElement.textContent = "Erreur de connexion au serveur. Réessayez.";
         errorMessageElement.style.display = 'block';
@@ -130,15 +125,12 @@ function setupLogout() {
       });
 
       if (response.ok || response.status === 401) {
-        console.log("Déconnexion réussie. Redirection vers la page d'accueil");
         window.location.href = '../templates/accueil.html';
       } else {
         const errorData = await response.json();
-        console.error("Erreur lors de la déconnexion: ", errorData.error);
         alert("Une erreur est survenue lors de la déconnexion: " + (errorData.error || 'Erreur inconnue'));
       }
     } catch (error) {
-      console.error("Erreur lors de la requête: ", error);
       alert("Une erreur est survenue lors de la déconnexion.");
     } finally {
       logoutButton.disabled = false;
@@ -150,14 +142,11 @@ function setupLogout() {
 
 // Fonction pour switcher entre le bouton Connexion et Déconnexion
 async function checkLoginStatus() {
-  console.log("checkLoginStatus() appelée");
-
   const loginLink = document.getElementById('login_link');
   const logoutLink = document.getElementById('logout_link');
   const espaceLink = document.getElementById('espace_link');
 
   if (!loginLink && !logoutLink) {
-    console.warn("Aucun bouton de connexion/déconnexion trouvé dans le DOM.");
     return;
   }
 
@@ -167,24 +156,19 @@ async function checkLoginStatus() {
       credentials: 'include'
     });
 
-    console.log("Réponse de vérification :", response.status);
-
     if (response.ok) {
       // Utilisateur connecté
       if (loginLink) loginLink.style.display = 'none';
       if (logoutLink) logoutLink.style.display = 'inline-block';
       if (espaceLink) espaceLink.style.display = 'inline-block';
-      console.log("Utilisateur connecté → bouton déconnexion affiché");
     } else {
       // Utilisateur déconnecté
       if (loginLink) loginLink.style.display = 'inline-block';
       if (logoutLink) logoutLink.style.display = 'none';
       if (espaceLink) espaceLink.style.display = 'none';
-      console.log("Utilisateur non connecté → bouton connexion affiché");
     }
 
   } catch (error) {
-    console.error("Erreur lors de la vérification de l'état de connexion :", error);
     if (loginLink) loginLink.style.display = 'inline-block';
     if (logoutLink) logoutLink.style.display = 'none';
     if (espaceLink) espaceLink.style.display = 'none';
@@ -208,7 +192,6 @@ async function redirectToContactPage() {
       window.location.href = '../templates/login.html';
     }
   } catch (error) {
-    console.error("Erreur de redirection: ", error);
     window.location.href = '../templates/login.html';
   }
 }
@@ -216,13 +199,6 @@ async function redirectToContactPage() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const currentPage = window.location.pathname;
-
-  const logoutLink = document.getElementById('logout_link');
-  console.log("logout_link trouvé :", logoutLink);
-
-  if (!logoutLink) {
-    alert("Le bouton #logout_link n'existe pas dans le DOM !");
-  }
 
   if (currentPage.includes('login.html')) {
     setupClearButton();

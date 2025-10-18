@@ -1,4 +1,3 @@
-console.log("Script chargé");
 const API_USERS_BASE_URL = 'http://localhost:5000/api/v1/users';
 const API_REVIEWS_BASE_URL = 'http://localhost:5000/api/v1/reviews';
 
@@ -19,7 +18,6 @@ function mapInputToUserField(name) {
 	}
 
 	if (!(name in mapping)) {
-		console.warn(`Champ inconnu ignoré: ${name}`);
 		return null;
 	}
 
@@ -29,8 +27,6 @@ function mapInputToUserField(name) {
 
 // Fonction pour charger les données de l'utilisateur
 async function loadUserData() {
-	console.log("Appel à loadUserData");
-
 	try {
 		const response = await fetch(`${API_USERS_BASE_URL}/me`, {
 			method: 'GET',
@@ -45,13 +41,10 @@ async function loadUserData() {
 		}
 
 		const data = await response.json();
-		console.log("Données reçues: ", data);
-
 		const inputFields = document.querySelectorAll('.form-field input');
 
 		if (data.id) {
 			window.currentUserId = data.id;
-			console.log("ID utilisateur: ", window.currentUserId);
 		}
 
 		const firstName = data['first_name'];
@@ -149,7 +142,6 @@ function saveUserData(inputFields) {
 		body: JSON.stringify(updateData)
 	})
 	.then(response => {
-		console.log("Réponse PATCH :", response.status);
 		if (!response.ok) {
 			throw new Error('Erreur lors de la mise à jour des données');
 		}
@@ -169,7 +161,6 @@ function saveUserData(inputFields) {
 async function loadUserReviews() {
 	const reviewsContainer = document.querySelector('.review-container-grid');
 	if (!reviewsContainer) {
-		console.error("Conteneur des commentaires introuvables");
 		return;
 	}
 
@@ -342,21 +333,17 @@ async function saveAllReviewData(ratingFields, textFields) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-	console.log("DOM entièrement chargé !");
-
 	// Infos personnelles
 	const modifierButton = document.getElementById('modifier-button');
 	const infoForm = document.getElementById('personal-info-form');
 
 	// Vérifie que les éléments existent
 	if (!modifierButton || !infoForm) {
-		console.error("Eléments du formulaire introuvables");
 		return;
 	}
 
 	const inputFields = infoForm.querySelectorAll('input');
 	if (!inputFields || inputFields.length === 0) {
-		console.warn("Aucun champ de saisie trouvé dans le formulaire");
 		return;
 	}
 
@@ -366,7 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Commentaires
 	const modifierReviewButton = document.getElementById('modifier-review-button');
 	if (!modifierReviewButton) {
-		console.error("Bouton de modification des commentaires introuvrable");
 		return;
 	}
 
