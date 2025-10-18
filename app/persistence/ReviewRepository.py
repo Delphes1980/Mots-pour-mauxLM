@@ -1,9 +1,10 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.review import Review
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import (rating_validation, type_validation, text_field_validation, is_valid_uuid4)
+from app.utils import (CustomError, rating_validation, type_validation, text_field_validation, is_valid_uuid4)
 from app.models.user import User
 from app.models.prestation import Prestation
+from sqlalchemy.orm import joinedload
 
 
 class ReviewRepository(BaseRepository):
@@ -136,3 +137,12 @@ class ReviewRepository(BaseRepository):
         self.db.session.commit()
 
         return len(reviews)
+    
+    def get_all_public_reviews(self):
+        """Récupérer tous les commentaires publics"""
+        try:
+            reviews = self.db.session.query(Review).options(joinedload(Review._user), joinedload(Review._prestation)).all()
+            return reviews
+        
+        except Exception as e:
+            raise CustomError(f"Erreur lors de la récupération des commentaires publics : {str(e)}")

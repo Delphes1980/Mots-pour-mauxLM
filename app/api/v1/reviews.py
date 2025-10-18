@@ -39,6 +39,21 @@ review_update_model = api.model('ReviewUpdate', {
     'text': fields.String(required=False, description='Le texte du commentaire')
 })
 
+# Définir le modèle de données pour l'utilisateur
+user_details_model = api.model('UserDetails', {
+	'id': fields.String(required=True, description='ID de l\'utilisateur'),
+	'first_name': fields.String(required=True, description='Le prénom de l\'utilisateur'),
+    'last_name': fields.String(required=True, description='Le nom de l\'utilisateur')
+})
+
+# Définir le modèle de données pour les commentaires publics
+public_review_response_model = api.model('PublicReviewResponse', {
+	'id': fields.String(required=True, description='ID du commentaire'),
+	'rating': fields.Integer(required=True, description='La note du commentaire'),
+	'text': fields.String(required=True, description='Le texte du commentaire'),
+    'user': fields.Nested(user_details_model, required=True, description='Détails de l\'utilisateur associé au commentaire')
+})
+
 # Définir le modèle de données pour l'erreur
 error_model = api.model('Error', {
     'error': fields.String(description='Message d\'erreur')
@@ -124,6 +139,23 @@ class ReviewList(Resource):
 
         try:
             reviews = facade.get_all_reviews()
+            return reviews, 200
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
+@api.route('/public-reviews')
+class PublicReviews(Resource):
+    @api.doc('Get all the public reviews')
+    @api.marshal_list_with(public_review_response_model, code=_http.HTTPStatus.OK, description='List of all reviews retrieved successfully')
+    @api.response(200, 'Liste des commentaires récupérée avec succès', public_review_response_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def get(self):
+        """Récupérer tous les commentaires publiques"""
+        try:
+            reviews = facade.get_all_public_reviews()
             return reviews, 200
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
