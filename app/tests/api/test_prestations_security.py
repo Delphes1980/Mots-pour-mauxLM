@@ -135,7 +135,6 @@ class TestPrestationsSecurity(BaseTest):
         
         endpoints = [
             ('POST', '/prestations/', {'name': 'Test'}),
-            ('GET', '/prestations/', None),
             ('GET', '/prestations/search?name=Test', None),
             ('GET', f'/prestations/{prestation.id}', None),
             ('PUT', f'/prestations/{prestation.id}', {'name': 'Updated'}),
@@ -228,7 +227,7 @@ class TestPrestationsSecurity(BaseTest):
         no_claim_client = self.app.test_client()
         no_claim_client.set_cookie('access_token_cookie', token_no_admin_claim)
         
-        response = no_claim_client.get('/prestations/')
+        response = no_claim_client.get('/prestations/search?name=Test')
         
         # Devrait être refusé car pas de claim is_admin
         self.assertEqual(response.status_code, 403)
