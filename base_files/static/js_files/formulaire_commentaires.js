@@ -56,7 +56,7 @@ function ratingSubmit() {
 }
 
 
-// Bouton pour supprimer le champ
+// Bouton pour effacer le champ
 function setupClearButton() {
   // Pour faire apparaitre / disparaître la croix pour effacer le contenu
 	const inputFields = document.querySelectorAll('.form-field input, .form-field textarea');
@@ -94,8 +94,6 @@ function setupClearButton() {
 
 // Fonction pour le menu déroulant
 function setupCustomSelects() {
-  console.log("Menu déroulant initialisé");
-
   const customSelects = document.querySelectorAll('.select-wrapper');
 
   customSelects.forEach(customSelect => {
@@ -159,7 +157,7 @@ async function loadUserData() {
 
 	} catch (error) {
 		console.error("Erreur lors du chargement des données utilisateur: ", error);
-		console.error("Impossible de charger vos informations. Redirection vers l'accueil");
+		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard");
 	}
 }
 
@@ -215,7 +213,8 @@ async function loadPrestationsForDropdown() {
       dropdownContainer.appendChild(item);
     });
   } catch (error) {
-    showFeedbackMessage("Erreur lors du chargement des prestations", true);
+    console.error('Erreur lors du chargement des prestations: ', error);
+    showFeedbackMessage("Erreur lors du chargement des prestations. Veuillez réessayer plus tard");
   }
 }
 
@@ -268,9 +267,13 @@ function setupReviewForm() {
       }
 
       showFeedbackMessage("Merci pour votre commentaire!");
-      window.location.href = '../templates/avis.html';
+      setTimeout(() => {
+        window.location.href = '/base_files/templates/avis.html';
+      }, 3500);
+
     } catch (error) {
-      showFeedbackMessage(error.message);
+      console.error("Erreur lors de l'envoi du commentaire: ", error);
+      showFeedbackMessage("Une erreur est survenue lors de l'envoi du commentaire. Veuillez réessayer");
     }
   });
 }
@@ -293,8 +296,8 @@ function showFeedbackMessage(message, isError = false) {
     setTimeout(() => {
       banner.style.display = 'none';
       banner.classList.remove('error');
-    }, 300);
-  }, 4000);
+    }, 100);
+  }, 3000);
 }
 
 

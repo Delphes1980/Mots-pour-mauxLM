@@ -29,7 +29,7 @@
         		<img class="logo" src="/base_files/images/Logo Clair.png" alt="Mots pour maux LM logo">
 			</div>
 			<div class="nav-container">
-        		<nav id="nav-links">
+        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
 					<a href="/base_files/templates/accueil.html" id="accueil_link">Accueil</a>
 					<a href="/base_files/templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
             		<a href="/base_files/templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
@@ -51,13 +51,13 @@
 
 					<!-- Champ pour l'email -->
 					<div class="form-field">
-						<input type="email" id="email" name="email" placeholder="Email" required>
+						<input type="email" id="email" name="email" placeholder="Email" aria-label="Adresse email" required>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
 					<!-- Champ pour le mot de passe -->
 					<div class="form-field">
-						<input type="password" id="password" name="password" placeholder="Mot de passe" required>
+						<input type="password" id="password" name="password" placeholder="Mot de passe" aria-label="Mot de passe" required>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
@@ -65,10 +65,12 @@
 					<p id="errorMessage" class="error-message" style="color: red; margin-top: 10px; text-align: center; display: none"></p>
 
 					<a href="/base_files/templates/page_inscription.html">Créer un compte</a>
-					<button type="submit">Se connecter</button>
+					<button type="submit" aria-label="Se connecter à votre espace">Se connecter</button>
 				</form>
 			</section>
     	</main>
+
+		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 
 		<!-- Liens pour les fichiers JS -->
         <script src="/base_files/static/js_files/login.js"></script>
