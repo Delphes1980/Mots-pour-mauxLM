@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.prestation import Prestation
 from app.persistence.BaseRepository import BaseRepository
-from app.utils import text_field_validation
+from app.utils import (text_field_validation, CustomError)
 
 class PrestationRepository(BaseRepository):
 	def __init__(self):
@@ -31,3 +31,11 @@ class PrestationRepository(BaseRepository):
 		except SQLAlchemyError:
 			self.db.session.rollback()
 			raise ValueError("Erreur lors de la création de la prestation")
+
+	def get_all_prestations_for_user(self):
+		"""Récupère toutes les prestations visibles pour les utilisateurs connectés"""
+		try:
+			prestations = self.db.session.query(self.model_class).filter(Prestation.name != 'Ghost prestation').all()
+			return prestations
+		except SQLAlchemyError:
+			raise CustomError("Erreur lors de la récupération des prestations", 500)

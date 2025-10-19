@@ -5,48 +5,49 @@ app/
 |__base_files/					# Frontend folder
 |	|__images/
 |	|	|__favicon/
-|	|	|	|__android-chrome-192x192.png
-|	|	|	|__androif-chrome-512x512.png
-|	|	|	|__apple-touch-icon.png
-|	|	|	|__favicon-16x16.png
-|	|	|	|__favion-32x32.png
-|	|	|	|__favicon.ico
-|	|	|	|__site.webmanifest
-|	|	|__Logo Clair.png
-|	|	|__Phot Profil.jpg
+|	|	|	|__ android-chrome-192x192.png
+|	|	|	|__ androif-chrome-512x512.png
+|	|	|	|__ apple-touch-icon.png
+|	|	|	|__ favicon-16x16.png
+|	|	|	|__ favion-32x32.png
+|	|	|	|__ favicon.ico
+|	|	|	|__ site.webmanifest
+|	|	|__ Logo Clair.png
+|	|	|__ Phot Profil.jpg
 |	|__static/
 |	|	|__css_files/
-|	|	|	|__accueil.css
-|	|	|	|__avis.css
-|	|	|	|__coordonnees_horaires.css
-|	|	|	|__en_savoir_plus.css
-|	|	|	|__formulaire_commentaires.css
-|	|	|	|__formulaire_rdv.css
-|	|	|	|__login.css
-|	|	|	|__page_inscription.css
-|	|	|	|__page_personnelle.css
-|	|	|	|__prestations_tarifs.css
-|	|	|	|__styles.css
-|	|	|	|__techniques_therapeutiques.css
+|	|	|	|__ accueil.css
+|	|	|	|__ avis.css
+|	|	|	|__ coordonnees_horaires.css
+|	|	|	|__ en_savoir_plus.css
+|	|	|	|__ formulaire_commentaires.css
+|	|	|	|__ formulaire_rdv.css
+|	|	|	|__ login.css
+|	|	|	|__ page_inscription.css
+|	|	|	|__ page_personnelle.css
+|	|	|	|__ prestations_tarifs.css
+|	|	|	|__ styles.css
+|	|	|	|__ techniques_therapeutiques.css
 |	|	|__js_files/
-|	|		|__avis.js
-|	|		|__formulaire_commentaires.js
-|	|		|__formulaire_rdv.js
-|	|		|__login.js
-|	|		|__page_personnelle.js
+|	|		|__ avis.js
+|	|		|__ formulaire_commentaires.js
+|	|		|__ formulaire_rdv.js
+|	|		|__ login.js
+|	|		|__ page_inscription.js
+|	|		|__ page_personnelle.js
 |	|__templates/
-|	|	|__accueil.html
-|	|	|__avis.html
-|	|	|__base.html
-|	|	|__coordonnees_horaires.html
-|	|	|__en_savoir_plus.html
-|	|	|__formulaire_commentaires.html
-|	|	|__formulaire_rdv.html
-|	|	|__login.html
-|	|	|__page_inscription.html
-|	|	|__page_personnelle.html
-|	|	|__prestations_tarifs.html
-|	|	|__techniques_therapeutiques.html
+|	|	|__ accueil.html
+|	|	|__ avis.html
+|	|	|__ base.html
+|	|	|__ coordonnees_horaires.html
+|	|	|__ en_savoir_plus.html
+|	|	|__ formulaire_commentaires.html
+|	|	|__ formulaire_rdv.html
+|	|	|__ login.html
+|	|	|__ page_inscription.html
+|	|	|__ page_personnelle.html
+|	|	|__ prestations_tarifs.html
+|	|	|__ techniques_therapeutiques.html
 |	|
 |___app/					# Backend folder
 	├── __init__.py
@@ -102,6 +103,7 @@ app/
 	|	|	|__ test_reviews_integration.py
 	|	|	|__ test_reviews_security.py
 	|	|	|__ test_reviews_unit.py
+	|	|	|__ test_user_api_deletion.py
 	|	|	|__ test_users_api.py
 	|	|	|__ test_users_integration.py
 	|	|	|__ test_users_security.py
@@ -140,6 +142,7 @@ app/
 	|		|__ test_mail_service.py
 	|		|__ test_PrestationService_integration.py
 	|		|__ test_PrestationService.py
+	|		|__ test_reassignation_integration.py
 	|		|__ test_ReviewService_integration.py
 	|		|__ test_ReviewService.py
 	|		|__ test_UserService_admin_validation.py

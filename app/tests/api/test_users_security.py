@@ -481,6 +481,20 @@ class TestUsersSecurity(BaseTest):
             self.assertEqual(response.status_code, 400, 
                            f"Email '{email}' devrait être rejeté")
 
+    def test_get_me_requires_authentication(self):
+        """Test que /users/me nécessite un token JWT"""
+        response = self.client.get('/users/me')
+        self.assertEqual(response.status_code, 401)
+
+
+    def test_get_me_rejects_invalid_token(self):
+        """Test que /users/me rejette un token invalide"""
+        response = self.client.get(
+            '/users/me',
+            headers={'Authorization': 'Bearer faketoken123'}
+        )
+        self.assertEqual(response.status_code, 401)  # JWT invalide ou manquant → 401 attendu avec token en cookie
+
 
 if __name__ == '__main__':
     unittest.main()

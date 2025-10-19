@@ -7,13 +7,13 @@
     <title>Mots pour maux LM - Les avis</title>
 
 	<!-- Liens pour les fichiers CSS -->
-	<link rel="stylesheet" href="../static/css_files/styles.css">
-	<link rel="stylesheet" href="../static/css_files/avis.css">
+	<link rel="stylesheet" href="/base_files/static/css_files/styles.css">
+	<link rel="stylesheet" href="/base_files/static/css_files/avis.css">
 	<!-- Liens pour le favicon -->
-	<link rel="apple-touch-icon" sizes="180x180" href="../images/favicon/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon/favicon-16x16.png">
-	<link rel="manifest" href="../images/favicon/site.webmanifest">
+	<link rel="apple-touch-icon" sizes="180x180" href="/base_files/images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/base_files/images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/base_files/images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="/base_files/images/favicon/site.webmanifest">
 	<!-- Liens pour Google fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,17 +26,19 @@
 <body>
     	<header class="header">
 			<div class="logo-container">
-        		<img class="logo" src="../images/Logo Clair.png" alt="Mots pour maux LM logo">
+        		<img class="logo" src="/base_files/images/Logo Clair.png" alt="Mots pour maux LM logo">
 			</div>
 			<div class="nav-container">
-        		<nav id="nav-links">
-					<a href="../templates/accueil.html" id="accueil_link">Accueil</a>
-					<a href="../templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="../templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="../templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="../templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="../templates/avis.html" id="avis_link">Avis</a>
-					<a href="../templates/login.html" id="login_link">Connexion</a>
+        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
+					<a href="/base_files/templates/accueil.html" id="accueil_link">Accueil</a>
+					<a href="/base_files/templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
+            		<a href="/base_files/templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
+					<a href="/base_files/templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
+					<a href="/base_files/templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
+					<a href="/base_files/templates/avis.html" id="avis_link">Avis</a>
+					<a href="/base_files/templates/page_personnelle.html" id="espace_link" style="display: none;">Mon espace</a>
+					<a href="/base_files/templates/login.html" id="login_link">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
@@ -45,60 +47,20 @@
 			<div class="hero-box"><p>Les avis</p></div>
 			<hr class="line">
 			<div class="main-content">
-				<div class="review-container">
-					<div class="review-box">
-					<div class="review-name-box">
-						<h3>Maya Angelou</h3>
-						<div class="rating-stars">
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-						</div>
-					</div>
-					<div class="review-text-box">
-						<p>J’ai appris que les gens oublieront ce que vous avez dit, les gens oublieront ce que vous avez fait, mais les gens n’oublieront jamais ce que vous leur avez fait ressentir.</p>
-					</div>
-					</div>
-					<div class="review-box">
-					<div class="review-name-box">
-						<h3>Nelson Mandela</h3>
-						<div class="rating-stars">
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-						</div>
-					</div>
-					<div class="review-text-box">
-						<p>Une tête bien faite et un bon coeur forment toujours une formidable combinaison.</p>
-					</div>
-					</div>
-					<div class="review-box">
-					<div class="review-name-box">
-						<h3>Shakespeare</h3>
-						<div class="rating-stars">
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-							<i class="bx bxs-star"></i>
-						</div>
-					</div>
-					<div class="review-text-box">
-						<p>L'amour ne voit pas avec les yeux, mais avec l'âme.</p>
-					</div>
-					</div>
+				<div class="review-container" role="list" aria-label="Liste des commentaires">
+					<!-- Les commentaires sont chargés dynamiquement -->
 				</div>
 			</div>
     	</main>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="/base_files/static/js_files/login.js"></script>
+		<script src="/base_files/static/js_files/avis.js"></script>
 
 		<hr class="line">
     	<footer class="footer">
         	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
     	</footer>
-		<script src="../static/js_files/avis.js"></script>
+
 </body>
 </html>

@@ -51,6 +51,9 @@ class Facade:
 
     def get_all_reviews(self):
         return self.review_service.get_all_reviews()
+    
+    def get_all_public_reviews(self):
+        return self.review_service.get_all_public_reviews()
 
     def get_review_by_prestation(self, prestation_id):
         return self.review_service.get_review_by_prestation(prestation_id)
@@ -67,8 +70,11 @@ class Facade:
     def delete_review(self, review_id):
         return self.review_service.delete_review(review_id)
 
-    def reassign_reviews(self, old_user_id, new_user_id):
-        return self.review_service.reassign_reviews(old_user_id, new_user_id)
+    def reassign_reviews_from_user(self, old_user_id, new_user_id):
+        return self.review_service.reassign_reviews_from_user(old_user_id, new_user_id)
+    
+    def reassign_reviews_from_prestation(self, old_prestation_id, new_prestation_id):
+        return self.review_service.reassign_reviews_from_prestation(old_prestation_id, new_prestation_id)
 
     # Appointment CRUD operations
     def create_appointment(self, **kwargs):
@@ -98,6 +104,9 @@ class Facade:
 
     def get_all_prestations(self):
         return self.prestation_service.get_all_prestations()
+    
+    def get_all_prestations_for_user(self):
+        return self.prestation_service.get_all_prestations_for_user()
 
     def get_prestation_by_name(self, name):
         return self.prestation_service.get_prestation_by_name(name)

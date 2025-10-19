@@ -7,13 +7,13 @@
     <title>Mots pour maux LM - Accueil</title>
 
     <!-- Liens pour les fichiers CSS -->
-    <link rel="stylesheet" href="../static/css_files/styles.css">
-    <link rel="stylesheet" href="../static/css_files/page_personnelle.css">
+    <link rel="stylesheet" href="/base_files/static/css_files/styles.css">
+    <link rel="stylesheet" href="/base_files/static/css_files/page_personnelle.css">
     <!-- Liens pour le favicon -->
-	<link rel="apple-touch-icon" sizes="180x180" href="../images/favicon/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon/favicon-16x16.png">
-	<link rel="manifest" href="../images/favicon/site.webmanifest">
+	<link rel="apple-touch-icon" sizes="180x180" href="/base_files/images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/base_files/images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/base_files/images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="/base_files/images/favicon/site.webmanifest">
     <!-- Liens pour Google fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,101 +26,91 @@
 <body>
     	<header class="header">
 			<div class="logo-container">
-        		<img class="logo" src="../images/Logo Clair.png" alt="Mots pour maux LM logo">
+        		<img class="logo" src="/base_files/images/Logo Clair.png" alt="Mots pour maux LM logo">
 			</div>
 			<div class="nav-container">
-        		<nav id="nav-links">
-					<a href="../templates/accueil.html" id="accueil_link">Accueil</a>
-					<a href="../templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="../templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="../templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="../templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="../templates/avis.html" id="avis_link">Avis</a>
-					<a href="../templates/login.html" id="login_link">Connexion</a>
+        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
+					<a href="/base_files/templates/accueil.html" id="accueil_link">Accueil</a>
+					<a href="/base_files/templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
+            		<a href="/base_files/templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
+					<a href="/base_files/templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
+					<a href="/base_files/templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
+					<a href="/base_files/templates/avis.html" id="avis_link">Avis</a>
+					<a href="/base_files/templates/page_personnelle.html" id="espace_link" style="display: none;">Mon espace</a>
+					<a href="/base_files/templates/login.html" id="login_link">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
 
     	<main>
-			<div class="hero-box"><p>Ravie de vous revoir Jean</p></div>
+			<div class="hero-box">
+				<p>Ravie de vous revoir <span id="user_firstname"></span></p>
+			</div>
 			<hr class="line">
+
             <div class="main-content">
-				<!-- Partie gauche de la page -->
+				<!-- Partie gauche de la page (informations personnelles) -->
                 <div class="client-info">
 					<h2>Informations personnelles</h2>
                     <div class="info-container">
-						<form id="personal-info-form">
+						<form id="personal-info-form" role="form">
 							<div class="form-field">
 								<label for="firstName">Prénom</label>
-								<input type="text" id="firstName" name="firstName" value="Jean" readonly>
+								<input type="text" id="firstName" name="firstName" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="lastName">Nom</label>
-								<input type="text" id="lastName" name="lastName" value="PIERRE"readonly>
+								<input type="text" id="lastName" name="lastName" value=""readonly>
 							</div>
 							<div class="form-field">
 								<label for="address">Adresse</label>
-								<input type="text" id="address" name="address" placeholder="Adresse (facultatif)" readonly>
+								<input type="text" id="address" name="address" placeholder="Adresse (facultatif)" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="phone">Téléphone</label>
-								<input type="tel" id="phone" name="phone" placeholder="Téléphone (facultatif)" readonly>
+								<input type="tel" id="phone" name="phone" placeholder="Téléphone (facultatif)" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="email">E-mail</label>
-								<input type="email" id="email" name="email" value="jean@pierre.com" readonly>
+								<input type="email" id="email" name="email" value="" readonly>
 							</div>
 							<div class="form-field">
 								<label for="password">Mot de passe</label>
-								<input type="password" id="password" name="password" value="password" readonly>
+								<input type="password" id="password" name="password" value="" readonly disabled>
 							</div>
-							<button type="submit" class="modify-info-button" id="modifier-button">Modifier</button>
+							<button type="submit" class="modify-info-button" id="modifier-button" aria-label="Modifier vos informations personnelles">Modifier</button>
 						</form>
                     </div>
+
 					<div class="button-container">
-						<a href="../templates/formulaire_rdv.html" class="contact-button">Prendre rendez-vous</a>
-						<a href="../templates/formulaire_commentaires.html" class="contact-button">Laisser un commentaire</a>
+						<a href="/base_files/templates/formulaire_rdv.html" class="contact-button" aria-label="Prendre un rendez-vous">Prendre rendez-vous</a>
+						<a href="/base_files/templates/formulaire_commentaires.html" class="contact-button" aria-label="Laisser un commentaire">Laisser un commentaire</a>
 					</div>
                 </div>
 
-				<!-- Partie droite de la page -->
+				<!-- Partie droite de la page (les commentaires laissés par l'utilisateur) -->
                 <div class="review-info-container">
 					<h2>Commentaires laissés</h2>
                     <div class="review-container-grid">
-						<div class="review-box">
-							<div class="rating-stars">
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-							</div>
-							<div class="review-text">
-								<p>Mélanie est très perspicace, elle est très avenante, et à l'écoute sans porter de jugements. Je recommande chaudement cette practicienne.</p>
-							</div>
-						</div>
-						<div class="review-box">
-							<div class="rating-stars">
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-								<i class="bx bxs-star"></i>
-							</div>
-							<div class="review-text">
-								<p>J'étais angoissée à l'idée de me confier à une inconnue, mais Mélanie sait vite mettre en confiance. C'est une personne très sympathique, qui ne mâche pas ses mots quand c'est nécessaire. Je recommande vivement.</p>
-							</div>
-						</div>
+						<!-- Les commentaires sont ajoutés dynamiquement -->
                     </div>
-					<button type="submit" class="modify-review-button" id="modifier-button">Modifier</button>
+					<button type="submit" class="modify-review-button" id="modifier-review-button" aria-label="Modifier vos commentaires">Modifier</button>
                 </div>
             </div>
     	</main>
+
+		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="/base_files/static/js_files/login.js"></script>
+		<script src="/base_files/static/js_files/page_personnelle.js"></script>
+		<script src="/base_files/static/js_files/avis.js"></script>
 
 		<hr class="line">
     	<footer class="footer">
         	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
     	</footer>
-		<script src="../static/js_files/avis.js"></script>
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields, _http
 from app.services import facade
 from app.utils import (compare_data_and_model, CustomError, name_validation, validate_entity_id)
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import (jwt_required, get_jwt, get_jwt_identity)
 from flask import request
 
 # Créer une instance de façade
@@ -71,29 +71,37 @@ class PrestationList(Resource):
         return new_prestation, 201
 
 
-    @api.doc('Get all prestations')
+    @api.doc('Get all prestations (for admin or user)')
     @api.marshal_list_with(prestation_response_model, code=_http.HTTPStatus.OK, description='List of prestations retrieved successfully')
     @jwt_required()
     @api.response(200, 'Liste des prestations récupérée avec succès', prestation_response_model)
     @api.response(500, 'Erreur interne du serveur', error_model)
     @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
     @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(404, 'Prestation non trouvée', error_model)
     def get(self):
-        """Récupérer toutes les prestations"""
-        current_user = get_jwt()
+        """Récupérer toutes les prestations selon le rôle"""
+        is_admin = get_jwt()
+        current_user = get_jwt_identity()
 
-        # Vérifier que l'utilisateur a les droits admin
-        if not current_user.get('is_admin'):
-            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+        if not current_user:
+            api.abort(401, error='Vous devez vous connecter')
+
+        print("→ Accès utilisateur standard à /prestations/")
 
         try:
-            prestations = facade.get_all_prestations()
+            if is_admin.get('is_admin'):
+                prestations = facade.get_all_prestations()
+            else:
+                prestations = facade.get_all_prestations_for_user()
+
             return prestations, 200
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
             api.abort(500, error=str(e))
+
 
 @api.route('/search')
 class PrestationSearch(Resource):
@@ -217,6 +225,22 @@ class Prestation(Resource):
 
         try:
             validate_entity_id(prestation_id, 'prestation_id')
+
+            prestation = facade.get_prestation_by_id(prestation_id)
+            if not prestation:
+                api.abort(404, error='Prestation non trouvée')
+
+            if prestation.name == 'Ghost prestation':
+                api.abort(403, error='Vous ne pouvez pas supprimer la prestation fantôme')
+
+            ghost_prestation = facade.get_prestation_by_name('Ghost prestation')
+            if not ghost_prestation:
+                api.abort(404, error='Prestation fantôme non trouvée')
+
+            reviews = facade.get_review_by_prestation(prestation_id)
+            if reviews:
+                facade.reassign_reviews_from_prestation(prestation_id, ghost_prestation.id)
+
             facade.delete_prestation(prestation_id)
             return {'message': 'Prestation supprimée avec succès'}, 200
 

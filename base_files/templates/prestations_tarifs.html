@@ -7,13 +7,13 @@
     <title>Mots pour maux LM - Prestations & Tarifs</title>
 
 	<!-- Liens pour les fichiers CSS -->
-	<link rel="stylesheet" href="../static/css_files/styles.css">
-	<link rel="stylesheet" href="../static/css_files/prestations_tarifs.css">
+	<link rel="stylesheet" href="/base_files/static/css_files/styles.css">
+	<link rel="stylesheet" href="/base_files/static/css_files/prestations_tarifs.css">
 	<!-- Liens pour le favicon -->
-	<link rel="apple-touch-icon" sizes="180x180" href="../images/favicon/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon/favicon-16x16.png">
-	<link rel="manifest" href="../images/favicon/site.webmanifest">
+	<link rel="apple-touch-icon" sizes="180x180" href="/base_files/images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/base_files/images/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/base_files/images/favicon/favicon-16x16.png">
+	<link rel="manifest" href="/base_files/images/favicon/site.webmanifest">
 	<!-- Liens pour Google fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,17 +24,19 @@
 <body>
     	<header class="header">
 			<div class="logo-container">
-        		<img class="logo" src="../images/Logo Clair.png" alt="Mots pour maux LM logo">
+        		<img class="logo" src="/base_files/images/Logo Clair.png" alt="Mots pour maux LM logo">
 			</div>
 			<div class="nav-container">
-        		<nav id="nav-links">
-					<a href="../templates/accueil.html" id="accueil_link">Accueil</a>
-					<a href="../templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="../templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="../templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="../templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="../templates/avis.html" id="avis_link">Avis</a>
-					<a href="../templates/login.html" id="login_link">Connexion</a>
+        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
+					<a href="/base_files/templates/accueil.html" id="accueil_link">Accueil</a>
+					<a href="/base_files/templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
+            		<a href="/base_files/templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
+					<a href="/base_files/templates/prestations_tarifs.html" id="prestations_link">Prestations<br>& Tarifs</a>
+					<a href="/base_files/templates/coordonnees_horaires.html" id="coordonnees_link">Coordonnées<br>& Horaires</a>
+					<a href="/base_files/templates/avis.html" id="avis_link">Avis</a>
+					<a href="/base_files/templates/page_personnelle.html" id="espace_link" style="display: none;">Mon espace</a>
+					<a href="/base_files/templates/login.html" id="login_link">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
@@ -43,7 +45,7 @@
 			<div class="hero-box"><p>Prestations & tarifs</p></div>
 			<hr class="line">
 			<div class="main-content">
-			<div class="prestations-container">
+			<div class="prestations-container" aria-label="Liste des prestations proposées">
 				<div class="prestation-box">
 					<h3>Séance de psychothérapie</h3>
 					<p>Accompagnement personnalisé pour adultes et enfants.</p>
@@ -51,7 +53,7 @@
 						<li>Durée: 1 heure</li>
 						<li>En cabinet, à domicile ou en visio</li>
 					</ul>
-					<div class="price-container">
+					<div class="price-container" aria-label="Tarif de la prestation">
 						<p>50€</p>
 					</div>
 				</div>
@@ -62,7 +64,7 @@
 						<li>Durée: 1 heure</li>
 						<li>En cabinet ou en visio</li>
 					</ul>
-					<div class="price-container">
+					<div class="price-container" aria-label="Tarif de la prestation">
 						<p>60€</p>
 					</div>
 				</div>
@@ -74,7 +76,7 @@
 						<li>Suivi personnalisé</li>
 						<li>Outils d'auto-hypnose</li>
 					</ul>
-					<div class="price-container">
+					<div class="price-container" aria-label="Tarif de la prestation">
 						<p>300€</p>
 					</div>
 				</div>
@@ -86,12 +88,12 @@
 						<li>Outils d'auto-hypnose</li>
 						<li> Suivi post-séance</li>
 					</ul>
-					<div class="price-container">
+					<div class="price-container" aria-label="Tarif de la prestation">
 						<p>120€</p>
 					</div>
 				</div>
 			</div>
-			<div class="informations-container">
+			<div class="informations-container" aria-label="Informations complémentaires sur les prestations">
 				<h4>Informations complémentaires</h4>
 				<ul class="informations-list">
 					<li>Le règlement peut s'effectuer par carte bancaire, virement ou espèces.</li>
@@ -101,6 +103,9 @@
 			</div>
 			</div>
     	</main>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="/base_files/static/js_files/login.js"></script>
 
 		<hr class="line">
     	<footer class="footer">

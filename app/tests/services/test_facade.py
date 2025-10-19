@@ -233,6 +233,9 @@ class TestFacadeSimple(BaseTest):
 
     def test_delete_prestation_delegation(self):
         """Test délégation delete_prestation"""
+        ghost = Prestation(name="Ghost prestation")
+        self.save_to_db(ghost)
+
         prestation = self.facade.create_prestation(name="To Delete")
         
         result = self.facade.delete_prestation(prestation.id)
@@ -529,7 +532,11 @@ class TestFacadeSimple(BaseTest):
             prestation_id=prestation.id
         )
         
-        result = self.facade.update_review(review.id, rating=5, text="Excellent service")
+        result = self.facade.update_review(
+            review.id,
+            current_user_id=user.id,
+            rating=5,
+            text="Excellent service")
         
         self.assertIsNotNone(result)
         self.assertEqual(result.rating, 5)

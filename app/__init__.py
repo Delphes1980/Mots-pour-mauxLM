@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -26,12 +27,55 @@ def create_app():
 
     # Configuration
     app.config.from_object('app.config.DevelopmentConfig')
+    frontend_url = app.config['FRONTEND_URL']
 
     # Initialization of extensions
     db.init_app(app)
     bcrypt.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
+
+    # ====================================================================
+    # 🚨 GESTIONNAIRES D'ERREURS JWT POUR LE DÉBOGAGE 🚨
+    # ====================================================================
+
+    @jwt.unauthorized_loader
+    def unauthorized_callback(err):
+        """
+        Gère les erreurs où le token est MANQUANT (code 401 Unauthorized).
+        Cela arrive si le client n'a pas renvoyé le cookie.
+        """
+        print(f"\n--- ⚠️ Erreur JWT Unauthorized (Token MANQUANT) ---")
+        print(f"Détails de l'erreur: {err}")
+        print("ACTION: Vérifiez si le client de test a bien renvoyé le cookie.")
+        print("----------------------------------------------------------\n")
+
+        return jsonify(msg=f"Le jeton d'accès est manquant ou non supporté. Détail: {err}"), 401
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(err):
+        """
+        Gère les erreurs où le token est PRÉSENT mais INVALIDE (signature, expiration, etc.).
+        (Code 422 Unprocessable Entity - souvent utilisé pour jeton invalide/expiré)
+        """
+        print(f"\n--- ❌ Erreur JWT Invalid Token (Token PRÉSENT mais REJETÉ) ---")
+        print(f"Détails de l'erreur: {err}")
+        print("ACTION: Le problème est la clé secrète (JWT_SECRET_KEY) ou l'expiration du token.")
+        print("----------------------------------------------------\n")
+
+        return jsonify(msg=f"Le jeton d'accès est invalide (signature/expiration). Détail: {err}"), 422
+        
+    # ====================================================================
+    # FIN DES GESTIONNAIRES D'ERREURS JWT
+    # ====================================================================
+
+    CORS(
+        app,
+        origins=[frontend_url],
+        supports_credentials=True,  # Autorise l'envoi/réception de cookies
+        allow_headers=['Content-Type'],  # Headers que le front est autorisé à envoyer
+        methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+        )
 
     # Initialize API
     authorizations = {
@@ -72,6 +116,6 @@ def create_app():
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(appointments_ns, path='/api/v1/appointments')
     api.add_namespace(prestations_ns, path='/api/v1/prestations')
-    api.add_namespace(authentication_ns, path='/api/v1/auth')
+    api.add_namespace(authentication_ns, path='/api/v1/authentication')
 
     return app

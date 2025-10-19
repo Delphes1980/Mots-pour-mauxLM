@@ -241,6 +241,6 @@ class UserService:
         # Vérifier si des avis existent pour cet utilisateur
         reviews = self.review_repository.get_by_user_id(user_id)
         if reviews:
-            self.review_repository.reassign_reviews(user.id, ghost_user.id)
+            self.review_repository.reassign_reviews_from_user(user.id, ghost_user.id)
 
         return self.user_repository.delete(user_id)

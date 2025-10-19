@@ -33,6 +33,7 @@ class Config:
     JWT_COOKIE_SAMESITE = 'Lax'  # Le cookie est renvoyé seulement pour le même site
     JWT_COOKIE_CSRF_PROTECT = False  # Active la protection CSRF pour les cookies
     JWT_ACCESS_CSRF_COOKIE_NAME = 'csrf_access_token'  # Nom du cookie CSRF pour les tokens d'accès (utile pour la détection du token par le front)
+    JWT_AUTH_OPTIONS_ENABLED = False  # Désactive les options d'authentification personnalisées
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -41,11 +42,13 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_COOKIE_SECURE = False # Sécurité par CSRF désactivée
+    FRONTEND_URL = "http://localhost:8000"
 
 class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     JWT_COOKIE_SECURE = True  # Sécurité CSRF activée
+    FRONTEND_URL = "https://www.motspourmauxlm.fr"
 
 class TestingConfig(Config):
     DEBUG = True

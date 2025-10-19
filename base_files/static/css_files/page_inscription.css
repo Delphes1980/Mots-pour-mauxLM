@@ -103,6 +103,30 @@
 	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Style pour les messages d'alerte */
+.feedback-message {
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 12px 24px;
+	border-radius: 6px;
+	font-weight: 500;
+	font-size: 1rem;
+	color: var(--background-form);
+	background-color: var(--icon-color);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	z-index: 9999;
+	opacity: 0;
+	transition: opacity 0.3s ease, top 0.3s ease;
+}
+
+.feedback-message.show {
+	opacity: 1;
+	top: 40px;
+}
+
+
 /* ##### Code responsive ##### */
 /* Style pour les écrans plus petits que 768px */
 @media (max-width: 768px) {

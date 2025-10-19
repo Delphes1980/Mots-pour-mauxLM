@@ -96,6 +96,57 @@ class ReviewService:
 		"""
 		return self.review_repository.get_all()
 
+	def get_all_public_reviews(self):
+		"""Get all public reviews
+
+		Returns:
+		list: List of all reviews
+		"""
+		try:
+			reviews = self.review_repository.get_all_public_reviews()
+			public_reviews = []
+
+			for review in reviews:
+				user = review.user
+
+				# Déterminer le nom de l'auteur
+				if not user:
+					user_first_name = 'Utilisateur anonyme'
+					user_last_name = ''
+				else:
+					first_name_clean = user.first_name.strip().lower()
+					last_name_clean = user.last_name.strip().lower()
+
+					if first_name_clean == 'ghost' and last_name_clean == 'user':
+						user_first_name = 'Utilisateur anonyme'
+						user_last_name = ''
+					else:
+						# Capitalisation des prénoms composé
+						segments = user.first_name.strip().split('-')
+						capitalized_segments = [segment.capitalize() for segment in segments]
+						user_first_name = '-'.join(capitalized_segments)
+
+						if user.last_name:
+							user_last_name = user.last_name.strip()[0].upper() + '.'
+						else:
+							user_last_name = ''
+
+					public_reviews.append({
+						'id': str(review.id),
+						'rating': review.rating,
+						'text': review.text,
+						'user': {
+							'id': str(user.id) if user else None,
+							'first_name': user_first_name,
+							'last_name': user_last_name
+						}
+					})
+
+			return public_reviews
+			
+		except Exception as e:
+			raise CustomError('Erreur lors de la récupération des commentaires publics', 500)
+
 	def get_review_by_prestation(self, prestation_id):
 		"""Get reviews by prestation ID
 
@@ -263,7 +314,7 @@ class ReviewService:
 
 		return self.review_repository.delete(review_id)
 
-	def reassign_reviews(self, old_user_id, new_user_id):
+	def reassign_reviews_from_user(self, old_user_id, new_user_id):
 		"""Reassign reviews from an old user to a new user
 
 		Args:
@@ -295,6 +346,44 @@ class ReviewService:
 
 		for review in reviews:
 			review.user = new_user
+			reassigned_reviews.append(review)
+
+		self.review_repository.db.session.commit()
+
+		return reassigned_reviews
+
+	def reassign_reviews_from_prestation(self, old_prestation_id, new_prestation_id):
+		"""Reassign reviews from an old prestation to a new prestation
+
+		Args:
+			old_prestation_id (str): The ID of the old prestation
+			new_prestation_id (str): The ID of the new prestation
+
+		Returns:
+			list: List of reassigned reviews
+
+		Raises:
+			CustomError: If the IDs are invalid(400) or if the prestations are not found(404)
+		"""
+		try:
+			old_prestation_id = validate_entity_id(old_prestation_id, 'old_prestation_id')
+			new_prestation_id = validate_entity_id(new_prestation_id, 'new_prestation_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
+
+		old_prestation = self.prestation_repository.get_by_id(old_prestation_id)
+		if not old_prestation:
+			raise CustomError("Ancienne prestation non trouvée", 404)
+
+		new_prestation = self.prestation_repository.get_by_id(new_prestation_id)
+		if not new_prestation:
+			raise CustomError("Nouvelle prestation non trouvée", 404)
+
+		reviews = self.review_repository.get_by_prestation_id(old_prestation_id)
+		reassigned_reviews = []
+
+		for review in reviews:
+			review.prestation = new_prestation
 			reassigned_reviews.append(review)
 
 		self.review_repository.db.session.commit()
