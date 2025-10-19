@@ -32,6 +32,7 @@ function ratingSubmit() {
         allStar.forEach(star => {
             star.classList.replace('bxs-star', 'bx-star');
             star.classList.remove('active');
+            star.setAttribute('aria-checked', 'false');
         });
 
         // Pour les effets visuels
@@ -43,11 +44,13 @@ function ratingSubmit() {
                 allStar[i].classList.replace('bx-star', 'bxs-star');
                 allStar[i].classList.add('active');
                 allStar[i].style.setProperty('--i', i);
+                allStar[i].setAttribute('aria-checked', 'true');
 
             } else {
                 allStar[i].classList.replace('bxs-star', 'bx-star');
                 allStar[i].classList.remove('active');
                 allStar[i].style.setProperty('--i', click);
+                allStar[i].setAttribute('aria-checked', 'false');
                 click++;
             }
         }

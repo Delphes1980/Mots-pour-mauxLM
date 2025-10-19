@@ -135,10 +135,7 @@ function setupLogout() {
       });
 
       if (response.ok || response.status === 401) {
-        showFeedbackMessage('Déconnexion réussie');
-        setTimeout(() => {
-          window.location.href = '/base_files/templates/accueil.html';
-        }, 3500);
+        window.location.href = '/base_files/templates/accueil.html';
       } else {
         const errorData = await response.json();
         showFeedbackMessage("Une erreur est survenue lors de la déconnexion: " + (errorData.error || 'Erreur inconnue'));

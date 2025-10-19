@@ -31,7 +31,7 @@ function createReviewBlock(review) {
   const text = review.text;
 
   return `
-    <div class="review-box">
+    <div class="review-box" role="listitem">
       <div class="review-name-box">
         <h3>${author}</h3>
         ${stars}
