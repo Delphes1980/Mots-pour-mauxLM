@@ -2,6 +2,27 @@ const API_BASE_URL = 'http://localhost:5000/api/v1/authentication';
 const API_LOGIN_URL = `${API_BASE_URL}/login`;
 const API_LOGOUT_URL = `${API_BASE_URL}/logout`;
 
+// Fonction pour les messages d'alerte
+function showFeedbackMessage(message, isError = false) {
+  const banner = document.getElementById('feedback-message');
+  if (!banner) return;
+
+  banner.textContent = message;
+  banner.classList.remove('error', 'show');
+  if (isError) banner.classList.add('error');
+
+  banner.style.display = 'block';
+  setTimeout(() => banner.classList.add('show'), 10);
+
+  setTimeout(() => {
+    banner.classList.remove('show');
+    setTimeout(() => {
+      banner.style.display = 'none';
+      banner.classList.remove('error');
+    }, 100);
+  }, 3000);
+}
+
 
 // Fonction qui permet d'effacer le contenu des champs
 function setupClearButton() {
@@ -42,11 +63,6 @@ function setupLogin() {
     // Empêche le rechargement de la page par défaut
     event.preventDefault();
 
-    if (errorMessageElement) {
-      errorMessageElement.textContent = '';
-      errorMessageElement.style.display = 'none';
-    }
-
     // Récupération des valeurs des champs
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -74,22 +90,16 @@ function setupLogin() {
       const result = await response.json();
 
       if (response.ok) {
-        window.location.href = '../templates/page_personnelle.html';
+        window.location.href = '/base_files/templates/page_personnelle.html';
 
       } else {
         // Afficher le message d'erreur
-        const errorMessage = result.error || "Email ou mot de passe invalide";
+        showFeedbackMessage("Email ou mot de passe invalide");
 
-        if (errorMessageElement) {
-          errorMessageElement.textContent = errorMessage;
-          errorMessageElement.style.display = 'block';
-        }
       }
     } catch (error) {
-      if (errorMessageElement) {
-        errorMessageElement.textContent = "Erreur de connexion au serveur. Réessayez.";
-        errorMessageElement.style.display = 'block';
-      }
+      console.error("Erreur lors de la connexion; ", error);
+      showFeedbackMessage("Impossible de se connecter. Veuillez réessayer plus tard");
     } finally {
       // Réactiver le bouton de soumission
       submitButton.disabled = false;
@@ -125,13 +135,14 @@ function setupLogout() {
       });
 
       if (response.ok || response.status === 401) {
-        window.location.href = '../templates/accueil.html';
+        window.location.href = '/base_files/templates/accueil.html';
       } else {
         const errorData = await response.json();
-        alert("Une erreur est survenue lors de la déconnexion: " + (errorData.error || 'Erreur inconnue'));
+        showFeedbackMessage("Une erreur est survenue lors de la déconnexion: " + (errorData.error || 'Erreur inconnue'));
       }
     } catch (error) {
-      alert("Une erreur est survenue lors de la déconnexion.");
+      console.error("Erreur de déconnexion: ", error);
+      showFeedbackMessage("Une erreur est survenue lors de la déconnexion. Veuillez réessayer");
     } finally {
       logoutButton.disabled = false;
       logoutButton.textContent = 'Déconnexion';
@@ -186,13 +197,13 @@ async function redirectToContactPage() {
 
     if (response.ok) {
       // Utilisateur connecté
-      window.location.href = '../templates/page_personnelle.html';
+      window.location.href = '/base_files/templates/page_personnelle.html';
     } else {
       // Utilisateur déconnecté
-      window.location.href = '../templates/login.html';
+      window.location.href = '/base_files/templates/accueil.html';
     }
   } catch (error) {
-    window.location.href = '../templates/login.html';
+    window.location.href = '/base_files/templates/login.html';
   }
 }
 

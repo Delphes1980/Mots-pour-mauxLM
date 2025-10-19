@@ -29,7 +29,7 @@
         		<img class="logo" src="/base_files/images/Logo Clair.png" alt="Mots pour maux LM logo">
 			</div>
 			<div class="nav-container">
-        		<nav id="nav-links">
+        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
 					<a href="/templates/accueil.html" id="accueil_link">Accueil</a>
 					<a href="/base_files/templates/en_savoir_plus.html" id="en_savoir_plus_link">En Savoir Plus</a>
             		<a href="/base_files/templates/techniques_therapeutiques.html" id="techniques_link">Techniques<br>Thérapeutiques</a>
@@ -47,40 +47,39 @@
 			<div class="hero-box"><p>Prise de rendez-vous</p></div>
 			<hr class="line">
 			<section class="appointment-container">
-				<form class="appointment-form" action="/appointment" method="post">
+				<form class="appointment-form">
 					<div class="form-field">
-						<input type="text" id="last-name" name="last-name" placeholder="Nom" required>
+						<input type="text" id="last-name" name="last-name" placeholder="Nom" aria-label="Nom" value="" required readonly>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
 					<div class="form-field">
-						<input type="text" id="first-name" name="first-name" placeholder="Prénom" required>
+						<input type="text" id="first-name" name="first-name" placeholder="Prénom" aria-label="Prénom" value="" required readonly>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
 					<!-- Menu déroulant -->
 					<div class="form-field">
 					<div class="select-wrapper">
-						<div class="select-selected">Type de prestation souhaité</div>
+						<div class="select-selected" role="button" aria-label="Type de prestation souhaité">Type de prestation souhaité</div>
 						<div class="select-items select-hide">
-							<div>Séance de psychothérapie</div>
-							<div>Séance d'hypnose classique</div>
-							<div>Programme "Anneau gastrique virtuel"</div>
-							<div>Séance d'hypnose pour l'arrêt du tabac</div>
+							<!-- Les prestations sont rajoutées dynamiquement -->
 						</div>
 						<input type="hidden" name="prestation-type" value="">
 					</div>
 					</div>
 
 					<div class="form-field message-field">
-						<textarea id="message" name="message" placeholder="Message"></textarea>
+						<textarea id="message" name="message" placeholder="Message: Merci de préciser vos disponibilités et vos coordonnées téléphoniques si vous souhaitez être rappelé par la praticienne" aria-label="Message pour la praticienne"></textarea>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
-					<button type="submit">Envoyer</button>
+					<button type="submit" aria-label="Envoyer la demande de rendez-vous">Envoyer</button>
 				</form>
 			</section>
     	</main>
+
+		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 
 		<!-- Liens pour les fichiers JS -->
         <script src="/base_files/static/js_files/login.js"></script>

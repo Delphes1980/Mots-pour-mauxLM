@@ -2,7 +2,8 @@ const API_USERS_BASE_URL = 'http://localhost:5000/api/v1/users';
 const API_REVIEWS_BASE_URL = 'http://localhost:5000/api/v1/reviews';
 
 
-// Fonction utilitaire: fait correspondre les noms des inputs HTML aux clés API
+// Fonctions utilitaires: 
+// Fonction qui fait correspondre les noms des inputs HTML aux clés API
 function mapInputToUserField(name) {
 	const mapping = {
 		firstName: 'first_name',
@@ -22,6 +23,28 @@ function mapInputToUserField(name) {
 	}
 
 	return mapping[name];
+}
+
+
+// Fonction pour les messages d'alerte
+function showFeedbackMessage(message, isError = false) {
+  const banner = document.getElementById('feedback-message');
+  if (!banner) return;
+
+  banner.textContent = message;
+  banner.classList.remove('error', 'show');
+  if (isError) banner.classList.add('error');
+
+  banner.style.display = 'block';
+  setTimeout(() => banner.classList.add('show'), 10);
+
+  setTimeout(() => {
+    banner.classList.remove('show');
+    setTimeout(() => {
+      banner.style.display = 'none';
+      banner.classList.remove('error');
+    }, 300);
+  }, 4000);
 }
 
 
@@ -68,7 +91,7 @@ async function loadUserData() {
 
 	} catch (error) {
 		console.error("Erreur lors du chargement des données utilisateur: ", error);
-		console.error("Impossible de charger vos informations. Redirection vers l'accueil");
+		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard");
 	}
 }
 
@@ -123,13 +146,13 @@ function saveUserData(inputFields) {
 	try {
 		validateUserData(updateData);
 	} catch (error) {
-		alert(error.message);
+		showFeedbackMessage(error.message);
 		return;
 	}
 
 	// Vérifie que l'ID est disponible
 	if (!window.currentUserId) {
-		alert("Impossible d'identifier l'utilisateur");
+		showFeedbackMessage("Impossible d'identifier l'utilisateur");
 		return;
 	}
 
@@ -148,11 +171,11 @@ function saveUserData(inputFields) {
 		return response.json();
 	})
 	.then(() => {
-		alert('Mise à jour réussie !');
+		showFeedbackMessage('Mise à jour réussie !');
 	})
 	.catch(error => {
 		console.error(error);
-		alert('Echec lors de la mise à jour. Veuillez réessayer');
+		showFeedbackMessage('Echec lors de la mise à jour. Veuillez réessayer');
 	});
 }
 
@@ -327,7 +350,12 @@ async function saveAllReviewData(ratingFields, textFields) {
 		}
 	}
 
-	alert('Tous les commentaires ont été mis à jour !');
+	if (hasError) {
+		showFeedbackMessage("Certains commentaires n'ont pas pu être mis à jour. Veuillez réessayer");
+	} else {
+		showFeedbackMessage('Tous les commentaires ont été mis à jour !');
+	}
+
 	loadUserReviews();
 }
 

@@ -27,39 +27,26 @@ function isPasswordSecure(password) {
 }
 
 
-// Fonction pour afficher dynamiquement les symboles de validation ou non des champs
-// function setupValidationIcons() {
-// 	const fields = [
-// 		{ id: 'last-name', validator: isValidName },
-// 		{ id: 'first-name', validator: isValidName },
-// 		{ id: 'email', validator: isValidEmail },
-// 		{ id: 'password', validator: isPasswordSecure }
-// 	];
+// Fonction pour les messages d'alerte
+function showFeedbackMessage(message, isError = false) {
+  const banner = document.getElementById('feedback-message');
+  if (!banner) return;
 
-// 	fields.forEach(({ id, validator }) => {
-// 		const input = document.getElementById(id);
-// 		const icon = document.getElementById(`${id}-icon`);
+  banner.textContent = message;
+  banner.classList.remove('error', 'show');
+  if (isError) banner.classList.add('error');
 
-// 		input.addEventListener('input', () => {
-// 			const value = input.value.trim();
+  banner.style.display = 'block';
+  setTimeout(() => banner.classList.add('show'), 10);
 
-// 			if (value.length === 0) {
-// 				icon.textContent = '';
-// 				icon.classList.remove('visible');
-// 				return;
-// 			} else {
-// 				if (validator(value)) {
-// 					icon.textContent = '✅';
-// 					icon.style.color = 'green';
-// 				} else {
-// 					icon.textContent = '❌';
-// 					icon.style.color = 'red';
-// 				}
-// 				icon.classList.add('visible');
-// 			}
-// 		});
-// 	});
-// }
+  setTimeout(() => {
+    banner.classList.remove('show');
+    setTimeout(() => {
+      banner.style.display = 'none';
+      banner.classList.remove('error');
+    }, 100);
+  }, 3000);
+}
 
 
 // Bouton pour supprimer les champs
@@ -105,22 +92,22 @@ async function setupRegistrationForm() {
 		const password = document.getElementById('password').value;
 
 		if (!lastName || !firstName || !email || !password) {
-			alert("Tous les champs sont obligatoires");
+			showFeedbackMessage("Tous les champs sont obligatoires");
 			return;
 		}
 
 		if (!isValidName(lastName) || !isValidName(firstName)) {
-			alert("Le nom et le prénom doivent être valides");
+			showFeedbackMessage("Le nom et le prénom doivent être valides");
 			return;
 		}
 
 		if (!isValidEmail(email)) {
-			alert("Adresse email invalide");
+			showFeedbackMessage("Adresse email invalide");
 			return;
 		}
 
 		if (!isPasswordSecure(password)) {
-			alert("Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial");
+			showFeedbackMessage("Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial");
 			return;
 		}
 
@@ -144,11 +131,16 @@ async function setupRegistrationForm() {
 				throw new Error(errorData.error || "Erreur lors de l'inscription");
 			}
 
-			alert("Inscription réussie !");
-			window.location.href = '../templates/login.html';
+			showFeedbackMessage("Inscription réussie !");
+			form.reset();
+
+			setTimeout(() => {
+				window.location.href = '/base_files/templates/login.html';
+			}, 3500);
+
 		} catch (error) {
 			console.error("Erreur lors de l'inscription: ", error);
-			alert(error.message);
+			showFeedbackMessage("Une erreur est survenue lors de l'inscription. Veuillez réessayer");
 		}
 	});
 }
