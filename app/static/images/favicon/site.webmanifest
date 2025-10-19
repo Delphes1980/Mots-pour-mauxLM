@@ -1,10 +1,10 @@
 {
 	"name":"Mots pour Maux",
 	"short_name":"MotsMaux",
-	"icons":[{"src":"/base_files/images/favicon/android-chrome-192x192.png",
+	"icons":[{"src":"/static/images/favicon/android-chrome-192x192.png",
 	"sizes":"192x192",
 	"type":"image/png"},
-	{"src":"/base_files/images/favicon/android-chrome-512x512.png",
+	{"src":"/static/images/favicon/android-chrome-512x512.png",
 	"sizes":"512x512",
 	"type":"image/png"}],
 	"theme_color":"#ffffff",

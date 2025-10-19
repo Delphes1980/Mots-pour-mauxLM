@@ -6,8 +6,10 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 import smtplib
+import os
 
 
+# Pour éviter les erreurs d'envoi
 class PatchedSMTP(smtplib.SMTP):
     def __init__(self, *args, **kwargs):
         # Force le nom d'hôte utilisé dans le EHLO
@@ -23,7 +25,11 @@ jwt = JWTManager()
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        # template_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'base_files', 'templates')),
+        # static_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'base_files', 'static'))
+        )
 
     # Configuration
     app.config.from_object('app.config.DevelopmentConfig')
@@ -35,39 +41,6 @@ def create_app():
     mail.init_app(app)
     jwt.init_app(app)
 
-    # ====================================================================
-    # 🚨 GESTIONNAIRES D'ERREURS JWT POUR LE DÉBOGAGE 🚨
-    # ====================================================================
-
-    @jwt.unauthorized_loader
-    def unauthorized_callback(err):
-        """
-        Gère les erreurs où le token est MANQUANT (code 401 Unauthorized).
-        Cela arrive si le client n'a pas renvoyé le cookie.
-        """
-        print(f"\n--- ⚠️ Erreur JWT Unauthorized (Token MANQUANT) ---")
-        print(f"Détails de l'erreur: {err}")
-        print("ACTION: Vérifiez si le client de test a bien renvoyé le cookie.")
-        print("----------------------------------------------------------\n")
-
-        return jsonify(msg=f"Le jeton d'accès est manquant ou non supporté. Détail: {err}"), 401
-
-    @jwt.invalid_token_loader
-    def invalid_token_callback(err):
-        """
-        Gère les erreurs où le token est PRÉSENT mais INVALIDE (signature, expiration, etc.).
-        (Code 422 Unprocessable Entity - souvent utilisé pour jeton invalide/expiré)
-        """
-        print(f"\n--- ❌ Erreur JWT Invalid Token (Token PRÉSENT mais REJETÉ) ---")
-        print(f"Détails de l'erreur: {err}")
-        print("ACTION: Le problème est la clé secrète (JWT_SECRET_KEY) ou l'expiration du token.")
-        print("----------------------------------------------------\n")
-
-        return jsonify(msg=f"Le jeton d'accès est invalide (signature/expiration). Détail: {err}"), 422
-        
-    # ====================================================================
-    # FIN DES GESTIONNAIRES D'ERREURS JWT
-    # ====================================================================
 
     CORS(
         app,
@@ -117,5 +90,13 @@ def create_app():
     api.add_namespace(appointments_ns, path='/api/v1/appointments')
     api.add_namespace(prestations_ns, path='/api/v1/prestations')
     api.add_namespace(authentication_ns, path='/api/v1/authentication')
+
+    # Import of HTML routes (SSR)
+    from app.views.avis import avis_bp
+    from app.views.static_pages import static_bp
+    # from app.views.test_page import test_bp
+    app.register_blueprint(avis_bp)
+    app.register_blueprint(static_bp)
+    # app.register_blueprint(test_bp)
 
     return app

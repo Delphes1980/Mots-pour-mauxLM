@@ -67,4 +67,45 @@ async function loadPublicReviews() {
 }
 
 
-document.addEventListener('DOMContentLoaded', loadPublicReviews);
+// Fonction qui intercepte la soumission du formulaire d'avis
+async function handleReviewFormSubmission(event) {
+  event.preventDefault();
+
+  const text = document.querySelector('#review-text')?.value.trim();
+  const rating = parseInt(document.querySelector('#review-rating')?.value, 10);
+
+  if (!text || isNaN(rating)) {
+    alert('Veuillez remplir tous les champs');
+    return;
+  }
+
+  const data = { text, rating };
+
+  try {
+    const response = await fetch(API_PUBLIC_REVIEWS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de l'envoi du commentaire");
+    }
+
+    document.querySelector('#review-form').reset();
+    loadPublicReviews();  // Recharge les avis après ajout
+  } catch (error) {
+    conseole.error("Erreur lors de l'ajout du commentaire: ", error);
+    alert("Une erreur est survenue. Veuillez réessayer plus tard");
+  }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.querySelector('.review-container');
+  if (container && container.children.length === 0) {
+    loadPublicReviews();
+  }
+});
