@@ -31,31 +31,31 @@
 			</div>
 			<div class="nav-container">
         		<nav id="nav-links" role="navigation" aria-label="Menu principal">
-					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link">Accueil</a>
-					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="{{ url_for('static_pages.avis') }}" id="avis_link">Avis</a>
-                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;">Mon espace</a>
-					<a href="{{ url_for('static_pages.login') }}" id="login_link">Connexion</a>
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+                    <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+                    <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+                    <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+                    <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+                    <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+                    <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
 					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
 
-    	<main>
-			<div class="hero-box"><p>Laisser un avis</p></div>
+    	<main id="main-content" role="main" aria-labelledby="reviewform-hero-title">
+			<div class="hero-box"><p id="reviewform-hero-title">Laisser un avis</p></div>
 			<hr class="line">
-			<section class="review-container">
-				<form class="review-form">
+			<section class="review-container" aria-label="Formulaire pour la soumission d'un avis client">
+				<form class="review-form" aria-label="Formulaire de commentaire" role="form">
 					<div class="form-field">
-						<input type="text" id="last-name" name="last-name" placeholder="Nom" value="" required readonly>
+						<input type="text" id="last-name" name="last-name" placeholder="Nom" value="" required readonly aria-label="Votre nom (lecture seule)">
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
 					<div class="form-field">
-						<input type="text" id="first-name" name="first-name" placeholder="Prénom" value="" required readonly>
+						<input type="text" id="first-name" name="first-name" placeholder="Prénom" value="" required readonly aria-label="Votre prénom (lecture seule)">
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
@@ -89,7 +89,7 @@
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
-					<button type="submit">Envoyer</button>
+					<button type="submit" aria-label="Soumettre votre commentaire et votre note">Envoyer</button>
 				</form>
 			</section>
     	</main>
@@ -101,8 +101,11 @@
 		<script src="{{ url_for('static', filename='js_files/formulaire_commentaires.js') }}" defer></script>
 
 		<hr class="line">
-    	<footer class="footer">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
+    	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
+                <br>
+            <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+            </p>
     	</footer>
 
 </body>

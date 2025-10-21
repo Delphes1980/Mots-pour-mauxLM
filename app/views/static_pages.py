@@ -46,3 +46,7 @@ def formulaire_rdv():
 @static_bp.route('/formulaire-commentaires')
 def formulaire_commentaires():
     return render_template('formulaire_commentaires.html')
+
+@static_bp.route('/politique')
+def politique_confidentialite():
+    return render_template('politique_confidentialite.html')

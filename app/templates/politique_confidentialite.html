@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mots pour maux LM - Politique de confidentialité</title>
+
+    <!-- Liens pour les fichiers CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css_files/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css_files/politique_confidentialite.css') }}"
+    <!-- Liens pour le favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest') }}">
+    <!-- Liens pour Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+        <header class="header">
+            <div class="logo-container">
+                <img class="logo" src="{{ url_for('static', filename='images/Logo Clair.png') }}" alt="Mots pour maux LM logo">
+            </div>
+            <div class="nav-container">
+                <nav id="nav-links" role="navigation" aria-label="Menu principal">
+                    <a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+                    <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+                    <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+                    <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+                    <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+                    <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+                    <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
+                    <a href="#" id="logout_link" style="display: none;">Déconnexion</a>
+                </nav>
+            </div>
+        </header>
+
+        <main id="main-content" role="main" aria-labelledby="policy-hero-title">
+            <div class="hero-box"><p id="policy-hero-title">Politique de Confidentialité</p></div>
+            <hr class="line">
+
+            <section class="main-content" role="article" aria-label="Contenu détaillé de la politique de confidentialité">
+                <p class="last-update">Dernière mise à jour: 21 octobre 2025</p>
+
+                <div class="policy-grid-container">
+
+                    <p class="intro">La présente Politique de Confidentialité a pour but de vous informer sur la manière dont vos données personnelles sont collectées et traitées par Mélanie Laborda, responsable du site "Mots pour Maux LM", conformément au <b>Règlement Général sur la Protection des Données (RGDP)</b>.</p>
+
+                <div class="policy-grid-content">
+                    <div class="policy-box" aria-labelledby="heading-responsable">
+                        <h4 id="heading-responsable">1. Responsable du Traitement des Données</h4>
+                        <br>
+                        <p>Le responsable du traitement de vos données personnelles est:</p>
+                        <br>
+                        <ul class="policy-list" aria-label="Détails du responsable du traitement">
+                            <li><strong>Nom/Activité: </strong>Mélanie Laborda, Psychopraticienne et Hypnothérapeute</li>
+                            <li><strong>SIRET: </strong>93841610400017</li>
+                            <li><strong>Contact: </strong>Motspourmauxlm@gmail.com</li>
+                        </ul>
+                    </div>
+
+            <div class="policy-box full-width-box" aria-labelledby="heading-donnees">
+                <h4 id="heading-donnees">2. Données Collectées et Finalités</h4>
+                <br>
+                <p>Les données sont collectées sur la base de votre consentement ou de la nécessité contractuelle de fournir nos services. Nous collectons les données suivantes:</p>
+                <br>
+
+                <table class="data-table" role="table" aria-label="Tableau récapitulatif des données collectées, finalités et bases légales">
+                    <thead>
+                        <tr class="table-header">
+                            <th>Données Collectées</th>
+                            <th>Finalité du Traitement</th>
+                            <th>Base Légale (RGPD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Données Collectées">Nom, Prénom, Email, Téléphone, Adresse.</td>
+                            <td data-label="Finalité du Traitement">Gestion du compte utilisateur, communication pour les prises de rendez-vous et suivi client.</td>
+                            <td data-label="Base Légale (RGPD)">Exécution d'un contrat (RDV) et Intérêt Légitime.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Données Collectées">Mot de passe (hashé)</td>
+                            <td data-label="Finalité du Traitement">Sécurisation et authentification de votre accès à l'espace personnel.</td>
+                            <td data-label="Base Légale (RGPD)">Intérêt Légitime (sécurité du service).</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Données Collectées">Note et Texte de l'avis soumis.</td>
+                            <td data-label="Finalité du Traitement">Publication et affichage des retours d'expérience sur le site.</td>
+                            <td data-label="Base Légale (RGPD)">Consentement de l'utilisateur.</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Données Collectées">Contenu de la demande de Rendez-vous (texte libre).</td>
+                            <td data-label="Finalité du Traitement">Évaluation et préparation de la première séance.</td>
+                            <td data-label="Base Légale (RGPD)"><b>Consentement explicite</b> (donnée de santé potentiellement sensible).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="policy-box" aria-labelledby="heading-anonymisation">
+                <h4 id="heading-anonymisation">3. Anonymisation et Commentaires Publics</h4>
+                <br>
+                <p>Afin de concilier transparence et protection de votre vie privée, les avis publiés sont affichés sous une forme <b>pseudonymisée</b>.</p>
+                <ul class="policy-list" aria-label="Règles d'affichage des commentaires publics">
+                    <li>Seuls votre <b>prénom</b> et la <b>première lettre de votre nom</b> (ex "Mélanie L.") sont visibles publiquement. </li>
+                    <li>Votre nom complet et vos informations de contact sont conservés en toute sécurité dans notre base de données pour l'identification interne et la gestion de votre compte.</li>
+                </ul>
+            </div>
+
+            <div class="policy-box" aria-labelledby="heading-cookies">
+                <h4 id="heading-cookies">4. Cookies et Traceurs Tiers (Google Maps)</h4>
+                <br>
+                <p>Notre site utilise des cookies de première partie pour le fonctionnement technique (authentification sécurisée).</p>
+                <p>Nous utilisons également un service tiers: <b>Google Maps</b>.</p>
+                <ul class="policy-list" aria-label="Détails sur l'utilisation des cookies Google Maps">
+                    <li><strong>Fonction: </strong>Affichage de l'emplacement du cabinet sur la page "Coordonnées & Horaires".</li>
+                    <li><strong>Nature des cookies: </strong>Google Maps est susceptible de déposer des cookies tiers à des fins d'analyse, de profilage et de mesure d'audience.</li>
+                    <li><strong>Votre droit: </strong>Conformément au RGPD, le script de Google Maps est <b>bloqué par défaut</b>. Il ne sera chargé et les cookies tiers ne seront déposés qu'après votre <b>consentement explicite</b> donné en cliquant sur le bouton d'acceptation sur la page concernée.</li>
+                </ul>
+            </div>
+
+            <div class="policy-box full-width-box" aria-labelledby="heading-droits">
+                <h4 id="heading-droits">5. Vos droits (RGPD)</h4>
+                <br>
+                <p>Conformément au RGPD, vous disposez des droits suivants concernant vos données personnelles:</p>
+                <ul class="policy-list" aria-label="Liste de vos droits en vertu du RGPD">
+                    <li><strong>Droit d'accès et de rectification: </strong>Vous pouvez consulter et modifier vos données personnelles directement depuis votre <b>espace personnel</b>.</li>
+                    <li><strong>Droit à l'effacement ("Droit à l'oubli"): </strong>Vous pouvez demander la suppression de votre compte et de tous vos avis associés.</li>
+                    <li><strong>Droit d'opposition: </strong>Vous pouvez vous opposer au traitement de vos données pour des raisons légitimes.</li>
+                </ul>
+                <p>Pour exercer l'un de ces droits ou pour toute question, veuillez contacter le responsable du traitement à l'adresse e-mail mentionnée au point 1.</p>
+            </div>
+                </div>
+                </div>
+            </section>
+
+        </main>
+
+        <hr class="line">
+        <footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+            <p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
+
+        </footer>
+</body>
+</html>
