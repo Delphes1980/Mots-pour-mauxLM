@@ -28,28 +28,29 @@
 			</div>
 			<div class="nav-container">
         		<nav id="nav-links" role="navigation" aria-label="Menu principal">
-					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link">Accueil</a>
-					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="{{ url_for('static_pages.avis') }}" id="avis_link">Avis</a>
-                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;">Mon espace</a>
-					<a href="{{ url_for('static_pages.login') }}" id="login_link">Connexion</a>
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+                    <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+                    <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+                    <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+                    <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+                    <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+                    <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
 					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
 
-    	<main>
-			<div class="hero-box"><p>Prestations & tarifs</p></div>
+    	<main id="main-content" role="main" aria-labelledby="prestations-hero-title">
+			<div class="hero-box"><p id="prestations-hero-title">Prestations & tarifs</p></div>
 			<hr class="line">
 			<div class="main-content">
-			<div class="prestations-container" aria-label="Liste des prestations proposées">
-				<div class="prestation-box">
-					<h3>Séance de psychothérapie</h3>
+			<div class="prestations-container" role="list" aria-label="Liste des prestations proposées">
+
+				<div class="prestation-box" role="listitem" aria-label="psycho-seance-title">
+					<h3 id="psycho-seance-title">Séance de psychothérapie</h3>
 					<p>Accompagnement personnalisé pour adultes et enfants.</p>
-					<ul class="prestation-list">
+					<ul class="prestation-list" aria-label="Détails de la séance de psychothérapie">
 						<li>Durée: 1 heure</li>
 						<li>En cabinet, à domicile ou en visio</li>
 					</ul>
@@ -57,10 +58,11 @@
 						<p>50€</p>
 					</div>
 				</div>
-				<div class="prestation-box">
-					<h3>Séance d'hypnose classique</h3>
+
+				<div class="prestation-box" role="listitem" aria-label="hypnose-classique-title">
+					<h3 id="hypnose-classique-title">Séance d'hypnose classique</h3>
 					<p>Hypnose thérapeutique pour divers objectifs: stress, confiance en soi, sommeil...</p>
-					<ul class="prestation-list">
+					<ul class="prestation-list" aria-label="Détails de la séance d'hypnose classique">
 						<li>Durée: 1 heure</li>
 						<li>En cabinet ou en visio</li>
 					</ul>
@@ -68,10 +70,11 @@
 						<p>60€</p>
 					</div>
 				</div>
-				<div class="prestation-box">
-					<h3>Programme "Anneau gastrique virtuel"</h3>
+
+				<div class="prestation-box" role="listitem" aria-label="anneau-gastrique-title">
+					<h3 id="anneau-gastrique-title">Programme "Anneau gastrique virtuel"</h3>
 					<p>Accompagnement complet pour la perte de poids par hypnose</p>
-					<ul class="prestation-list">
+					<ul class="prestation-list" aria-label="Détails du programme anneau gastrique virtuel">
 						<li>Forfait de 3 séances</li>
 						<li>Suivi personnalisé</li>
 						<li>Outils d'auto-hypnose</li>
@@ -80,10 +83,11 @@
 						<p>300€</p>
 					</div>
 				</div>
-				<div class="prestation-box">
-					<h3>Séance d'hypnose pour l'arrêt du tabac</h3>
+
+				<div class="prestation-box" role="listitem" aria-label="arret-tabac-title">
+					<h3 id="arret-tabac-title">Séance d'hypnose pour l'arrêt du tabac</h3>
 					<p>Protocole spécifique pour cesser de fumer durablement</p>
-					<ul class="prestation-list">
+					<ul class="prestation-list" aria-label="Détails de la séance d'hypnose pour l'arrêt du tabac">
 						<li>Séance renforcée</li>
 						<li>Outils d'auto-hypnose</li>
 						<li> Suivi post-séance</li>
@@ -93,9 +97,10 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="informations-container" aria-label="Informations complémentaires sur les prestations">
 				<h4>Informations complémentaires</h4>
-				<ul class="informations-list">
+				<ul class="informations-list" aria-label="Conditions de paiement et remboursement">
 					<li>Le règlement peut s'effectuer par carte bancaire, virement ou espèces.</li>
 					<li>Les séances non annulées 24h à l'avance sont dues.</li>
 					<li>Les consultations ne sont pas prises en charge par la sécurité sociale mais peuvent être remboursées par certaines mutuelles.</li>
@@ -108,9 +113,12 @@
         <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
 
 		<hr class="line">
-    	<footer class="footer">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
-
+    	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
+                <br>
+            <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+            </p>
     	</footer>
+
 </body>
 </html>

@@ -28,28 +28,29 @@
 			</div>
 			<div class="nav-container">
         		<nav id="nav-links" role="navigation" aria-label="Menu principal">
-					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link">Accueil</a>
-					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="{{ url_for('static_pages.avis') }}" id="avis_link">Avis</a>
-                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;">Mon espace</a>
-					<a href="{{ url_for('static_pages.login') }}" id="login_link">Connexion</a>
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+                    <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+                    <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+                    <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+                    <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+                    <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+                    <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
 					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
 
-    	<main>
-			<div class="hero-box"><p>Techniques thérapeutiques</p></div>
+    	<main id="main-content" role="main" aria-labelledby="technique-hero-title">
+			<div class="hero-box"><p id="technique-hero-title">Techniques thérapeutiques</p></div>
 			<hr class="line">
 			<div class="main-content">
 				<p>Dans ma pratique, j'utilise différentes approches thérapeutiques que j'adapte à vos besoins spécifiques. Voici les principales techniques que j'emploie:</p>
 			</div>
-			<div class="techniques-container" aria-label="Liste des techniques thérapeutiques utilisées">
-				<div class="technique-box">
-					<h4>TCC (Thérapie Cognitivo-Comportementale)</h4>
+
+			<div class="techniques-container" role="list"aria-label="Liste des techniques thérapeutiques utilisées">
+				<div class="technique-box" role="listitem" aria-labelledby="tcc-titlle">
+					<h4 id="tcc-titlle">TCC (Thérapie Cognitivo-Comportementale)</h4>
 					<p>La TCC s'intéresse aux pensées, émotions et comportements actuels plutôt qu'aux expériences passées. Elle vous aide à:</p>
 					<br>
 					<ul class="technique-list">
@@ -59,8 +60,9 @@
 						<li>Résoudre des problèmes spécifiques comme l'anxiété, la dépression, les phobies</li>
 					</ul>
 				</div>
-				<div class="technique-box">
-					<h4>PNL (Programmation Neuro-Linguistique)</h4>
+
+				<div class="technique-box" role="listitem" aria-label="pnl-title">
+					<h4 id="pnl-title">PNL (Programmation Neuro-Linguistique)</h4>
 					<p>La PNL étudie comment notre langage (verbal et non-verbal) influence notre cerveau et nos comportements. Elle permet de:</p>
 					<br>
 					<ul class="technique-list">
@@ -70,8 +72,9 @@
 						<li>Fixer et atteindre des objectifs de façon plus efficace</li>
 					</ul>
 				</div>
-				<div class="technique-box">
-					<h4>DTMA (Deep Transformative Memory Alignment)</h4>
+
+				<div class="technique-box" role="listitem" aria-label="dtma-title">
+					<h4 id="dtma-title">DTMA (Deep Transformative Memory Alignment)</h4>
 					<p>Le DTMA est une technique innovante qui permet de travailler en profondeur sur les mémoires traumatiques. Elle aide à:</p>
 					<br>
 					<ul class="technique-list">
@@ -81,8 +84,9 @@
 						<li>Permettre une guérison émotionnelle durable</li>
 					</ul>
 				</div>
-				<div class="technique-box">
-					<h4>EFT (Emotional Freedom Techniques)</h4>
+
+				<div class="technique-box" role="listitem" aria-label="eft-title">
+					<h4 id="eft-title">EFT (Emotional Freedom Techniques)</h4>
 					<p>L'EFT ou technique de libération émotionnelle, combine la stimulation de points d'acupuncture et la focalisation mentale. Elle permet de:</p>
 					<br>
 					<ul class="technique-list">
@@ -93,15 +97,18 @@
 					</ul>
 				</div>
 			</div>
-			<div class="specialities-container" aria-label="Spécialités de la praticienne">
+
+			<!-- Les spécialités -->
+			<div class="specialities-container" role="region" aria-label="Spécialités de la praticienne">
 				<h4>Mes spécialités</h4>
-				<div class="specialities-grid">
-					<div class="specialities-box">
-						<p class="title">Gestion des émotions</p>
+				<div class="specialities-grid" role="list">
+					<div class="specialities-box" role="listitem" aria-labelledby="gestion-emotions-title">
+						<p class="title" id="gestion-emotions-title">Gestion des émotions</p>
 						<p>Je vous aide à identifier, comprendre et gérer vos émotions pour retrouver un équilibre émotionnel. Ensemble, nous travaillerons sur la régulation émotionnelle, la gestion du stress et le développement de stratégies d'adaptation efficaces.</p>
 					</div>
-					<div class="specialities-box">
-						<p class="title">Gestion des traumatismes</p>
+
+					<div class="specialities-box" role=" listitem" aria-labelledby="gestion-traumatismes-title">
+						<p class="title" id="gestion-traumatismes-title">Gestion des traumatismes</p>
 						<p>Les traumatismes, qu'ils soient ponctuels ou répétés, peuvent avoir un impact profond sur votre vie. J'utilise des techniques spécialisées pour vous aider à traiter ces expériences douloureuses et à reconstruire un sentiment de sécurité et de bien-être.</p>
 					</div>
 				</div>
@@ -112,9 +119,12 @@
         <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
 
 		<hr class="line">
-    	<footer class="footer">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
-
+    	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
+                <br>
+            <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+            </p>
     	</footer>
+
 </body>
 </html>

@@ -28,21 +28,21 @@
 			</div>
 			<div class="nav-container">
         		<nav id="nav-links" role="navigation" aria-label="Menu principal">
-					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link">Accueil</a>
-					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="{{ url_for('static_pages.avis') }}" id="avis_link">Avis</a>
-                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;">Mon espace</a>
-					<a href="{{ url_for('static_pages.login') }}" id="login_link">Connexion</a>
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+                    <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+                    <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+                    <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+                    <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+                    <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+                    <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
 					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
 
-    	<main>
-			<div class="hero-box"><p>En savoir plus</p></div>
+    	<main id="main-content" role="main" aria-labelledby="aboutus-hero-title">
+			<div class="hero-box"><p id="aboutus-hero-title">En savoir plus</p></div>
 			<hr class="line">
 			<div class="content-container">
 				<div class="content" aria-label="Philosophie de la praticienne">
@@ -59,7 +59,7 @@
 				</div>
 				<div class="content" aria-label="Modalités pratiques">
 					<h4>Les modalités pratiques</h4>
-					<ul class="content-list">
+					<ul class="content-list" aria-label="Lieu et durée des consultations">
 						<li><strong>Consultations en cabinet:</strong> Mon cabinet est situé au 7 rue Bombée à Saint Papoul.</li>
 						<li><strong>Consultations à distance:</strong> Je propose également des séances en visioconférence pour les personnes ne pouvant pas se déplacer.</li>
 						<li><strong>Consultations à domicile:</strong> Dans certaines situations, je peux me déplacer à votre domicile.</li>
@@ -73,9 +73,12 @@
         <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
 
 		<hr class="line">
-    	<footer class="footer">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
-
+    	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
+                <br>
+            <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+            </p>
     	</footer>
+
 </body>
 </html>

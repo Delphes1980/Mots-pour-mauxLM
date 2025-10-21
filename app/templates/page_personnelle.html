@@ -30,22 +30,22 @@
 			</div>
 			<div class="nav-container">
         		<nav id="nav-links" role="navigation" aria-label="Menu principal">
-					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link">Accueil</a>
-					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link">En Savoir Plus</a>
-            		<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link">Techniques<br>Thérapeutiques</a>
-					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link">Prestations<br>& Tarifs</a>
-					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link">Coordonnées<br>& Horaires</a>
-					<a href="{{ url_for('static_pages.avis') }}" id="avis_link">Avis</a>
-                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;">Mon espace</a>
-					<a href="{{ url_for('static_pages.login') }}" id="login_link">Connexion</a>
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+                    <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+                    <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+                    <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+                    <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+                    <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+                    <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
 					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
         		</nav>
 			</div>
     	</header>
 
-    	<main>
+    	<main id="main-content" role="main" aria-labelledby="myspace-hero-title">
 			<div class="hero-box">
-				<p>Ravie de vous revoir <span id="user_firstname"></span></p>
+				<p id="myspace-hero-title">Ravie de vous revoir <span id="user_firstname"></span></p>
 			</div>
 			<hr class="line">
 
@@ -54,31 +54,43 @@
                 <div class="client-info">
 					<h2>Informations personnelles</h2>
                     <div class="info-container">
-						<form id="personal-info-form" role="form">
+						<form id="personal-info-form" role="form" aria-label="Formulaire de consultation des informations personnelles">
+							<!-- Champ pour le prénom -->
 							<div class="form-field">
 								<label for="firstName">Prénom</label>
-								<input type="text" id="firstName" name="firstName" value="" readonly>
+								<input type="text" id="firstName" name="firstName" value="" readonly aria-label="Prénom (Lecture seule)">
 							</div>
+
+							<!-- Champ pour le nom -->
 							<div class="form-field">
 								<label for="lastName">Nom</label>
-								<input type="text" id="lastName" name="lastName" value=""readonly>
+								<input type="text" id="lastName" name="lastName" value=""readonly aria-label="Nom (Lecture seule)">
 							</div>
+
+							<!-- Champ pour l'adresse -->
 							<div class="form-field">
 								<label for="address">Adresse</label>
-								<input type="text" id="address" name="address" placeholder="Adresse (facultatif)" value="" readonly>
+								<input type="text" id="address" name="address" placeholder="Adresse (facultatif)" value="" readonly aria-label="Adresse">
 							</div>
+
+							<!-- Champ pour le téléphone -->
 							<div class="form-field">
 								<label for="phone">Téléphone</label>
-								<input type="tel" id="phone" name="phone" placeholder="Téléphone (facultatif)" value="" readonly>
+								<input type="tel" id="phone" name="phone" placeholder="Téléphone (facultatif)" value="" readonly aria-label="Téléphone">
 							</div>
+
+							<!-- Champ pour l'email -->
 							<div class="form-field">
 								<label for="email">E-mail</label>
-								<input type="email" id="email" name="email" value="" readonly>
+								<input type="email" id="email" name="email" value="" readonly aria-label="Adresse email (Lecture seule)">
 							</div>
+
+							<!-- Champ pour le mot de passe -->
 							<div class="form-field">
 								<label for="password">Mot de passe</label>
 								<input type="password" id="password" name="password" value="" readonly disabled>
 							</div>
+
 							<button type="submit" class="modify-info-button" id="modifier-button" aria-label="Modifier vos informations personnelles">Modifier</button>
 						</form>
                     </div>
@@ -108,8 +120,11 @@
 		<script src="{{ url_for('static', filename='js_files/avis.js') }}"></script>
 
 		<hr class="line">
-    	<footer class="footer">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
+    	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
+                <br>
+            <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+            </p>
     	</footer>
 
 </body>
