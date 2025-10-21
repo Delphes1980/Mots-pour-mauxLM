@@ -1,0 +1,160 @@
+/* Style pour le conteneur principal de la politique */
+.policy-grid-container {
+	max-width: 1200px;
+	margin: 0 auto 50px auto;
+	padding: 0 20px;
+	font-family: 'Lexend', sans-serif;
+}
+
+.policy-grid-container p {
+	text-align: left;
+}
+
+/* Style pour la phrase d'introduction */
+.intro {
+	text-align: left;
+	max-width: 800px;
+	margin: 30px;
+}
+
+/* Style pour la date de mise à jour */
+.last-update {
+	font-size: italic;
+	font-size: 1em;
+	margin-bottom: 20px;
+	text-align: center;
+	color: var(--writing-medium);
+}
+
+/* Style pour la grille */
+.policy-grid-content {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 30px;
+	margin-top: 30px;
+}
+
+/* Style pour les box */
+.policy-box {
+	background-color: var(--background-color);
+	padding: 25px;
+	border-radius: 10px;
+	box-shadow: none;
+	border: none;
+	line-height: 1.6;
+	color: var(--writing-dark);
+}
+
+/* Style pour le titre des box */
+.policy-box h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.5em;
+	margin-bottom: 15px;
+	color: var(--writing-dark);
+}
+
+.policy-box p {
+	text-align: left;
+}
+
+/* Style pour la liste */
+.policy-list {
+	padding-left: 20px;
+	margin: 10px 0 20px 0;
+	list-style-type: disc;
+	color: var(--writing-medium);
+}
+
+/* Style pour les éléments de la liste */
+.policy-list li {
+	margin-bottom: 8px;
+	color: var(--button-hover);
+	text-align: start;
+}
+
+/* Style pour les titres dans les listes */
+.policy-list strong {
+	color: var(--writing-dark);
+}
+
+/* Style du tableau de données */
+.data-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 25px;
+	margin-bottom: 20px;
+	font-size: 0.95em;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+/* Style pour les lignes et colonnes du tableau */
+.data-table th, .data-table td {
+	padding: 12px;
+	border: 1px solid var(--button-hover);
+	text-align: left;
+	vertical-align: top;
+}
+
+/* Style pour le titre des colonnes */
+.data-table th {
+	background-color: var(--background-card);
+	color: var(--writing-dark);
+	font-weight: bold;
+	font-family: 'Lexend', sans-serif;
+	text-align: center;
+}
+
+/* ##### Code responsive #####*/
+/* Pour les écrans plus petits que 1024px */
+@media (max-width: 1024px) {
+	.policy-grid-content {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Responsive pour les écrans plus petits */
+@media (max-width: 768px) {
+	.policy-grid-container {
+		padding: 0 10px;
+	}
+	.policy-box {
+		padding: 15px;
+	}
+	.policy-box h4 {
+		font-size: 1.3em;
+	}
+	.data-table {
+		box-shadow: none;
+	}
+	.data-table thead {
+		display: none;
+	}
+	.data-table tr {
+		display: block;
+		margin-bottom: 20px;
+		border: 1px solid var(--button-hover);
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	.data-table th, .data-table td {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+		text-align: right;
+		padding-left: 50%;
+		position: relative;
+	}
+	.data-table td::before {
+		content: attr(data-label);
+		position: absolute;
+		left: 12px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: normal;
+		font-weight: bold;
+		color: var(--writing-dark);
+		text-align: left;
+	}
+}
