@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mots pour maux LM - Les avis</title>
+
+	<!-- Liens pour les fichiers CSS -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/styles.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/avis.css') }}">
+	<!-- Liens pour le favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
+	<link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest') }}">
+	<!-- Liens pour Google fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+	<!-- Lien pour les étoiles -->
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    	<header class="header">
+			<div class="logo-container">
+        		<img class="logo" src="{{ url_for('static', filename='images/Logo Clair.png') }}" alt="Mots pour maux LM logo">
+			</div>
+			<div class="nav-container">
+        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link">Accueil</a>
+					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link">En Savoir Plus</a>
+            		<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link">Techniques<br>Thérapeutiques</a>
+					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link">Prestations<br>& Tarifs</a>
+					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link">Coordonnées<br>& Horaires</a>
+					<a href="{{ url_for('static_pages.avis') }}" id="avis_link">Avis</a>
+                    <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;">Mon espace</a>
+					<a href="{{ url_for('static_pages.login') }}" id="login_link">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
+        		</nav>
+			</div>
+    	</header>
+
+    	<main>
+			<div class="hero-box"><p>Les avis</p></div>
+			<hr class="line">
+			<div class="main-content">
+				<div class="review-container" role="list" aria-label="Liste des commentaires">
+					<!-- Les commentaires sont chargés dynamiquement -->
+				</div>
+			</div>
+    	</main>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
+		<script src="{{ url_for('static', filename='js_files/avis.js') }}"></script>
+
+		<hr class="line">
+    	<footer class="footer">
+        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
+    	</footer>
+
+</body>
+</html>

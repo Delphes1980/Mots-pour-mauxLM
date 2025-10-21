@@ -1,6 +1,6 @@
-const API_USERS_BASE_URL = 'http://localhost:5000/api/v1/users';
-const API_REVIEWS_BASE_URL = 'http://localhost:5000/api/v1/reviews/';
-const API_PRESTATIONS_BASE_URL = 'http://localhost:5000/api/v1/prestations/';
+const API_USERS_BASE_URL = '/api/v1/users';
+const API_REVIEWS_BASE_URL = '/api/v1/reviews/';
+const API_PRESTATIONS_BASE_URL = '/api/v1/prestations/';
 
 // Fonction utilitaire: fait correspondre les noms des inputs HTML aux clés API
 function mapInputToUserField(name) {
@@ -138,6 +138,11 @@ async function loadUserData() {
 			credentials: 'include'
 		});
 
+    if (response.status === 401) {
+      window.location.href = '/login';
+      return;
+    }
+
 		if (!response.ok) {
 			throw new Error(`Erreur HTTP lors de la connexion: ${response.status}`);
 		}
@@ -183,6 +188,11 @@ async function loadPrestationsForDropdown() {
         'Content-Type': 'application/json'
       }
     });
+
+    if (response.status === 401) {
+      window.location.href = '/login';
+      return;
+    }
 
     if (!response.ok) {
       throw new Error(`Erreur lors du chargement des prestations: ${response.status}`);
@@ -271,7 +281,7 @@ function setupReviewForm() {
 
       showFeedbackMessage("Merci pour votre commentaire!");
       setTimeout(() => {
-        window.location.href = '/base_files/templates/avis.html';
+        window.location.href = '/avis';
       }, 3500);
 
     } catch (error) {

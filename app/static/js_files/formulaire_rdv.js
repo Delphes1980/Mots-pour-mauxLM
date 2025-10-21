@@ -1,6 +1,6 @@
-const API_USERS_BASE_URL = 'http://localhost:5000/api/v1/users';
-const API_PRESTATIONS_BASE_URL = 'http://localhost:5000/api/v1/prestations/';
-const API_APPOINTMENTS_BASE_URL = 'http://localhost:5000/api/v1/appointments/';
+const API_USERS_BASE_URL = '/api/v1/users';
+const API_PRESTATIONS_BASE_URL = '/api/v1/prestations/';
+const API_APPOINTMENTS_BASE_URL = '/api/v1/appointments/';
 
 
 // Fonctions utilitaires: 
@@ -171,6 +171,11 @@ async function loadUserData() {
 			credentials: 'include'
 		});
 
+        if (response.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+
 		if (!response.ok) {
 			throw new Error(`Erreur HTTP lors de la connexion: ${response.status}`);
 		}
@@ -241,7 +246,7 @@ function setupAppointmentForm() {
             form.reset();
 
             setTimeout(() => {
-                window.location.href = '/base_files/templates/page_personnelle.html';
+                window.location.href = '/mon-espace';
             }, 3500);
 
         } catch (error) {
