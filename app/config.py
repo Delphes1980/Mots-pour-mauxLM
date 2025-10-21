@@ -42,7 +42,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_COOKIE_SECURE = False # Sécurité par CSRF désactivée
-    FRONTEND_URL = "http://localhost:8000"
+    FRONTEND_URL = ["http://localhost:5000", "http://127.0.0.1:5000"]
 
 class ProductionConfig(Config):
     DEBUG = False

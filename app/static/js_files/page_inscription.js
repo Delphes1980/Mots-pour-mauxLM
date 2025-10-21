@@ -1,4 +1,4 @@
-const API_USERS_BASE_URL = 'http://localhost:5000/api/v1/users/'
+const API_USERS_BASE_URL = '/api/v1/users/'
 
 // Fonctions utilitaires
 // Valide le nom
@@ -135,7 +135,7 @@ async function setupRegistrationForm() {
 			form.reset();
 
 			setTimeout(() => {
-				window.location.href = '/base_files/templates/login.html';
+				window.location.href = '/login';
 			}, 3500);
 
 		} catch (error) {
@@ -148,6 +148,5 @@ async function setupRegistrationForm() {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	setupClearButton();
-	// setupValidationIcons();
 	await setupRegistrationForm();
 });
