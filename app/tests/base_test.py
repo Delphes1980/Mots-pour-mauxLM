@@ -39,19 +39,10 @@ class BaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Configuration une seule fois pour toute la classe de test avec contournement psycopg2"""
-        print(f"\n🚀 Initialisation de la classe de test : {cls.__name__}")
-
         # 🔒 Neutraliser les variables d'environnement PostgreSQL pour éviter les encodages corrompus
         for var in ["PGHOST", "PGDATABASE", "PGUSER", "PGPASSWORD", "PGSERVICE", "PGSERVICEFILE", "PGPASSFILE"]:
             if var in os.environ:
-                print(f"🧹 Suppression de la variable d'environnement : {var}")
                 del os.environ[var]
-
-        # 📋 Affichage des variables PG restantes
-        print("📋 Variables PG visibles dans Python :")
-        for k, v in os.environ.items():
-            if k.startswith("PG"):
-                print(f" > {k} = {v}")
 
         os.environ['FLASK_ENV'] = 'testing'
 
@@ -61,19 +52,11 @@ class BaseTest(unittest.TestCase):
 
         # --- 2. Récupération et affichage de l'URL de la base ---
         db_url = cls.app.config.get("SQLALCHEMY_DATABASE_URI")
-        print(f"🔍 URL de base détectée : {db_url}")
-
-        # 🔎 Test d'encodage anticipé
-        try:
-            db_url.encode("utf-8").decode("utf-8")
-        except UnicodeDecodeError as e:
-            print("❌ URI corrompue avant même le parsing :", e)
+        db_url.encode("utf-8").decode("utf-8")
 
         # --- 3. Analyse de l'URL pour extraire les paramètres ---
-        from urllib.parse import urlparse, unquote
         parsed_url = urlparse(db_url)
         clean_password = unquote(parsed_url.password or "")
-        print(f"🔐 Mot de passe décodé : [masqué] (longueur {len(clean_password)})")
 
         # --- 4. Création manuelle de la connexion psycopg2 ---
         def create_connection():
@@ -84,22 +67,7 @@ class BaseTest(unittest.TestCase):
                 f"password='{clean_password}' "
                 f"dbname={parsed_url.path.lstrip('/')}"
             )
-            print(f"🛠️ DSN construit pour psycopg2 : {dsn_string.replace(clean_password, '********')}")
-            try:
-                return psycopg2.connect(dsn_string)
-            except Exception as e:
-                try:
-                    safe_e = str(e).encode('latin1', 'replace').decode('ascii', 'replace')
-                except Exception:
-                    safe_e = f"Impossible d'afficher l'erreur (Type: {type(e).__name__})"
-
-                print("\n======================================================================")
-                print("FATAL ERROR: Échec de la connexion Psycopg2 (UnicodeDecodeError probable - ENCODING ISSUE).")
-                print("Erreur brute (non décodée) :", repr(e))
-                print("Paramètres tentés (password masqué):")
-                print(f" > DSN construit: {dsn_string.replace(clean_password, '********')}")
-                print("======================================================================")
-                raise
+            return psycopg2.connect(dsn_string)
 
         # --- 5. Injection du créateur dans SQLAlchemy ---
         cls.app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'creator': create_connection}
@@ -113,16 +81,12 @@ class BaseTest(unittest.TestCase):
         # --- 7. Contexte d'application ---
         cls.app_context = cls.app.app_context()
         cls.app_context.push()
-        print("📦 Contexte Flask activé")
 
         # --- 8. Création des tables ---
         try:
             cls.db.drop_all()
-            print("📦 Tentative de création des tables...")
             cls.db.create_all()
-            print("✅ Tables créées avec succès")
         except UnicodeDecodeError as e:
-            print("⚠️ UnicodeDecodeError détecté : tentative de récupération")
             cls.db.engine.dispose()
 
             # Recréation d'une nouvelle app propre
@@ -141,36 +105,24 @@ class BaseTest(unittest.TestCase):
             cls.app_context = new_app.app_context()
             cls.app_context.push()
 
-            try:
-                cls.db.create_all()
-                print("✅ Tables recréées après récupération")
-            except Exception as e:
-                print("\n======================================================================")
-                print("❌ Échec final de création des tables")
-                print(f"Erreur : {str(e)}")
-                print("======================================================================")
-                raise
+            cls.db.create_all()
 
         # --- 9. Données de base ---
         if hasattr(cls, "insert_initial_data"):
-            print("📥 Insertion des données initiales...")
             cls.insert_initial_data()
 
     
     @classmethod
     def tearDownClass(cls):
         """Nettoyage après tous les tests de la classe"""
-        print(f"\n🧹 Nettoyage global après la classe de test : {cls.__name__}")
         try:
             cls.db.drop_all()
-            print("✅ Tables supprimées avec succès")
             time.sleep(0.5)
         except Exception as e:
-            print(f"⚠️ Erreur lors du drop_all : {e}")
+            pass
         finally:
             if hasattr(cls, 'app_context'):
                 cls.app_context.pop()
-                print("📦 Contexte Flask libéré")
 
     def setUp(self):
         """
@@ -213,7 +165,6 @@ class BaseTest(unittest.TestCase):
 
         except Exception as e:
             # Log any errors during cleanup
-            print(f"Error during tearDown data deletion (rolling back): {e}")
             self.db.session.rollback()
 
         finally:
@@ -255,8 +206,6 @@ class BaseTest(unittest.TestCase):
         engine_options = self.app.config.get('SQLALCHEMY_ENGINE_OPTIONS', {})
         if engine_options:
             test_app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
-        else:
-            print("⚠️ Attention : SQLALCHEMY_ENGINE_OPTIONS manquante. Connexion PostgreSQL par défaut utilisée.")
 
         # Initialiser les extensions sur la nouvelle app
         self.db.init_app(test_app)

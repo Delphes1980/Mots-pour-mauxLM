@@ -1,4 +1,4 @@
-const API_PUBLIC_REVIEWS_URL = 'http://localhost:5000/api/v1/reviews';
+const API_PUBLIC_REVIEWS_URL = '/api/v1/reviews';
 
 // Fonction qui génère les étoiles dans un avis déjà laissé
 function generateStarsInReviews(rating) {

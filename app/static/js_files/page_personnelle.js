@@ -1,5 +1,5 @@
-const API_USERS_BASE_URL = 'http://localhost:5000/api/v1/users';
-const API_REVIEWS_BASE_URL = 'http://localhost:5000/api/v1/reviews';
+const API_USERS_BASE_URL = '/api/v1/users';
+const API_REVIEWS_BASE_URL = '/api/v1/reviews';
 
 
 // Fonctions utilitaires: 
@@ -196,6 +196,11 @@ async function loadUserReviews() {
 			}
 		});
 
+		if (response.status === 401) {
+			window.location.href = '/login';
+			return;
+		}
+
 		if (!response.ok) {
 			throw new Error(`Erreur HTTP ${response.status}`);
 		}
@@ -277,18 +282,19 @@ function validateUserData(data) {
 
 // Gère le clic sur le bouton Modifier côté commentaires laissés par l'utilisateur
 function setupReviewModifierButton(modifierReviewButton) {
-	modifierReviewButton.addEventListener('click', function (e) {
+	modifierReviewButton.addEventListener('click', async function (e) {
 		e.preventDefault();
 
 		const isEditing = modifierReviewButton.textContent === 'Modifier';
 		const ratingFields = document.querySelectorAll('.review-rating');
 		const textFields = document.querySelectorAll('.review-textarea');
 
-		toggleReviewEditMode(modifierReviewButton, ratingFields, textFields);
-
 		if (!isEditing) {
-			saveAllReviewData(ratingFields, textFields);
+			await saveAllReviewData(ratingFields, textFields);
+			await loadUserReviews();
 		}
+
+		toggleReviewEditMode(modifierReviewButton, ratingFields, textFields);
 	});
 }
 
@@ -324,6 +330,7 @@ function toggleReviewEditMode(modifierReviewButton, ratingFields, textFields) {
 
 // Envoie les données modifiées à l'API des commentaires modifiés
 async function saveAllReviewData(ratingFields, textFields) {
+	let hasError = false;
 	for (let i = 0; i < ratingFields.length; i++) {
 		const ratingInput = ratingFields[i];
 		const textInput = textFields[i];

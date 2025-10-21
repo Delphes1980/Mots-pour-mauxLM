@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -64,7 +64,8 @@ def create_app():
         description='MotsPourMaux Application API',
         doc='/api/v1/',
         authorizations=authorizations,
-        security='Bearer'
+        security='Bearer',
+        prefix='/api'
         )
 
     # Import models (to create the tables)
@@ -78,10 +79,16 @@ def create_app():
     from app.api.v1.authentication import api as authentication_ns
 
     # Register API namespaces
-    api.add_namespace(users_ns, path='/api/v1/users')
-    api.add_namespace(reviews_ns, path='/api/v1/reviews')
-    api.add_namespace(appointments_ns, path='/api/v1/appointments')
-    api.add_namespace(prestations_ns, path='/api/v1/prestations')
-    api.add_namespace(authentication_ns, path='/api/v1/authentication')
+    api.add_namespace(users_ns, path='/v1/users')
+    api.add_namespace(reviews_ns, path='/v1/reviews')
+    api.add_namespace(appointments_ns, path='/v1/appointments')
+    api.add_namespace(prestations_ns, path='/v1/prestations')
+    api.add_namespace(authentication_ns, path='/v1/authentication')
+
+    # Import of HTML routes
+    from app.views.static_pages import static_bp
+
+    app.register_blueprint(static_bp)
+
 
     return app

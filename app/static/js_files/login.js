@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api/v1/authentication';
+const API_BASE_URL = '/api/v1/authentication';
 const API_LOGIN_URL = `${API_BASE_URL}/login`;
 const API_LOGOUT_URL = `${API_BASE_URL}/logout`;
 
@@ -90,7 +90,7 @@ function setupLogin() {
       const result = await response.json();
 
       if (response.ok) {
-        window.location.href = '/base_files/templates/page_personnelle.html';
+        window.location.href = '/mon-espace';
 
       } else {
         // Afficher le message d'erreur
@@ -135,7 +135,7 @@ function setupLogout() {
       });
 
       if (response.ok || response.status === 401) {
-        window.location.href = '/base_files/templates/accueil.html';
+        window.location.href = '/';
       } else {
         const errorData = await response.json();
         showFeedbackMessage("Une erreur est survenue lors de la déconnexion: " + (errorData.error || 'Erreur inconnue'));
@@ -197,13 +197,13 @@ async function redirectToContactPage() {
 
     if (response.ok) {
       // Utilisateur connecté
-      window.location.href = '/base_files/templates/page_personnelle.html';
+      window.location.href = '/mon-espace';
     } else {
-      // Utilisateur déconnecté
-      window.location.href = '/base_files/templates/accueil.html';
+      // Utilisateur déconnecté (retour à l'accueil)
+      window.location.href = '/';
     }
   } catch (error) {
-    window.location.href = '/base_files/templates/login.html';
+    window.location.href = '/login';
   }
 }
 
@@ -211,7 +211,7 @@ async function redirectToContactPage() {
 document.addEventListener('DOMContentLoaded', () => {
   const currentPage = window.location.pathname;
 
-  if (currentPage.includes('login.html')) {
+  if (currentPage.includes('/login')) {
     setupClearButton();
     setupLogin();
   }
