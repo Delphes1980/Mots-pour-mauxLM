@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta pour le SEO -->
+    <meta name="description" content="Consultez la Politique de Confidentialité de Mots pour Maux LM. Détails sur la collecte, le traitement de vos données personnelles (RGPD) et la gestion des cookies.">
 
     <title>Mots pour maux LM - Politique de confidentialité</title>
 
@@ -115,15 +118,17 @@
             </div>
 
             <div class="policy-box" aria-labelledby="heading-cookies">
-                <h4 id="heading-cookies">4. Cookies et Traceurs Tiers (Google Maps)</h4>
+                <h4 id="heading-cookies">4. Cookies et Traceurs Tiers (OpenStreetMap)</h4>
                 <br>
                 <p>Notre site utilise des cookies de première partie pour le fonctionnement technique (authentification sécurisée).</p>
-                <p>Nous utilisons également un service tiers: <b>Google Maps</b>.</p>
+                <p>Pour l'affichage de la carte, nous utilisons une alternative open source et respectueuse de la vie privée: <b>OpenStreetMap (via Leaflet)</b></p>
+
                 <ul class="policy-list" aria-label="Détails sur l'utilisation des cookies Google Maps">
                     <li><strong>Fonction: </strong>Affichage de l'emplacement du cabinet sur la page "Coordonnées & Horaires".</li>
-                    <li><strong>Nature des cookies: </strong>Google Maps est susceptible de déposer des cookies tiers à des fins d'analyse, de profilage et de mesure d'audience.</li>
-                    <li><strong>Votre droit: </strong>Conformément au RGPD, le script de Google Maps est <b>bloqué par défaut</b>. Il ne sera chargé et les cookies tiers ne seront déposés qu'après votre <b>consentement explicite</b> donné en cliquant sur le bouton d'acceptation sur la page concernée.</li>
+                    <li><strong>Nature des données: </strong>Ce service <b>ne dispose pas de cookies de suivi tiers</b> sur votre navigateur. Cependant, votre <b>adresse IP</b> est transmise aux serveurs OpenStreetMap (ou du fournisseur de tuiles) pour charger les images de la carte.</li>
+                    <li><strong>Votre droit: </strong>Étant donné qu'aucune donnée de profilage n'est collectée, nous considérons cette transmission d'IP comme <b>strictement nécessaire</b> à la fourniture du service de cartographie.</li>
                 </ul>
+                <p>L'utilisation d'OpenStreetMap est couverte par la licence ODbL (Open Data Commons Open Database License).</p>
             </div>
 
             <div class="policy-box full-width-box" aria-labelledby="heading-droits">
@@ -143,10 +148,15 @@
 
         </main>
 
+        <div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
+
+        <!-- Liens pour les fichiers JS -->
+        <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
+
         <hr class="line">
         <footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-            <p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</p>
-
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
         </footer>
 </body>
 </html>

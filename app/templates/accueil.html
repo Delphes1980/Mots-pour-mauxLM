@@ -2,8 +2,11 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <!-- Meta pour le SEO -->
+    <meta name="description" content="Mélanie Laborda, psychopratcienne et hypnothérapeute à Saint Papoul. Accompagnement personnalisé pour le mieux-être émotionnel et comportemental.">
+    
     <title>Mots pour maux LM - Accueil</title>
 
     <!-- Liens pour les fichiers CSS -->
@@ -27,7 +30,7 @@
         		<img class="logo" src="{{ url_for('static', filename='images/Logo Clair.png') }}" alt="Mots pour maux LM logo">
 			</div>
 			<div class="nav-container">
-        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
+        	    <nav id="nav-links" role="navigation" aria-label="Menu principal">
 					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
                     <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
                     <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
@@ -37,19 +40,22 @@
                     <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
                     <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
                     <a href="#" id="logout_link" style="display: none;">Déconnexion</a>
-        		</nav>
+        	    </nav>
 			</div>
-    	</header>
+        </header>
 
-    	<main id="main-content" role="main" aria-labelledby="hero-accueil-title">
+        <main id="main-content" role="main" aria-labelledby="hero-accueil-title">
 			<div class="hero-box"><p id="hero-accueil-title">Bienvenue</p></div>
 			<hr class="line">
             <div class="main-content">
+                <!-- Côté gauche avec la photo -->
                 <div class="practitioner-photo">
                     <div class="image-container">
                         <img src="{{ url_for('static', filename='images/Photo Profil.jpg') }}" alt="Photo du praticien">
                     </div>
                 </div>
+
+                <!-- Côté droit pour la présentation -->
                 <div class="presentation-info">
                     <div class="presentation-text">
                         <h4>Mélanie Laborda</h4>
@@ -59,6 +65,8 @@
                         <br>
                         <p>Mon approche personnalisée combine différentes techniques de psychothérapie et d'hypnose pour vous aider à surmonter vos difficultés et retrouver votre équilibre.</p>
                     </div>
+
+                    <!-- Présentation des services -->
                     <div class="services">
                         <h4>Mes services</h4>
                         <br>
@@ -71,23 +79,24 @@
                             <li>Accompagnement des traumatismes</li>
                         </ul>
                     </div>
+
                     <div class="button-container">
                     <a href="#" id="contact_button" class="contact-button" role="button" aria-label="Contacter la praticienne">Me contacter</a>
                     </div>
                 </div>
             </div>
-    	</main>
+        </main>
 
         <!-- Liens pour les fichiers JS -->
-        <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
+        <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
 
 		<hr class="line">
-    	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
-                <br>
+        <footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
-            </p>
-    	</footer>
+        </footer>
 
 </body>
 </html>

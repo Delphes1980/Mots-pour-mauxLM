@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+	<!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Meta pour le SEO -->
+	<meta name="description" content="Gérez vos informations personnelles, consultez vos avis laissés et accédez aux liens rapides vers les formulaires de prise de rendez-vous.">
 
     <title>Mots pour maux LM - Accueil</title>
 
@@ -95,6 +98,7 @@
 						</form>
                     </div>
 
+					<!-- Champ pour les boutons -->
 					<div class="button-container">
 						<a href="{{ url_for('static_pages.formulaire_rdv') }}" class="contact-button" aria-label="Prendre un rendez-vous">Prendre rendez-vous</a>
 						<a href="{{ url_for('static_pages.formulaire_commentaires') }}" class="contact-button" aria-label="Laisser un commentaire">Laisser un commentaire</a>
@@ -115,17 +119,17 @@
 		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 
 		<!-- Liens pour les fichiers JS -->
-        <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
-		<script src="{{ url_for('static', filename='js_files/page_personnelle.js') }}"></script>
-		<script src="{{ url_for('static', filename='js_files/avis.js') }}"></script>
+        <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/page_personnelle.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/avis.js') }}" defer></script>
 
 		<hr class="line">
     	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
-                <br>
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
-            </p>
-    	</footer>
+        </footer>
 
 </body>
 </html>

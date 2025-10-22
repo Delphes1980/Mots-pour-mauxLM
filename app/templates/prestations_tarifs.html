@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
+	<!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Meta pour le SEO -->
+	<meta name="description" content="Consultez les tarifs et les détails des prestations de psychothérapie et d'hypnose. Séances individuelles, programmes et forfaits disponibles.">
 
     <title>Mots pour maux LM - Prestations & Tarifs</title>
 
@@ -47,6 +50,7 @@
 			<div class="main-content">
 			<div class="prestations-container" role="list" aria-label="Liste des prestations proposées">
 
+				<!-- Conteneur pour la séance de psychothérapie -->
 				<div class="prestation-box" role="listitem" aria-label="psycho-seance-title">
 					<h3 id="psycho-seance-title">Séance de psychothérapie</h3>
 					<p>Accompagnement personnalisé pour adultes et enfants.</p>
@@ -59,6 +63,7 @@
 					</div>
 				</div>
 
+				<!-- Conteneur pour la séance d'hypnose classique -->
 				<div class="prestation-box" role="listitem" aria-label="hypnose-classique-title">
 					<h3 id="hypnose-classique-title">Séance d'hypnose classique</h3>
 					<p>Hypnose thérapeutique pour divers objectifs: stress, confiance en soi, sommeil...</p>
@@ -71,6 +76,7 @@
 					</div>
 				</div>
 
+				<!-- Conteneur pour le programme d'anneau virtuel -->
 				<div class="prestation-box" role="listitem" aria-label="anneau-gastrique-title">
 					<h3 id="anneau-gastrique-title">Programme "Anneau gastrique virtuel"</h3>
 					<p>Accompagnement complet pour la perte de poids par hypnose</p>
@@ -84,6 +90,7 @@
 					</div>
 				</div>
 
+				<!-- Conteneur pour le programme d'arrêt du tabac -->
 				<div class="prestation-box" role="listitem" aria-label="arret-tabac-title">
 					<h3 id="arret-tabac-title">Séance d'hypnose pour l'arrêt du tabac</h3>
 					<p>Protocole spécifique pour cesser de fumer durablement</p>
@@ -98,6 +105,7 @@
 				</div>
 			</div>
 
+			<!-- Informations supplémentaires sur les prestations -->
 			<div class="informations-container" aria-label="Informations complémentaires sur les prestations">
 				<h4>Informations complémentaires</h4>
 				<ul class="informations-list" aria-label="Conditions de paiement et remboursement">
@@ -110,15 +118,15 @@
     	</main>
 
 		<!-- Liens pour les fichiers JS -->
-        <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
+        <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
 
 		<hr class="line">
     	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
-                <br>
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
-            </p>
-    	</footer>
+        </footer>
 
 </body>
 </html>

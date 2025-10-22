@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
+	<!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Meta pour le SEO -->
+	<meta name="description" content="Laissez un avis et une note sur une prestation reçue. Votre commentaire est précieux pour le cabinet.">
 
     <title>Mots pour maux LM - Laisser un avis</title>
 
@@ -49,17 +52,19 @@
 			<hr class="line">
 			<section class="review-container" aria-label="Formulaire pour la soumission d'un avis client">
 				<form class="review-form" aria-label="Formulaire de commentaire" role="form">
+					<!-- Champ pour le nom -->
 					<div class="form-field">
 						<input type="text" id="last-name" name="last-name" placeholder="Nom" value="" required readonly aria-label="Votre nom (lecture seule)">
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
+					<!-- Champ pour le prénom -->
 					<div class="form-field">
 						<input type="text" id="first-name" name="first-name" placeholder="Prénom" value="" required readonly aria-label="Votre prénom (lecture seule)">
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
-					<!-- Notation étoile  -->
+					<!-- Notation étoile -->
 					<div class="form-field">
 					<div class="stars-wrapper">
 						<div class="rating" role="radiogroup" aria-label="Note de la prestation">
@@ -84,6 +89,7 @@
 					</div>
 					</div>
 
+					<!-- Champ pour le texte -->
 					<div class="form-field message-field">
 						<textarea id="message" name="message" placeholder="Votre avis" aria-label="Votre avis sur la prestation"></textarea>
 						<i class="bx bx-x clear-input-button"></i>
@@ -102,11 +108,11 @@
 
 		<hr class="line">
     	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
-                <br>
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
-            </p>
-    	</footer>
+        </footer>
 
 </body>
 </html>
