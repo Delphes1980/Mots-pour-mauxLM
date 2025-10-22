@@ -220,13 +220,19 @@ async function loadUserReviews() {
 		for (const review of reviews) {
 			const box = document.createElement('div');
 			box.className = 'review-box';
+			box.dataset.reviewId = review.id;
 
 			// Etoiles visibles
 			const stars = document.createElement('div');
 			stars.className = 'rating-stars';
+
 			for (let i = 0; i < 5; i++) {
 				const star = document.createElement('i');
-				star.className = i < review.rating ? 'bx bxs-star' : 'bx bx-star';
+				const starValue = i + 1;
+
+				star.className = starValue <= review.rating ? 'bx bxs-star star-icon' : 'bx bx-star star-icon';
+				star.dataset.value = starValue;
+				star.dataset.reviewId = review.id;
 				stars.appendChild(star);
 			}
 
@@ -236,16 +242,6 @@ async function loadUserReviews() {
 			text.innerHTML = `<p>${review.text || "(Commentaire vide)"}</p>`;
 
 			// Champs cachés pour modification
-			const ratingInput = document.createElement('input');
-			ratingInput.type = 'number';
-			ratingInput.min = 1;
-			ratingInput.max = 5;
-			ratingInput.value = review.rating;
-			ratingInput.readOnly = true;
-			ratingInput.className = 'review-rating review-field';
-			ratingInput.dataset.reviewId = review.id;
-			ratingInput.style.display ='none';
-
 			const commentInput = document.createElement('textarea');
 			commentInput.value = review.text || '';
 			commentInput.readOnly = true;
@@ -253,10 +249,34 @@ async function loadUserReviews() {
 			commentInput.dataset.reviewId = review.id;
 			commentInput.style.display = 'none';
 
+			// Champ caché pour la note
+			const ratingInputHidden = document.createElement('input');
+			ratingInputHidden.type = 'hidden';
+			ratingInputHidden.value = review.rating;
+			ratingInputHidden.readOnly = true;
+			ratingInputHidden.className = 'review-rating review-field';
+			ratingInputHidden.dataset.reviewId = review.id;			
+
+			// Logique pour les étoiles en mode édition (clic pour la note)
+			stars.querySelectorAll('.star-icon').forEach(starIcon => {
+				starIcon.addEventListener('click', () => {
+					if (box.classList.contains('editing')) {
+						const newRating = parseInt(starIcon.dataset.value);
+						ratingInputHidden.value = newRating;
+
+						stars.querySelectorAll('.star-icon').forEach(s => {
+							const starValue = parseInt(s.dataset.value);
+							s.classList.toggle('bxs-star', starValue <= newRating);
+							s.classList.toggle('bx-star', starValue > newRating);
+						});
+					}
+				});
+			});
+
 			box.appendChild(stars);
 			box.appendChild(text);
-			box.appendChild(ratingInput);
 			box.appendChild(commentInput);
+			box.appendChild(ratingInputHidden);
 			reviewsContainer.appendChild(box);
 		}
 	} catch (error) {
@@ -300,26 +320,36 @@ function setupReviewModifierButton(modifierReviewButton) {
 
 
 // Active ou désactive le champ du formulaire côté commentaires laissés par l'utilisateur
-function toggleReviewEditMode(modifierReviewButton, ratingFields, textFields) {
+function toggleReviewEditMode(modifierReviewButton) {
 	const isEditing = modifierReviewButton.textContent === 'Modifier';
-
-	ratingFields.forEach(input => {
-		input.readOnly = !isEditing;
-		input.style.display = isEditing ? 'block' : 'none';
-	});
-
-	textFields.forEach(textarea => {
-		textarea.readOnly = !isEditing;
-		textarea.style.display = isEditing ? 'block' : 'none';
-	});
-
-	// Masquer les étoiles et textes statiques
 	const reviewBoxes = document.querySelectorAll('.review-box');
+
 	reviewBoxes.forEach(box => {
-		const stars = box.querySelector('.rating-stars');
 		const text = box.querySelector('.review-text');
-		if (stars) stars.style.display = isEditing ? 'none' : 'flex';
-		if (text) text.style.display = isEditing ? 'none' : 'block';
+		const textarea = box.querySelector('.review-textarea');
+		const stars = box.querySelector('.rating-stars');
+
+		// On a appuyé sur le bouton Modifier
+		if (isEditing) {
+			box.classList.add('editing');
+			if (text) text.style.display = 'none'; // Masque le texte stylisé
+			if (textarea) {
+				textarea.style.display = 'block';
+				textarea.readOnly = false; // Rend le champ modifiable
+			}
+		} else {
+			// On quitte le mode édition
+			box.classList.remove('editing');
+			if (text) text.style.display = 'block';
+			if (textarea) {
+				textarea.style.display = 'none';
+				textarea.readOnly = true;
+			}
+
+			if (text && textarea) {
+				text.innerHTML = `<p>${textarea.value || "Commentaire vide)"}</p>`;
+			}
+		}
 	});
 
 	modifierReviewButton.textContent = isEditing ? 'Enregistrer' : 'Modifier';
@@ -329,15 +359,25 @@ function toggleReviewEditMode(modifierReviewButton, ratingFields, textFields) {
 
 
 // Envoie les données modifiées à l'API des commentaires modifiés
-async function saveAllReviewData(ratingFields, textFields) {
+async function saveAllReviewData() {
+	const reviewBoxes = document.querySelectorAll('.review-box');
 	let hasError = false;
-	for (let i = 0; i < ratingFields.length; i++) {
-		const ratingInput = ratingFields[i];
-		const textInput = textFields[i];
+
+	for (const box of reviewBoxes) {
+		const ratingInput = box.querySelector('.review-rating');
+		const textInput = box.querySelector('.review-textarea');
+
+		if (!ratingInput || !textInput) continue;
 
 		const reviewId = ratingInput.dataset.reviewId;
 		const rating = parseInt(ratingInput.value);
 		const text = textInput.value;
+
+		if (!reviewId || isNaN(rating) || rating < 1 || rating > 5) {
+			console.error(`Données invalides pour l'avis: ${reviewId}`);
+			hasError = true;
+			continue;
+		}
 
 		try {
 			const response = await fetch(`${API_REVIEWS_BASE_URL}/${reviewId}`, {
@@ -350,10 +390,12 @@ async function saveAllReviewData(ratingFields, textFields) {
 			});
 
 			if (!response.ok) {
+				hasError = true;
 				throw new Error(`Erreur pour le commentaire ${reviewId}`);
 			}
 		} catch (error) {
 			console.error(`Erreur lors de la mise à jour du commentire ${reviewId}`, error);
+			hasError = true;
 		}
 	}
 
@@ -363,7 +405,7 @@ async function saveAllReviewData(ratingFields, textFields) {
 		showFeedbackMessage('Tous les commentaires ont été mis à jour !');
 	}
 
-	loadUserReviews();
+	await loadUserReviews();
 }
 
 
