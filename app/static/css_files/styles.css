@@ -123,7 +123,7 @@ main {
 /* Style du footer */
 footer {
 	display: flex;
-	flex-direction: row; 
+	flex-direction: column; 
     justify-content: center; 
     align-items: center;
 	text-align: center;
@@ -132,6 +132,16 @@ footer {
 	gap: 20px;
 	font-size: 14px;
 }
+
+.copyright-info {
+	display: block;
+	margin-bottom: 5px;
+}
+
+.footer a#politique {
+	margin-top: 0;
+}
+
 
 /* ##### Code responsive ##### */
 

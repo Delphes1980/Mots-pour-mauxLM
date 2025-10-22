@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
+	<!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Meta pour le SEO -->
+	<meta name="description" content="Découvrez l'approche thérapeuthique de Mélanie Laborda, sa philosophie, ses spécialités (gestion des émotions, traumatismes) et les modalités de consultation.">
 
     <title>Mots pour maux LM - En Savoir Plus</title>
 
@@ -44,6 +47,7 @@
     	<main id="main-content" role="main" aria-labelledby="aboutus-hero-title">
 			<div class="hero-box"><p id="aboutus-hero-title">En savoir plus</p></div>
 			<hr class="line">
+
 			<div class="content-container">
 				<div class="content" aria-label="Philosophie de la praticienne">
 					<h4>Ma philosophie</h4>
@@ -51,12 +55,14 @@
 					<br>
 					<p>Chaque individu étant unique, j'adapte mes accompagnements et différentes techniques de psychothérapie en fonction des profils des clients, de leurs besoins et du motif de leur venue.</p>
 				</div>
+
 				<div class="content" aria-label="Approche thérapeutique">
 					<h4>Mon approche</h4>
 					<p>L'alliance thérapeutique est au coeur de ma pratique. Je privilégie une relation de confiance et un environnement sécurisant où vous pouvez vous exprimer librement, sans jugement.</p>
 					<br>
 					<p>Pour chaque personne que j'accompagne, je propose un suivi personnalisé qui intègre différentes approches thérapeutiques selon les besoins identifiés.</p>
 				</div>
+
 				<div class="content" aria-label="Modalités pratiques">
 					<h4>Les modalités pratiques</h4>
 					<ul class="content-list" aria-label="Lieu et durée des consultations">
@@ -70,15 +76,15 @@
     	</main>
 
 		<!-- Liens pour les fichiers JS -->
-        <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
+        <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
 
 		<hr class="line">
     	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
-                <br>
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
-            </p>
-    	</footer>
+        </footer>
 
 </body>
 </html>

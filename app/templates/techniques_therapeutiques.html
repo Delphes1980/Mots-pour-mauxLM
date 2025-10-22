@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
+	<!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Meta pour le SEO -->
+	<meta name="description" content="Explorez les techniques utilisées: TCC, PNL, DTMA, EFT et hypnose thérapeutique. Des outils personnalisés pour un changement durable.">
 
     <title>Mots pour maux LM - Techniques Thérapeutiques</title>
 
@@ -48,6 +51,7 @@
 				<p>Dans ma pratique, j'utilise différentes approches thérapeutiques que j'adapte à vos besoins spécifiques. Voici les principales techniques que j'emploie:</p>
 			</div>
 
+			<!-- Conteneur pour la TCC -->
 			<div class="techniques-container" role="list"aria-label="Liste des techniques thérapeutiques utilisées">
 				<div class="technique-box" role="listitem" aria-labelledby="tcc-titlle">
 					<h4 id="tcc-titlle">TCC (Thérapie Cognitivo-Comportementale)</h4>
@@ -61,6 +65,7 @@
 					</ul>
 				</div>
 
+				<!-- Conteneur pour la PNL -->
 				<div class="technique-box" role="listitem" aria-label="pnl-title">
 					<h4 id="pnl-title">PNL (Programmation Neuro-Linguistique)</h4>
 					<p>La PNL étudie comment notre langage (verbal et non-verbal) influence notre cerveau et nos comportements. Elle permet de:</p>
@@ -73,6 +78,7 @@
 					</ul>
 				</div>
 
+				<!-- Conteneur pour la DTMA -->
 				<div class="technique-box" role="listitem" aria-label="dtma-title">
 					<h4 id="dtma-title">DTMA (Deep Transformative Memory Alignment)</h4>
 					<p>Le DTMA est une technique innovante qui permet de travailler en profondeur sur les mémoires traumatiques. Elle aide à:</p>
@@ -85,6 +91,7 @@
 					</ul>
 				</div>
 
+				<!-- Conteneur pour l'EFT -->
 				<div class="technique-box" role="listitem" aria-label="eft-title">
 					<h4 id="eft-title">EFT (Emotional Freedom Techniques)</h4>
 					<p>L'EFT ou technique de libération émotionnelle, combine la stimulation de points d'acupuncture et la focalisation mentale. Elle permet de:</p>
@@ -116,15 +123,15 @@
     	</main>
 
 		<!-- Liens pour les fichiers JS -->
-        <script src="{{ url_for('static', filename='js_files/login.js') }}"></script>
+        <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
 
 		<hr class="line">
     	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
-                <br>
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
-            </p>
-    	</footer>
+        </footer>
 
 </body>
 </html>
