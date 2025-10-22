@@ -70,12 +70,13 @@
 }
 
 /* Style pour la carte */
-.map-container iframe {
+#leaflet-map {
 	display: block;
 	width: 100%;
 	height: 300px;
 	border-radius: 5px;
 }
+
 
 /* ##### Code responsive ##### */
 /* Style pour les écrans plus petits que 768px */

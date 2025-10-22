@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
+	<!-- Meta pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Meta pour le SEO -->
+	<meta name="description" content="Créez votre compte utilisateur rapidement pour accéder à l'espace personnel et aux services de prise de rendez-vous en ligne.">
 
     <title>Mots pour maux LM - Inscription</title>
 
@@ -72,6 +75,7 @@
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
+					<!-- Champ pour les prérequis du mot de passe -->
 					<div class="password-requirements">
 						<p>Au moins 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</p>
 					</div>
@@ -83,15 +87,15 @@
 		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 
 		<!-- Liens pour les fichiers JS -->
-        <script src="{{ url_for('static', filename='js_files/page_inscription.js') }}"></script>
+        <script src="{{ url_for('static', filename='js_files/page_inscription.js') }}" defer></script>
 
 		<hr class="line">
     	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
-        	<p>© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017
-                <br>
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
-            </p>
-    	</footer>
+        </footer>
 
 </body>
 </html>
