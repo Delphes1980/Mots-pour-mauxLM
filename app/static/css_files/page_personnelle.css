@@ -149,6 +149,36 @@
 	border-radius: 8px;
 	background-color: var(--background-form);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	position: relative;
+}
+
+/* Style pour le texte quand on appuie sur modifier */
+.review-textarea {
+	width: 100%;
+	min-height: 100px;
+	padding: 10px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-color);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	box-sizing: border-box;
+	resize: vertical;
+	margin-top: 10px;
+}
+
+/* Style pour masquer l'input number pour la note */
+.review-rating {
+	display: none !important;
+}
+
+/* Style pour rendre les étoiles interactivent quand on clique sur modifier */
+.review-box.editing .rating-stars {
+	cursor: pointer;
+}
+
+.review-box.editing .rating-stars .bx {
+	transition: color 0.1s ease;
 }
 
 /* Style pour le conteneur des étoiles */
