@@ -46,6 +46,12 @@ function createReviewBlock(review) {
 
 // Fonction pour charger les avis
 async function loadPublicReviews() {
+  const container = document.querySelector('.review-container');
+
+  if (!container) {
+    return;
+  }
+
   try {
     const response = await fetch(`${API_PUBLIC_REVIEWS_URL}/public-reviews`);
     if (!response.ok) {
@@ -53,16 +59,32 @@ async function loadPublicReviews() {
     }
 
     const data = await response.json();
-    const container = document.querySelector('.review-container');
     // On vide les commentaires statiques
     container.innerHTML = '';
 
+    // Vérifie si le tableau de données est vide
+    if (!data || data.length === 0) {
+      const emptyMessage = document.createElement('p');
+      emptyMessage.textContent = 'Aucun commentaire pour le moment';
+      emptyMessage.className = 'empty-message';
+      container.appendChild(emptyMessage);
+      return;
+    }
+
+    // Si des données existent, on les affiche
     data.forEach(review => {
       const reviewHTML = createReviewBlock(review);
       container.insertAdjacentHTML('beforeend', reviewHTML);
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des commentaires: ', error);
+
+    // Affiche un message d'erreur en cas d'échec
+    container.innerHTML = '';
+    const errorMessage = document.createElement('p');
+    errorMessage.textContent = 'Impossible de charger les avis. Veuillez réessayer plus tard';
+    errorMessage.className = 'error-review-message';
+    container.appendChild(errorMessage);
   }
 }
 
