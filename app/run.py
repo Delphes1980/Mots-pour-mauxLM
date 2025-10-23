@@ -5,7 +5,7 @@ import socket
 
 socket.getfqdn = lambda host=None: "localhost.localdomain"
 
-load_dotenv("app/.env.dev")
+load_dotenv(".env")
 
 app = create_app()
 
