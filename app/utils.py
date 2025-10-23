@@ -5,6 +5,7 @@ import re
 from app import bcrypt
 import string
 import secrets
+from app import db, create_app
 
 
 """
@@ -326,3 +327,16 @@ class CustomError(Exception):
             satus_code (int): the HTTP status code"""
         super().__init__(message)
         self.status_code = status_code
+
+def db_setup():
+    """Crée les tables de la base de données dans le contexte de l'application"""
+    app = create_app()
+    with app.app_context():
+        db.create_all()
+        print("Database tables created successfully")
+
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == 'db_setup':
+        db_setup()

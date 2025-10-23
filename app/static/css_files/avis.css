@@ -65,6 +65,23 @@
 	margin: 0;
 }
 
+/* Style pour le message d'erreur ou aucun commentaires */
+.empty-message .error-review-message {
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	text-align: center;
+	padding: 30px;
+}
+
+/* Style spécifique du conteneur quand il y a un seul élément (le message) */
+.review-container > .empty-message {
+	grid-column: 1 / -1;
+	width: 100%;
+	justify-self: center;
+	align-self: center;
+}
+
+
 /* ##### Code responsive ##### */
 /* Style pour les écrans plus petits que 768px */
 @media (max-width: 768px) {

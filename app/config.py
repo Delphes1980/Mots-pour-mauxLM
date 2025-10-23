@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from datetime import timedelta
 
 
-load_dotenv("app/.env.dev")
+load_dotenv(".env")
 
 
 class Config:

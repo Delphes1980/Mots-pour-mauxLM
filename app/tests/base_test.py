@@ -58,13 +58,25 @@ class BaseTest(unittest.TestCase):
         parsed_url = urlparse(db_url)
         clean_password = unquote(parsed_url.password or "")
 
+        if not clean_password:
+            clean_password = os.getenv('DB_PASSWORD')
+
+        db_user = parsed_url.username or "postgres"
+
         # --- 4. Création manuelle de la connexion psycopg2 ---
         def create_connection():
+            db_port = parsed_url.port
+
+            if db_port is None:
+                db_port = 5433
+
+            test_host = "localhost"
+            
             dsn_string = (
-                f"host={parsed_url.hostname} "
-                f"port={parsed_url.port} "
-                f"user={parsed_url.username} "
-                f"password='{clean_password}' "
+                f"host={test_host} "
+                f"port={db_port} "
+                f"user={db_user} "
+                f"password={clean_password} "
                 f"dbname={parsed_url.path.lstrip('/')}"
             )
             return psycopg2.connect(dsn_string)
