@@ -394,7 +394,7 @@ async function saveAllReviewData() {
 				throw new Error(`Erreur pour le commentaire ${reviewId}`);
 			}
 		} catch (error) {
-			console.error(`Erreur lors de la mise à jour du commentire ${reviewId}`, error);
+			console.error(`Erreur lors de la mise à jour du commentaire ${reviewId}`, error);
 			hasError = true;
 		}
 	}

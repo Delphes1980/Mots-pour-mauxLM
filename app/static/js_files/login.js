@@ -198,8 +198,10 @@ async function redirectToContactPage() {
     if (response.ok) {
       // Utilisateur connecté
       window.location.href = '/mon-espace';
-    } else {
+    } else if (response.status === 401) {
       // Utilisateur déconnecté (retour à l'accueil)
+      window.location.href = '/login';
+    } else {
       window.location.href = '/';
     }
   } catch (error) {

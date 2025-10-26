@@ -286,6 +286,7 @@ Follow the link that you terminal will open or go to:
 http://localhost:5000
 ```
 You can now enjoy the web site and visit the different pages as a user do.
+**_⚠ WARNING:_** If you want to try the email sending, when register a user, enter a valid email address.
 
 ---
 
