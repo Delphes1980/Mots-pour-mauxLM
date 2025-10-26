@@ -18,7 +18,7 @@ function generateStarsInReviews(rating) {
 // Fonction qui formate le nom de l'auteur du commentaire
 function formatAuthor(user) {
   if (!user || !user.first_name) {
-    return 'Utilisateur Anonyme';
+    return 'Anonyme';
   }
   return `${user.first_name} ${user.last_name || ''}`.trim();
 }
