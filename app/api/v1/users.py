@@ -333,6 +333,10 @@ class User(Resource):
             if reviews:
                 facade.reassign_reviews_from_user(user_id, ghost_user.id)
 
+            appointments = facade.get_appointment_by_user(user_id)
+            if appointments:
+                facade.reassign_appointments_from_user(user_id, ghost_user.id)
+
             facade.delete_user(user_id)
             return {'message': 'Utilisateur supprimé avec succès'}, 200
 

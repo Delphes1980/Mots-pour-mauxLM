@@ -95,6 +95,9 @@ class Facade:
     def get_appointment_by_user_and_prestation(self, user_id, prestation_id):
         return self.appointment_service.get_appointment_by_user_and_prestation(user_id, prestation_id)
 
+    def reassign_appointments_from_user(self, old_user_id, new_user_id):
+        return self.appointment_service.reassign_appointments_from_user(old_user_id, new_user_id)
+
     # Prestation CRUD operations
     def create_prestation(self, **kwargs):
         return self.prestation_service.create_prestation(**kwargs)

@@ -94,12 +94,12 @@ function setupLogin() {
 
       } else {
         // Afficher le message d'erreur
-        showFeedbackMessage("Email ou mot de passe invalide");
+        showFeedbackMessage("Email ou mot de passe invalide", true);
 
       }
     } catch (error) {
       console.error("Erreur lors de la connexion; ", error);
-      showFeedbackMessage("Impossible de se connecter. Veuillez réessayer plus tard");
+      showFeedbackMessage("Impossible de se connecter. Veuillez réessayer plus tard", true);
     } finally {
       // Réactiver le bouton de soumission
       submitButton.disabled = false;
@@ -138,11 +138,11 @@ function setupLogout() {
         window.location.href = '/';
       } else {
         const errorData = await response.json();
-        showFeedbackMessage("Une erreur est survenue lors de la déconnexion: " + (errorData.error || 'Erreur inconnue'));
+        showFeedbackMessage("Une erreur est survenue lors de la déconnexion: " + (errorData.error || 'Erreur inconnue'), true);
       }
     } catch (error) {
       console.error("Erreur de déconnexion: ", error);
-      showFeedbackMessage("Une erreur est survenue lors de la déconnexion. Veuillez réessayer");
+      showFeedbackMessage("Une erreur est survenue lors de la déconnexion. Veuillez réessayer", true);
     } finally {
       logoutButton.disabled = false;
       logoutButton.textContent = 'Déconnexion';

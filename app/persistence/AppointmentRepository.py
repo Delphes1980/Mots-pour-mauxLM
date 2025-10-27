@@ -69,3 +69,31 @@ class AppointmentRepository(BaseRepository):
             _user_id=user_id
         ).all()
 
+    def reassign_appointments_from_user(self, old_user_id, new_user_id):
+        """Réassigner les rendez-vous d'un utilisateur supprimé à un utilisateur fantôme, pour pouvoir supprimer l'utilisateur"""
+        # Vérifier la validité des identifiants
+        if not is_valid_uuid4(old_user_id):
+            raise ValueError('Format d\'identifiant utilisateur à supprimer non valide')
+        if not is_valid_uuid4(new_user_id):
+            raise ValueError('Format d\'identifiant utilisateur fantôme non valide')
+
+        # Vérifier que les utilisateurs existent
+        old_user = self.db.session.query(User).get(old_user_id)
+        new_user = self.db.session.query(User).get(new_user_id)
+
+        if not old_user:
+            raise ValueError('L\'utilisateur à supprimer n\'a pas été trouvé')
+        if not new_user:
+            raise ValueError('Le nouvel utilisateur n\'a pas été trouvé')
+
+        # Vérifier s'il y a des rendez-vous à réassigner
+        appointments = self.get_by_user_id(old_user_id)
+        if not appointments:
+            return 0
+
+        # Réassigner les rendez-vous
+        for appointment in appointments:
+            appointment.user = new_user
+        self.db.session.commit()
+
+        return len(appointments)
