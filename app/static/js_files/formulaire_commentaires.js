@@ -165,7 +165,7 @@ async function loadUserData() {
 
 	} catch (error) {
 		console.error("Erreur lors du chargement des données utilisateur: ", error);
-		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard");
+		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard", true);
 	}
 }
 
@@ -227,7 +227,7 @@ async function loadPrestationsForDropdown() {
     });
   } catch (error) {
     console.error('Erreur lors du chargement des prestations: ', error);
-    showFeedbackMessage("Erreur lors du chargement des prestations. Veuillez réessayer plus tard");
+    showFeedbackMessage("Erreur lors du chargement des prestations. Veuillez réessayer plus tard", true);
   }
 }
 
@@ -246,17 +246,17 @@ function setupReviewForm() {
     const prestationId = document.getElementById('prestation-id').value;
 
     if (!rating || rating < 1 || rating > 5) {
-      showFeedbackMessage("Veuillez saisir une note entre 1 et 5");
+      showFeedbackMessage("Veuillez saisir une note entre 1 et 5", true);
       return;
     }
 
     if (!message || message.replace(/\s/g, '').length < 2) {
-      showFeedbackMessage("Veuillez saisir un commentaire valide");
+      showFeedbackMessage("Veuillez saisir un commentaire valide", true);
       return;
     }
 
     if (!prestationId) {
-      showFeedbackMessage("Veuillez sélectionner une prestation");
+      showFeedbackMessage("Veuillez sélectionner une prestation", true);
       return;
     }
 
@@ -286,7 +286,7 @@ function setupReviewForm() {
 
     } catch (error) {
       console.error("Erreur lors de l'envoi du commentaire: ", error);
-      showFeedbackMessage("Une erreur est survenue lors de l'envoi du commentaire. Veuillez réessayer");
+      showFeedbackMessage("Une erreur est survenue lors de l'envoi du commentaire. Veuillez réessayer", true);
     }
   });
 }
