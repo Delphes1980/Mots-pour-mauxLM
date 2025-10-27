@@ -1,5 +1,6 @@
 from app.persistence.UserRepository import UserRepository
 from app.persistence.ReviewRepository import ReviewRepository
+from app.persistence.AppointmentRepository import AppointmentRepository
 from app.utils import (validate_entity_id, admin_validation, name_validation, email_validation, validate_init_args, validate_password, validate_phone_number, address_validation, CustomError)
 from app.models.user import User
 
@@ -8,6 +9,7 @@ class UserService:
     def __init__(self):
         self.user_repository = UserRepository()
         self.review_repository = ReviewRepository()
+        self.appointment_repository = AppointmentRepository()
 
     def create_user(self, **kwargs):
         """Create a new user with the provided data
@@ -242,5 +244,10 @@ class UserService:
         reviews = self.review_repository.get_by_user_id(user_id)
         if reviews:
             self.review_repository.reassign_reviews_from_user(user.id, ghost_user.id)
+
+        # Vérifier si des rendez-vous existent pour cet utilisateur
+        appointments = self.appointment_repository.get_by_user_id(user_id)
+        if appointments:
+            self.appointment_repository.reassign_appointments_from_user(user.id, ghost_user.id)
 
         return self.user_repository.delete(user_id)

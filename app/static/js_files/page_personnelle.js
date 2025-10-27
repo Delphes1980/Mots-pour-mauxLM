@@ -91,7 +91,7 @@ async function loadUserData() {
 
 	} catch (error) {
 		console.error("Erreur lors du chargement des données utilisateur: ", error);
-		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard");
+		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard", true);
 	}
 }
 
@@ -152,7 +152,7 @@ function saveUserData(inputFields) {
 
 	// Vérifie que l'ID est disponible
 	if (!window.currentUserId) {
-		showFeedbackMessage("Impossible d'identifier l'utilisateur");
+		showFeedbackMessage("Impossible d'identifier l'utilisateur", true);
 		return;
 	}
 
@@ -166,7 +166,7 @@ function saveUserData(inputFields) {
 	})
 	.then(response => {
 		if (!response.ok) {
-			throw new Error('Erreur lors de la mise à jour des données');
+			throw new Error('Erreur lors de la mise à jour des données', true);
 		}
 		return response.json();
 	})
@@ -175,7 +175,7 @@ function saveUserData(inputFields) {
 	})
 	.catch(error => {
 		console.error(error);
-		showFeedbackMessage('Echec lors de la mise à jour. Veuillez réessayer');
+		showFeedbackMessage('Echec lors de la mise à jour. Veuillez réessayer', true);
 	});
 }
 
@@ -400,7 +400,7 @@ async function saveAllReviewData() {
 	}
 
 	if (hasError) {
-		showFeedbackMessage("Certains commentaires n'ont pas pu être mis à jour. Veuillez réessayer");
+		showFeedbackMessage("Certains commentaires n'ont pas pu être mis à jour. Veuillez réessayer", true);
 	} else {
 		showFeedbackMessage('Tous les commentaires ont été mis à jour !');
 	}

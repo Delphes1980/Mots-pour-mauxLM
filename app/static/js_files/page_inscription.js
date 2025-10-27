@@ -92,22 +92,22 @@ async function setupRegistrationForm() {
 		const password = document.getElementById('password').value;
 
 		if (!lastName || !firstName || !email || !password) {
-			showFeedbackMessage("Tous les champs sont obligatoires");
+			showFeedbackMessage("Tous les champs sont obligatoires", true);
 			return;
 		}
 
 		if (!isValidName(lastName) || !isValidName(firstName)) {
-			showFeedbackMessage("Le nom et le prénom doivent être valides");
+			showFeedbackMessage("Le nom et le prénom doivent être valides", true);
 			return;
 		}
 
 		if (!isValidEmail(email)) {
-			showFeedbackMessage("Adresse email invalide");
+			showFeedbackMessage("Adresse email invalide", true);
 			return;
 		}
 
 		if (!isPasswordSecure(password)) {
-			showFeedbackMessage("Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial");
+			showFeedbackMessage("Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial", true);
 			return;
 		}
 
@@ -140,7 +140,7 @@ async function setupRegistrationForm() {
 
 		} catch (error) {
 			console.error("Erreur lors de l'inscription: ", error);
-			showFeedbackMessage("Une erreur est survenue lors de l'inscription. Veuillez réessayer");
+			showFeedbackMessage("Une erreur est survenue lors de l'inscription. Veuillez réessayer", true);
 		}
 	});
 }

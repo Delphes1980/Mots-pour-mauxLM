@@ -104,7 +104,7 @@ class ReviewRepository(BaseRepository):
 
         # Réassigner les avis
         for review in reviews:
-            review.user= new_user
+            review.user = new_user
         self.db.session.commit()
 
         return len(reviews)

@@ -187,3 +187,41 @@ class AppointmentService:
 			raise CustomError("Rendez-vous non trouvés pour cet utilisateur et cette prestation", 404)
 
 		return appointment
+
+	def reassign_appointments_from_user(self, old_user_id, new_user_id):
+		"""Reassign appointments from an old user to a new user
+		
+		Args:
+			old_user_id (str): The ID of the old user
+			new_user_id (str): The ID of the new user
+			
+			Returns:
+				list: List of reassigned appointments
+				
+			Raises:
+				CustomError: If the IDs are invalid(400) or if the users are not found(404)
+			"""
+		try:
+			old_user_id = validate_entity_id(old_user_id, 'old_user_id')
+			new_user_id = validate_entity_id(new_user_id, 'new_user_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
+
+		old_user = self.user_repository.get_by_id(old_user_id)
+		if not old_user:
+			raise CustomError("Ancien utilisateur non trouvé", 404)
+
+		new_user = self.user_repository.get_by_id(new_user_id)
+		if not new_user:
+			raise CustomError("Nouvel utilisateur non trouvé", 404)
+
+		appointments = self.appointment_repository.get_by_user_id(old_user_id)
+		reassigned_appointments = []
+
+		for appointment in appointments:
+			appointment.user = new_user
+			reassigned_appointments.append(appointment)
+
+		self.appointment_repository.db.session.commit()
+
+		return reassigned_appointments
