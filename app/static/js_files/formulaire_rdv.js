@@ -155,7 +155,7 @@ async function loadPrestationsForDropdown() {
         });
     } catch (error) {
         console.error("Erreur lors du chargement des prestations: ", error);
-        showFeedbackMessage("Impossible de charger les presdtations. Veuillez réessayer plus tard");
+        showFeedbackMessage("Impossible de charger les prestations. Veuillez réessayer plus tard", true);
     }
 }
 
@@ -198,7 +198,7 @@ async function loadUserData() {
 
 	} catch (error) {
 		console.error("Erreur lors du chargement des données utilisateur: ", error);
-		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard");
+		showFeedbackMessage("Impossible de charger vos informations. Veuillez réessayer plus tard", true);
 	}
 }
 
@@ -215,12 +215,12 @@ function setupAppointmentForm() {
         const prestationId = document.querySelector('input[name="prestation-type"]').value;
 
         if (!message || message.replace(/\s/g, '').length < 10) {
-            showFeedbackMessage("Veuillez décrire vos disponibilités ou votre demande plus précisément");
+            showFeedbackMessage("Veuillez décrire vos disponibilités ou votre demande plus précisément", true);
             return;
         }
 
         if (!prestationId) {
-            showFeedbackMessage("Veuillez sélectionner une prestation");
+            showFeedbackMessage("Veuillez sélectionner une prestation", true);
             return;
         }
 
@@ -251,7 +251,7 @@ function setupAppointmentForm() {
 
         } catch (error) {
             console.error("Erreur lors de l'envoi de la demande: ", error);
-            showFeedbackMessage("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer");
+            showFeedbackMessage("Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer", true);
         }
     });
 }
