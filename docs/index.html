@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Projet Portfolio - Mots pour Maux LM</title>
+    
+    <!-- Polices (Lexend et Signika, comme sur votre site) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Styles --- */
+        body {
+            margin: 0;
+            font-family: 'Lexend', sans-serif;
+            background-color: #F5F2EA;
+            color: #48493D;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: #F5F2EA;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-logo {
+            height: 40px;
+			width: auto;
+			display: block;
+        }
+
+        nav a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: #48493D;
+            font-weight: 500;
+        }
+        nav a:hover {
+            color: #D27967;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: #F5F2EA;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1F2937;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: #48493D;
+        }
+        
+        .button {
+            background-color: #5D4037;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .button:hover {
+            background-color: #705141;
+            text-decoration: none;
+        }
+
+        .section {
+            padding: 3rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #1F2937;
+        }
+
+        /* --- Grille des fonctionnalités --- */
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: white;
+            border: 1px solid #A48B7F;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        .feature img {
+            width: 100%;
+            height: 15rem;
+            object-fit: contain;
+            background-color: #E9E1CC;
+        }
+        
+        .feature-content {
+            padding: 1.5rem;
+        }
+        
+        .feature h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.25rem;
+            color: #48493D;
+        }
+        .feature p {
+            color: #48493D;
+        }
+
+        /* --- Section À Propos --- */
+        .about {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #48493D;
+        }
+        .about p {
+            margin-bottom: 1rem;
+        }
+
+        .about-links {
+            margin-top: 2rem;
+        }
+        
+		.social-link {
+			display: inline-block;
+			margin: 0.25rem 0.5rem;
+			color: #D27967;
+			text-decoration: none;
+			font-weight: 500;;
+		}
+
+		.social-link:hover {
+			text-decoration: underline;
+		}
+
+        .developer-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #48493D;
+        }
+
+        .github-repo-button {
+            display: inline-block;
+            background-color: #5D4037;
+            color: #F5F2EA;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        .github-repo-button:hover {
+            background-color: #705141;
+            text-decoration: none;
+        }
+        
+        /* --- Pied de page --- */
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            background-color: #F5F2EA;
+            color: #48493D;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+        }
+
+        /* --- Code Responsive --- */
+        @media(min-width: 768px) {
+            .features {
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 1.5rem;
+            }
+            .feature {
+                width: 32%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Tâche 0 : En-tête -->
+<header>
+    <a href="#home" aria-label="Page d'accueil du portfolio">
+		<img src="images/Logo Clair.png" alt="Mots pour Maux LM logo" class="header-logo">
+	</a>
+
+    <nav>
+    	<a href="#features">Fonctionnalités</a>
+      	<a href="#about">À propos</a>
+      	<!-- Lien vers votre application déployée -->
+      	<a href="#" rel="noopener noreferrer">Visiter l'App</a>
+    </nav>
+</header>
+
+<!-- Tâche 0 : Section Hero -->
+<section class="hero">
+    <h1>Mots pour Maux LM</h1>
+    <p>Un site web complet pour la gestion d'un cabinet d'une psychopraticienne et hypnothérapeute.</p>
+    <a class="button" href="#" rel="noopener noreferrer">Visiter l'Application</a>
+</section>
+
+<!-- Tâche 1 : Section Fonctionnalités -->
+<section id="features" class="section">
+    <h2>Fonctionnalités Clés</h2>
+    <div class="features">
+
+    <!-- Fonctionnalité 1 -->
+    <div class="feature">
+        <img src="images/screenshot_espace_personnel.png" alt="Capture d'écran de l'espace personnel">
+        <div class="feature-content">
+            <h3>Espace Personnel</h3>
+            <p>Un tableau de bord client complet permettant de modifier les informations personnelles et de gérer les avis soumis.</p>
+        </div>
+    </div>
+
+    <!-- Fonctionnalité 2 -->
+    <div class="feature">
+        <img src="images/screenshot_formulaire_rdv.png" alt="Capture d'écran du formulaire de RDV">
+        <div class="feature-content">
+            <h3>Prise de Rendez-vous</h3>
+            <p>Les utilisateurs connectés peuvent envoyer des demandes de rendez-vous détaillées. Le praticien et le client sont notifiés par e-mail.</p>
+        </div>
+    </div>
+    
+    <!-- Fonctionnalité 3 -->
+    <div class="feature">
+        <img src="images/screenshot_formulaire_avis.png" alt="Capture d'écran des avis clients">
+        <div class="feature-content">
+            <h3>Gestion des Avis</h3>
+            <p>Les clients peuvent soumettre un avis pour des prestations spécifiques.</p>
+        </div>
+    </div>
+    
+    </div>
+</section>
+
+<!-- Tâche 2 : Section À Propos -->
+<section id="about" class="section">
+    <h2>À Propos de ce Projet</h2>
+    <div class="about">
+	    <p>
+        Ce projet a été inspiré par le besoin concret d'une professionnelle de confiance de disposer d'une visibilité en ligne. L'objectif était de créer un MVP (Minimum Viable Product) robuste en 4 semaines, en utilisant Python et Flask-RESTX pour le back-end et HTML, CSS et JavaScript pour le front-end. Le tout en conteneurisant l'application avec Docker et en intégrant les contraintes de gestion des données (RGPD).
+    	</p>
+    	<p>
+        Ce projet a été développé dans le cadre de ma formation de développeur web et web mobile à 
+        <a href="https://www.holbertonschool.fr/" target="_blank" rel="noopener noreferrer" class="social-link">Holberton School</a>.
+    	</p>
+
+    <div class="about-links">
+        <p class="developer-name">Delphine Coutouly-Laborda</p>
+        <a href="https://www.linkedin.com/in/delphine-coutouly-laborda-99b192358/" target="_blank" class="social-link">LinkedIn</a> |
+        <a href="https://github.com/Delphes1980" target="_blank" class="social-link">GitHub</a>
+        <br>
+        <!-- <a href="https://github.com/Delphes1980/Mots-pour-mauxLM" target="_blank" class="github-repo-button">
+            Voir le Dépôt GitHub du Projet
+        </a> -->
+    </div>
+
+    </div>
+</section>
+
+<footer class="footer">
+    <p>Projet de Portfolio par Delphine Coutouly-Laborda - Holberton School 2025</p>
+</footer>
+
+</body>
+</html>
+
