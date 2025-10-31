@@ -1,0 +1,412 @@
+const API_PRESTATIONS_URL = '/api/v1/prestations';
+let editingPrestationId = null;
+
+
+// Bouton pour effacer le champ
+function setupClearButton() {
+    const inputFields = document.querySelectorAll('.search-field input, .creation-field input');
+
+    inputFields.forEach(input => {
+        const clearButton = input.nextElementSibling;
+
+        if (clearButton) {
+            clearButton.style.display = 'none';
+
+            input.addEventListener('input', () => {
+                if (clearButton) {
+                    if (input.value.length > 0) {
+                        clearButton.style.display = 'block';
+                    } else {
+                        clearButton.style.display = 'none';
+                    }
+                }
+            });
+
+            if (clearButton) {
+                clearButton.addEventListener('click', () => {
+                    input.value = '';
+                    clearButton.style.display = 'none';
+                    input.focus();
+                });
+            }
+        }
+    });
+}
+
+
+// Fonction pour les messages d'alerte
+function showFeedbackMessage(message, isError = false) {
+    const banner = document.getElementById('feedback-message');
+    if (!banner) return;
+
+    banner.textContent = message;
+    banner.classList.remove('error', 'show');
+    if (isError) banner.classList.add('error');
+
+    banner.style.display = 'block';
+    setTimeout(() => banner.classList.add('show'), 10);
+
+    setTimeout(() => {
+        banner.classList.remove('show');
+        setTimeout(() => {
+        banner.style.display = 'none';
+        banner.classList.remove('error');
+        }, 100);
+    }, 3000);
+}
+
+
+// Fonction qui remplit les lignes du tableau avec les 2 boutons (Modifier et Supprimer) en bout de ligne
+function renderPrestations(prestations) {
+    const tableBody = document.getElementById('prestation-name-result');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+
+    if (!prestations || prestations.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Aucune prestation trouvée</td></tr>';
+        return;
+    }
+
+    prestations.forEach(prestation => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = prestation.id;
+
+        tr.innerHTML = `
+            <td data-label="ID">${prestation.id}</td>
+            <td data-label="Nom" class="prestation-name-cell">${prestation.name}</td>
+            <td class="actions-cell" data-label="Actions">
+                <button class="modify-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Modifier ${prestation.name}">Modifier</button>
+                <button class="delete-button" data-id="${prestation.id}" aria-label="Supprimer ${prestation.name}">Supprimer</button>
+            </td>
+            `;
+            tableBody.appendChild(tr);
+    });
+
+    attachActionListeners();
+}
+
+
+// Fonction qui récupère toutes les prestations
+async function fetchAllPrestations() {
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const tableBody = document.getElementById('prestation-name-result');
+
+    if (loadingSpinner) {
+        loadingSpinner.style.display = 'block';
+    }
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    try {
+        const response = await fetch(API_PRESTATIONS_URL, {
+            method: 'GET', 
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 403 || response.status === 401) {
+                showFeedbackMessage("Accès refusé. Vous devez être connecté en tant qu'administrateur", true);
+                return;
+            }
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        renderPrestations(data);
+    
+    } catch (error) {
+        console.error('Erreur lors de la récupération des prestations: ', error);
+        if (tableBody) {
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Erreur de chargement des données</td></tr>';
+        }
+    } finally {
+        if (loadingSpinner) {
+            loadingSpinner.style.display = 'none';
+        }
+    }
+}
+
+
+// Fonction pour chercher une prestation par nom
+async function fetchPrestationByName() {
+    const searchNameInput = document.getElementById('search-name-input');
+    const name = searchNameInput ? searchNameInput.value.trim() : '';
+
+    if (!name) {
+        showFeedbackMessage('Veuillez entrer un nom de prestation à rechercher', true);
+        return;
+    }
+
+    const loadingSpinner = document.getElementById('loading-spinner');
+    if (loadingSpinner) {
+        loadingSpinner.style.display = 'block';
+    }
+
+    try {
+        const response = await fetch(`${API_PRESTATIONS_URL}?name=${encodeURIComponent(name)}`, {
+        method: 'GET', 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+        });
+
+        if (!response.ok) {
+            if (response.status === 403 || response.status === 401) {
+                showFeedbackMessage('Accès refusé ou erreur de connexion', true);
+                return;
+            }
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        renderPrestations(data);
+
+    } catch (error) {
+        console.error('Erreur lors de la recherche de la prestation: ', error);
+        showFeedbackMessage('Erreur lors de la recherche', true);
+        renderPrestations([]);
+    } finally {
+        if (loadingSpinner) {
+            loadingSpinner.style.display = 'none';
+        }
+    }
+}
+
+
+// Fonction pour la création de la prestation
+async function createPrestation(event) {
+    event.preventDefault();
+
+    const createNameInput = document.getElementById('creation');
+    const createButton = document.getElementById('create-prestation-button');
+    const searchTypeSelect = document.getElementById('search-type-select');
+
+    const name = createNameInput ? createNameInput.value.trim() : '';
+
+    if (!name) {
+        showFeedbackMessage('Veuillez entrer le nom d\'une prestation', true);
+        return;
+    }
+
+    const data = { name: name };
+
+    createButton.disabled = true;
+    createButton.textContent = 'Enregistrement...';
+
+    try {
+        const response = await fetch(API_PRESTATIONS_URL, {
+            method: 'POST', 
+            credentials: 'include', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Erreur lors de la création');
+        }
+
+        showFeedbackMessage('Prestation créée avec succès');
+        createNameInput.value = '';
+
+        if (searchTypeSelect && searchTypeSelect.value === 'all') {
+            fetchAllPrestations();
+        }
+
+    } catch (error) {
+        console.error('Erreur lors de la création de la prestation: ', error);
+        showFeedbackMessage(`Erreur: ${error.message}`, true);
+    } finally {
+        createButton.disabled = false;
+        createButton.textContent = 'Enregistrer';
+    }
+}
+
+
+// Fonction qui déclenche le mode édition quand on clique sur 'Modifier'
+function handleModifyClick(id, currentName) {
+    if (editingPrestationId) {
+        showFeedbackMessage('Veuillez enregistrer ou annuler la modification en cours', true);
+        return;
+    }
+
+    editingPrestationId = id;
+
+    const row = document.querySelector(`tr[data-id="${id}"]`);
+    const nameCell = row ? row.querySelector('.prestation-name-cell') : null;
+    const actionsCell = row ? row.querySelector('.actions-cell') : null;
+
+    if (nameCell && actionsCell) {
+        nameCell.innerHTML = `
+            <input type="text" id="edit-input-${id}" value="${currentName}" class="modify-input" aria-label="Modifier le nom de la prestation">
+        `;
+
+        actionsCell.innerHTML = `
+            <button class="save-edit-button" data-id="${id}" aria-label="Enregister la modification">Enregistrer</button>
+            <button class="cancel-edit-button" data-id="${id}" data-original-name="${currentName}" aria-label="Annuler la modification">Annuler</button>
+            `;
+
+        attachSaveAndCancelListeners(id, currentName);
+    }
+}
+
+
+// Fonction pour la modification de la prestation
+async function modifyPrestation(id, newName) {
+    if (!id || !newName) return;
+
+    const data = { name: newName };
+    const saveButton = document.querySelector(`.save-edit-button[data-id="${id}"]`);
+
+    if (saveButton) saveButton.textContent = 'Enregistrement...';
+
+    try {
+        const response = await fetch(`${API_PRESTATIONS_URL}/${id}`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Echec de la modification de ${id}`);
+        }
+
+        showFeedbackMessage('Prestation modifiée avec succès');
+
+        fetchAllPrestations();
+
+    } catch (error) {
+        console.error('Erreur lors de la modification de la prestation: ', error);
+        showFeedbackMessage(`Echec de la modification: ${error.message}`, true);
+
+        if (saveButton) saveButton.textContent = 'Enregistrer';
+    } finally {
+        editingPrestationId = null;
+    }
+}
+
+
+// Fonction qui gère la suppression d'une prestation
+async function deletePrestation(id) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer la prestation: ${id} ?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_PRESTATIONS_URL}/${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.status === 200 || response.status === 204) {
+            showFeedbackMessage('Prestation supprimée avec succès');
+            fetchAllPrestations();
+        } else {
+            throw new Error(`Echec de la suppression: ${response.status}`);
+        }
+
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la prestation: ', error);
+        showFeedbackMessage(`Erreur: ${error.message}`, true);
+    }
+}
+
+
+// Fonction qui gère les boutons 'Modifier' et 'Supprimer'
+function attachActionListeners() {
+    // Ecouteur pour le bouton 'Supprimer'
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', () => {
+            deletePrestation(button.dataset.id);
+        });
+    });
+
+    // Ecouteur pour le bouton 'Modifier'
+    document.querySelectorAll('.modify-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.id;
+            const currentName = button.dataset.name;
+
+            handleModifyClick(id, currentName);
+        });
+    });
+}
+
+
+// Fonction qui gère les boutons 'Enregistrer' et 'Annuler'
+function attachSaveAndCancelListeners(id, originalName) {
+    // Ecouteur pour le bouton 'Enregistrer'
+    const saveButton = document.querySelector(`.save-edit-button[data-id="${id}"]`);
+    if (saveButton) {
+        saveButton.addEventListener('click', () => {
+            const inputField = document.getElementById(`edit-input-${id}`);
+            if (inputField) {
+                modifyPrestation(id, inputField.value);
+            } else {
+                showFeedbackMessage('Erreur: Champ de saisie introuvable', true);
+            }
+        });
+    }
+
+    // Ecouteur pour le bouton 'Annuler'
+    const cancelButton = document.querySelector(`.cancel-button[data-id="${id}"]`);
+    if (cancelButton) {
+        cancelButton.addEventListener('click', () => {
+            fetchAllPrestations();
+            editingPrestationId = null;
+        });
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const searchTypeSelect = document.getElementById('search-type-select');
+    const searchNameButton = document.getElementById('search-name-button');
+    const createForm = document.getElementById('create-prestation-form');
+    const searchNameInput = document.getElementById('search-name-input');
+
+    setupClearButton();
+
+    function toggleSearchVisibility() {
+        const searchByNameContainer = document.getElementById('search-by-name-container');
+        const selectedValue = searchTypeSelect.value;
+
+        if (selectedValue === 'by-name') {
+            if (searchByNameContainer) searchByNameContainer.style.display = 'flex';
+        } else if (selectedValue === 'all') {
+            if (searchByNameContainer) searchByNameContainer.style.display = 'none';
+            fetchAllPrestations();
+        }
+    }
+
+    if (searchTypeSelect) {
+        toggleSearchVisibility();
+        searchTypeSelect.addEventListener('change', toggleSearchVisibility);
+    }
+
+    if (searchNameButton) {
+        searchNameButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            fetchPrestationByName();
+        });
+    }
+
+    if (createForm) {
+        createForm.addEventListener('submit', createPrestation);
+    }
+});

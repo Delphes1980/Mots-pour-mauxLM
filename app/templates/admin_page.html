@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Mots pour maux LM - Admin</title>
+
+	<!-- Liens pour les fichiers CSS -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/styles.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_page.css') }}">
+	<!-- Liens pour le favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
+	<link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest') }}">
+	<!-- Liens pour Google fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+		<header class="header">
+			<div class="logo-container">
+				<img class="logo" src="{{ url_for('static', filename='images/Logo Clair.png') }}" alt="Mots pour maux LM logo">
+			</div>
+			<div class="nav-container">
+				<nav id="nav-links" role="navigation" aria-label="Menu principal">
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+					<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+					<a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+					<a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+					<a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
+				</nav>
+			</div>
+		</header>
+
+		<main id="main-content" role="main" aria-labelledby="hero-title">
+			<div class="hero-box"><p id="hero-title">Page administrateur</p></div>
+			<hr class="line">
+
+			<!-- Champ de recherche avec menu déroulant inclus -->
+			<section class="search-container" aria-label="Gestion des prestations">
+			<div class="search-bar">
+				<!-- Menu déroulant -->
+				<select id="search-type-select" class="search-menu" aria-label="Filtrer les prestations">
+					<option value="all">Toutes les prestations</option>
+					<option value="by-name">Prestation par nom</option>
+				</select>
+
+				<!-- Champ de recherche si 'par nom' est sélectionné -->
+				<div class="search-field" id="search-by-name-container" style="display: none;">
+					<input type="text" id="search-name-input" placeholder="Entrez le nom à rechercher" aria-label="Nom de la prestation à rechercher">
+					<i class="bx bx-x clear-input-button"></i>
+					<button id="search-name-button" class="search-button">Rechercher</button>
+				</div>
+			</div>
+			</section>
+
+			<!-- Tableau de résultat -->
+			<section class="result" aria-label="Résultats de la recherche">
+				<table class="result-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nom</th>
+							<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+						</tr>
+					</thead>
+					<tbody id="prestation-name-result">
+						<!-- Nom des prestations rentrées dynamiquement -->
+					</tbody>
+				</table>
+				<div id="loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+			</section>
+
+			<!-- Création d'une prestation -->
+			<section class="creation-container" aria-label="Créer une nouvelle prestation">
+				<h4>Créer une nouvelle prestation</h4>
+				<form class="creation-form" id="create-prestation-form">
+					<div class="creation-field">
+						<input type="text" id="creation" name="create-name" placeholder="Nom de la prestation" aria-label="Nom de la nouvelle prestation">
+						<i class="bx bx-x clear-input-button"></i>
+					</div>
+					<div class="save-button-container">
+						<button id="create-prestation-button" class="save-button">Enregistrer</button>
+						<i class="bx bx-x clear-input-button"></i>
+					</div>
+				</form>
+			</section>
+
+		</main>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="{{ url_for('static', filename='js_files/admin_page.js') }}" defer></script>
+
+		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
+
+		<hr class="line">
+		<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+			<div class="footer-content">
+			<span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
+			<a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+		</footer>
+
+</body>
+</html>

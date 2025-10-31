@@ -1,0 +1,306 @@
+/* Style pour les conteneurs principaux */
+.search-container, .result, .creation-container {
+	max-width: 1000px;
+	margin: 30px auto;
+	padding: 25px;
+	background-color: var(--background-card);
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style pour la barre de recherche */
+.search-bar {
+	display: flex;
+	gap: 20px;
+	align-items: flex-end;
+}
+
+/* Style pour le menu déroulant */
+.search-menu {
+	padding: 10px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 1em;
+	box-sizing: border-box;
+	height: 42px;
+}
+
+/* Style pour le conteneur de la barre des recherches cachée (que si 'par nom' est sélectionné) */
+.search-field {
+	display: flex;
+	align-items: flex-end;
+	width: 100%;
+	gap: 10px;
+}
+
+/* Style pour le champ de saisie */
+.search-field input[type="text"] {
+	padding: 10px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	font-size: 1em;
+	width: 100%;
+	box-sizing: border-box;
+	height: 42px;
+}
+
+/* Style pour le bouton de recherche */
+.search-button {
+	padding: 10px 15px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	background-color: #ddd;
+	color: #333;
+	white-space: nowrap;
+	height: 42px;
+}
+
+/* Style quand on survole le bouton */
+.search-button:hover {
+	background-color: #ccc;
+}
+
+/* Style pour le tableau de résultat */
+.result-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+}
+
+/* Style pour les colonnes et lignes */
+.result-table th, .result-table td {
+	padding: 12px;
+	border: 1px solid #ddd;
+	text-align: left;
+	font-family: 'Lexend', sans-serif;
+	vertical-align: middle;
+}
+
+/* Style pour les colonnes */
+.result-table th {
+	background-color: var(--background-color);
+	color: var(--writing-dark);
+	font-weight: 600;
+}
+
+/* Style pour masquer l'en-tête de la colonne 'actions' */
+.result-table th.actions-header-cell {
+	display: none;
+}
+
+/* Style pour */
+.result-table tr:nth-child(even) {
+	background-color: var(--background-color);
+}
+
+/* Style quand on survole le tableau */
+.result-table tr:hover {
+	background-color: #f9f9f9;
+}
+
+/* Style pour le conteneur des boutons d'action ('Modifier' et 'Supprimer') */
+.actions-cell {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	border: none !important;
+	background-color: transparent !important;
+}
+
+/* Style pour les boutons 'Modifier' et 'Supprimer' */
+.modify-button, .delete-button {
+	padding: 5px 10px;
+	font-size: 0.9em;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+/* Style pour le bouton 'Modifier' */
+.modify-button {
+	background-color: var(--background-button);
+	color: var(--background-card);
+}
+
+/* Style pour le bouton 'Supprimer' */
+.delete-button {
+	background-color: var(--icon-color);
+	color: var(--background-card);
+}
+
+/* Style pour le titre du conteneur pour la création de prestation */
+.creation-container h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.5em;
+	margin-bottom: 20px;
+	text-align: center;
+	color: var(--writing-dark);
+}
+
+/* Style pour le conteneur du champ de saisie */
+.creation-form {
+	display: grid;
+	grid-template-columns: 3fr 1fr;
+	gap: 15px;
+	align-items: flex-end;
+}
+
+/* Style pour le champ de saisie */
+.creation-form input[type="text"] {
+	padding: 10px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	font-size: 1em;
+	width: 100%;
+	box-sizing: border-box;
+	height: 42px;
+}
+
+/* Style pour le conteneur du bouton 'Enregistrer' */
+.save-button-container {
+	justify-self: stretch;
+}
+
+/* Style pour le bouton 'Enregistrer' */
+.save-button {
+	width: 100%;
+	padding: 10px 15px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	background-color: var(--background-button);
+	color: var(--background-card);
+	height: 42px;
+}
+
+/* Style quand on survole le bouton 'Enregistrer' */
+.save-button:hover {
+	background-color: var(--button-hover);
+}
+
+.search-field, .creation-field {
+	position: relative;
+}
+
+/* Style pour la croix pour effacer l'input */
+.clear-input-button {
+	position: absolute;
+	top: 15px;
+	right: 8px;
+	transform: translateY(-50%);
+	color: var(--writing-medium);
+	cursor: pointer;
+	font-size: 1.2em;
+	display: none;
+	z-index: 10;
+}
+
+.search-field .clear-input-button {
+	right: 120px;
+}
+
+/* Style pour les messages d'alerte */
+.feedback-message {
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 12px 24px;
+	border-radius: 6px;
+	font-weight: 500;
+	font-size: 1rem;
+	color: var(--background-form);
+	background-color: var(--button-hover);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	z-index: 9999;
+	opacity: 0;
+	transition: opacity 0.3s ease, top 0.3s ease;
+}
+
+.feedback-message.show {
+	opacity: 1;
+	top: 40px;
+}
+
+.feedback-message.error {
+	background-color: var(--icon-color);
+	color: var(--background-form);
+}
+
+.feedback-message.show.error {
+	background-color: var(--icon-color);
+	color: var(--background-form);
+}
+
+
+/* ##### Code responsive ##### */
+@media (max-width: 768px) {
+	.search-container, .result, .creation-container {
+		padding: 15px;
+	}
+	.search-bar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.search-field {
+		flex-direction: column;
+	}
+	.search-menu, .search-field input[type="text"], .search-button {
+		width: 100%;
+	}
+	.creation-form {
+		grid-template-columns: 1fr;
+	}
+	.result-table thead {
+		display: none;
+	}
+	.result-table tr {
+		display: block;
+		margin-bottom: 15px;
+		border: 1px solid #ddd;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+	.result-table td {
+		display: block;
+		text-align: right;
+		padding-left: 50%;
+		position: relative;
+		border: none;
+		border-bottom: 1px solid #eee;
+	}
+	.result-table td:last-child {
+		border-bottom: none;
+	}
+	.result-table td::before {
+		content: attr(data-label);
+		position: absolute;
+		left: 10px;
+		width: 45%;
+		padding-right: 10px;
+		text-align: left;
+		font-weight: bold;
+		color: var(--writing-dark);
+	}
+	.result-table td.actions-cell {
+		padding-left: 10px;
+		text-align: left;
+	}
+	.result-table td.actions-cell::before {
+		display: none;
+	}
+}
