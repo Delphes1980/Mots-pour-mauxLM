@@ -104,6 +104,18 @@
 
 		</main>
 
+		<!-- Modale pour le message de confirmation -->
+		<div id="confirmation-modal-overlay" class="modal-overlay" style="display: none;">
+			<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+				<h4 id="modal-title">Confirmation requise</h4>
+				<p id="modal-message">Voulez-vous vraiment continuer?</p>
+				<div class="modal-buttons">
+					<button id="modal-cancel-button" class="modal-button cancel-button">Annuler</button>
+					<button id="modal-confirm-button" class="modal-button confirm-button">Confirmer</button>
+				</div>
+			</div>
+		</div>
+
 		<!-- Liens pour les fichiers JS -->
         <script src="{{ url_for('static', filename='js_files/admin_page.js') }}" defer></script>
 

@@ -109,15 +109,10 @@
 	cursor: pointer;
 	font-family: 'Lexend', sans-serif;
 	font-weight: bold;
-	background-color: #ddd;
-	color: #333;
+	background-color: var(--button-hover);
+	color: var(--background-card);
 	white-space: nowrap;
 	height: 42px;
-}
-
-/* Style quand on survole le bouton */
-.search-button:hover {
-	background-color: #ccc;
 }
 
 /* Style pour le tableau de résultat */
@@ -175,7 +170,7 @@
 
 /* Style pour le bouton 'Modifier' */
 .modify-button {
-	background-color: var(--background-button);
+	background-color: var(--button-hover);
 	color: var(--background-card);
 }
 
@@ -319,6 +314,74 @@
 	color: var(--background-form);
 }
 
+/* Style pour la modale */
+.modal-overlay {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.6);
+	justify-content: center;
+	align-items: center;
+}
+
+.modal-box {
+	background-color: var(--background-card);
+	color: var(--writing-dark);
+	margin: auto;
+	padding: 25px;
+	border-radius: 10px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+	max-width: 400px;
+	width: 90%;
+	z-index: 1001;
+	text-align: center;
+}
+
+.modal-box h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.5em;
+	margin-top: 0;
+	margin-bottom: 15px;
+}
+
+.modal-box p {
+	font-family: 'Lexend', sans-serif;
+	line-height: 1.6;
+	margin-bottom: 25px;
+}
+
+.modal-buttons {
+	display: flex;
+	justify-content: space-between;
+	gap: 15px;
+}
+
+.modal-button {
+	flex: 1;
+	padding: 10px 15px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	font-size: 1em;
+	transition: background-color 0.2s ease;
+}
+
+/* Style du bouton 'Confirmer' */
+.confirm-button {
+	background-color: var(--icon-color);
+	color: var(--background-card);
+}
+
+.confirm-button:hover {
+	background-color: #c0392b;
+}
 
 /* ##### Code responsive ##### */
 @media (max-width: 768px) {
@@ -335,7 +398,7 @@
 	.search-field {
 		flex-direction: column;
 	}
-	.search-menu, .search-field input[type="text"], .search-button {
+	.search-field input[type="text"], .search-button {
 		width: 100%;
 	}
 	.creation-form {

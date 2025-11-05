@@ -77,7 +77,7 @@ function renderPrestations(prestations) {
             <td data-label="Nom" class="prestation-name-cell">${prestation.name}</td>
             <td class="actions-cell" data-label="Actions">
                 <button class="modify-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Modifier ${prestation.name}">Modifier</button>
-                <button class="delete-button" data-id="${prestation.id}" aria-label="Supprimer ${prestation.name}">Supprimer</button>
+                <button class="delete-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Supprimer ${prestation.name}">Supprimer</button>
             </td>
             `;
             tableBody.appendChild(tr);
@@ -170,7 +170,9 @@ async function fetchPrestationByName() {
 
         const data = await response.json();
         let dataArray = [];
-        if (data) {
+        if (Array.isArray(data)) {
+            dataArray = data;
+        } else if (data) {
             dataArray = [data];
         }
         renderPrestations(dataArray);
@@ -224,6 +226,11 @@ async function createPrestation(event) {
 
         showFeedbackMessage('Prestation créée avec succès');
         createNameInput.value = '';
+
+        const clearButton = createNameInput.nextElementSibling;
+        if (clearButton && clearButton.classList.contains('clear-input-button')) {
+            clearButton.style.display = 'none';
+        }
 
         if (searchTypeSelect && searchTypeSelect.value === 'all') {
             fetchAllPrestations();
@@ -306,12 +313,24 @@ async function modifyPrestation(id, newName) {
 }
 
 
+// Fonction qui gère la confirmation de la suppression d'une prestation
+function deleteConfirmation(id, name) {
+    const modalOverlay = document.getElementById('confirmation-modal-overlay');
+    const modalMessage = document.getElementById('modal-message');
+    const modalConfirmButton = document.getElementById('modal-confirm-button');
+
+    if (!modalOverlay || !modalMessage || !modalConfirmButton) return;
+
+    modalMessage.textContent = `Êtes-vous sûr de vouloir supprimer la prestation: "${name}?`;
+
+    modalConfirmButton.dataset.deleteId = id;
+
+    modalOverlay.style.display = 'flex';
+}
+
+
 // Fonction qui gère la suppression d'une prestation
 async function deletePrestation(id) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer la prestation: ${id} ?`)) {
-        return;
-    }
-
     try {
         const response = await fetch(`${API_PRESTATIONS_URL}/${id}`, {
             method: 'DELETE',
@@ -325,7 +344,8 @@ async function deletePrestation(id) {
             showFeedbackMessage('Prestation supprimée avec succès');
             fetchAllPrestations();
         } else {
-            throw new Error(`Echec de la suppression: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Echec de la suppression: ${response.status}`);
         }
 
     } catch (error) {
@@ -340,7 +360,9 @@ function attachActionListeners() {
     // Ecouteur pour le bouton 'Supprimer'
     document.querySelectorAll('.delete-button').forEach(button => {
         button.addEventListener('click', () => {
-            deletePrestation(button.dataset.id);
+            const id = button.dataset.id;
+            const name = button.dataset.name;
+            deleteConfirmation(id, name);
         });
     });
 
@@ -416,8 +438,9 @@ function setupCustomSelect() {
 function toggleSearchVisibility() {
     const searchByNameContainer = document.getElementById('search-by-name-container');
     const hiddenInput = document.getElementById('search-type-select');
+    const searchNameInput = document.getElementById('search-name-input');
 
-    if (!searchByNameContainer || !hiddenInput) return;
+    if (!searchByNameContainer || !hiddenInput || !searchNameInput) return;
 
     const selectedValue = hiddenInput.value;
 
@@ -428,6 +451,11 @@ function toggleSearchVisibility() {
     } else if (selectedValue === 'all') {
         if (searchByNameContainer) {
             searchByNameContainer.style.display = 'none';
+            searchNameInput.value = '';
+            const clearButton = searchNameInput.nextElementSibling;
+            if (clearButton && clearButton.classList.contains('clear-input-button')) {
+                clearButton.style.display = 'none';
+            }
         }
         fetchAllPrestations();
     }
@@ -439,6 +467,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const searchNameButton = document.getElementById('search-name-button');
     const createForm = document.getElementById('create-prestation-form');
+
+    // Ecouteurs pour la modale
+    const modalOverlay = document.getElementById('confirmation-modal-overlay');
+    const modalConfirmButton = document.getElementById('modal-confirm-button');
+    const modalCancelButton = document.getElementById('modal-cancel-button');
+
+    function closeModal() {
+        if (modalOverlay) {
+            modalOverlay.style.display = 'none';
+        }
+        if (modalConfirmButton) {
+            modalConfirmButton.dataset.deleteId = '';
+        }
+    }
+
+    if (modalConfirmButton) {
+        modalConfirmButton.addEventListener('click', () => {
+            const id = modalConfirmButton.dataset.deleteId;
+            if (id) {
+                deletePrestation(id);
+            }
+            closeModal();
+        });
+    }
+
+    if (modalCancelButton) {
+        modalCancelButton.addEventListener('click', closeModal);
+    }
+
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+    }
 
     setupCustomSelect();
 
@@ -454,4 +518,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createForm) {
         createForm.addEventListener('submit', createPrestation);
     }
+
+    fetchAllPrestations();
 });
