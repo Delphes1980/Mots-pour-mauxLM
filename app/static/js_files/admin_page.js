@@ -148,7 +148,7 @@ async function fetchPrestationByName() {
     }
 
     try {
-        const response = await fetch(`${API_PRESTATIONS_URL}?name=${encodeURIComponent(name)}`, {
+        const response = await fetch(`${API_PRESTATIONS_URL}/search?name=${encodeURIComponent(name)}`, {
         method: 'GET', 
         headers: {
             'Content-Type': 'application/json'
@@ -161,11 +161,19 @@ async function fetchPrestationByName() {
                 showFeedbackMessage('Accès refusé ou erreur de connexion', true);
                 return;
             }
+            if (response.status === 404) {
+                renderPrestations([]);
+                return;
+            }
             throw new Error(`Erreur HTTP: ${response.status}`);
         }
 
         const data = await response.json();
-        renderPrestations(data);
+        let dataArray = [];
+        if (data) {
+            dataArray = [data];
+        }
+        renderPrestations(dataArray);
 
     } catch (error) {
         console.error('Erreur lors de la recherche de la prestation: ', error);
@@ -364,7 +372,7 @@ function attachSaveAndCancelListeners(id, originalName) {
     }
 
     // Ecouteur pour le bouton 'Annuler'
-    const cancelButton = document.querySelector(`.cancel-button[data-id="${id}"]`);
+    const cancelButton = document.querySelector(`.cancel-edit-button[data-id="${id}"]`);
     if (cancelButton) {
         cancelButton.addEventListener('click', () => {
             fetchAllPrestations();
@@ -374,30 +382,67 @@ function attachSaveAndCancelListeners(id, originalName) {
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const searchTypeSelect = document.getElementById('search-type-select');
-    const searchNameButton = document.getElementById('search-name-button');
-    const createForm = document.getElementById('create-prestation-form');
-    const searchNameInput = document.getElementById('search-name-input');
+// Fonction qui gère le menu déroulant
+function setupCustomSelect() {
+    const selected = document.getElementById('admin-select-selected');
+    const items = document.getElementById('admin-select-items');
+    const hiddenInput = document.getElementById('search-type-select');
 
+    if (!selected || !items ||!hiddenInput) return;
+
+    selected.addEventListener('click', () => {
+        items.classList.toggle('select-hide');
+    });
+
+    items.querySelectorAll('div').forEach(item => {
+        item.addEventListener('click', () => {
+            selected.textContent = item.textContent;
+            hiddenInput.value = item.dataset.value;
+            items.classList.add('select-hide');
+
+            toggleSearchVisibility();
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!selected.contains(e.target) && !items.contains(e.target)) {
+            items.classList.add('select-hide');
+        }
+    });
+}
+
+
+// Fonction pour basculer l'affichage de la recherce
+function toggleSearchVisibility() {
+    const searchByNameContainer = document.getElementById('search-by-name-container');
+    const hiddenInput = document.getElementById('search-type-select');
+
+    if (!searchByNameContainer || !hiddenInput) return;
+
+    const selectedValue = hiddenInput.value;
+
+    if (selectedValue === 'by-name') {
+        if (searchByNameContainer) {
+            searchByNameContainer.style.display = 'flex';
+        }
+    } else if (selectedValue === 'all') {
+        if (searchByNameContainer) {
+            searchByNameContainer.style.display = 'none';
+        }
+        fetchAllPrestations();
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
     setupClearButton();
 
-    function toggleSearchVisibility() {
-        const searchByNameContainer = document.getElementById('search-by-name-container');
-        const selectedValue = searchTypeSelect.value;
+    const searchNameButton = document.getElementById('search-name-button');
+    const createForm = document.getElementById('create-prestation-form');
 
-        if (selectedValue === 'by-name') {
-            if (searchByNameContainer) searchByNameContainer.style.display = 'flex';
-        } else if (selectedValue === 'all') {
-            if (searchByNameContainer) searchByNameContainer.style.display = 'none';
-            fetchAllPrestations();
-        }
-    }
+    setupCustomSelect();
 
-    if (searchTypeSelect) {
-        toggleSearchVisibility();
-        searchTypeSelect.addEventListener('change', toggleSearchVisibility);
-    }
+    toggleSearchVisibility();
 
     if (searchNameButton) {
         searchNameButton.addEventListener('click', (e) => {

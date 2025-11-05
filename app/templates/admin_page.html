@@ -19,6 +19,8 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+	<!-- Lien pour l'icône de croix -->
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body>
@@ -49,10 +51,16 @@
 			<section class="search-container" aria-label="Gestion des prestations">
 			<div class="search-bar">
 				<!-- Menu déroulant -->
-				<select id="search-type-select" class="search-menu" aria-label="Filtrer les prestations">
-					<option value="all">Toutes les prestations</option>
-					<option value="by-name">Prestation par nom</option>
-				</select>
+				<div class="select-wrapper">
+					<div class="select-selected" id="admin-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les prestations">
+						Toutes les prestations
+					</div>
+					<div class="select-items select-hide" id="admin-select-items" role="listbox">
+						<div data-value="all">Toutes les prestations</div>
+						<div data-value="by-name">Prestation par nom</div>
+					</div>
+					<input type="hidden" id="search-type-select" value="all">
+				</div>
 
 				<!-- Champ de recherche si 'par nom' est sélectionné -->
 				<div class="search-field" id="search-by-name-container" style="display: none;">
@@ -90,7 +98,6 @@
 					</div>
 					<div class="save-button-container">
 						<button id="create-prestation-button" class="save-button">Enregistrer</button>
-						<i class="bx bx-x clear-input-button"></i>
 					</div>
 				</form>
 			</section>
