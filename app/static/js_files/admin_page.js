@@ -116,6 +116,11 @@ async function fetchAllPrestations() {
         }
 
         const data = await response.json();
+
+        // Stocke les données dans le cache
+        allPrestationsCache = data;
+
+        // Filtre "Ghost prestation" de l'affichage
         const filteredData = data.filter(prestation => prestation.name !== "Ghost prestation");
         renderPrestations(filteredData);
     
@@ -148,36 +153,13 @@ async function fetchPrestationByName() {
     }
 
     try {
-        const response = await fetch(`${API_PRESTATIONS_URL}/search?name=${encodeURIComponent(name)}`, {
-        method: 'GET', 
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-        });
+        const filteredResults = allPrestationsCache.filter(prestation =>
+            prestation.name.toLowerCase().includes(name)
+        );
 
-        if (!response.ok) {
-            if (response.status === 403 || response.status === 401) {
-                showFeedbackMessage('Accès refusé ou erreur de connexion', true);
-                return;
-            }
-            if (response.status === 404) {
-                renderPrestations([]);
-                return;
-            }
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
+        const finalData = filteredResults.filter(prestation => prestation.name !== "Ghost prestation");
 
-        const data = await response.json();
-        let dataArray = [];
-        if (Array.isArray(data)) {
-            dataArray = data;
-        } else if (data) {
-            dataArray = [data];
-        }
-
-        const filteredData = dataArray.filter(prestation => prestation.name !== "Ghost prestation");
-        renderPrestations(filteredData);
+        renderPrestations(finalData);
 
     } catch (error) {
         console.error('Erreur lors de la recherche de la prestation: ', error);
@@ -240,8 +222,11 @@ async function createPrestation(event) {
         }
 
         const hiddenInput = document.getElementById('search-type-select');
+        const newPrestation = await response.json();
+        allPrestationsCache.push(newPrestation);
+
         if (hiddenInput && hiddenInput.value === 'all') {
-            fetchAllPrestations();
+            await fetchAllPrestations();
         }
 
     } catch (error) {
@@ -313,14 +298,14 @@ async function modifyPrestation(id, newName) {
         }
 
         showFeedbackMessage('Prestation modifiée avec succès');
-
-        fetchAllPrestations();
+        await fetchAllPrestations();
 
     } catch (error) {
         console.error('Erreur lors de la modification de la prestation: ', error);
         showFeedbackMessage(`Echec de la modification: ${error.message}`, true);
 
         if (saveButton) saveButton.textContent = 'Enregistrer';
+        await fetchAllPrestations();
     } finally {
         editingPrestationId = null;
     }
@@ -343,6 +328,20 @@ function deleteConfirmation(id, name) {
 }
 
 
+// Fonction qui ferme la modale
+function closeModal() {
+    const modalOverlay = document.getElementById('confirmation-modal-overlay');
+    const modalConfirmButton = document.getElementById('modal-confirm-button');
+
+    if (modalOverlay) {
+        modalOverlay.style.display = 'none';
+    }
+    if (modalConfirmButton) {
+        modalConfirmButton.dataset.deleteId ='';
+    }
+}
+
+
 // Fonction qui gère la suppression d'une prestation
 async function deletePrestation(id) {
     try {
@@ -356,7 +355,7 @@ async function deletePrestation(id) {
 
         if (response.status === 200 || response.status === 204) {
             showFeedbackMessage('Prestation supprimée avec succès');
-            fetchAllPrestations();
+            await fetchAllPrestations();
         } else {
             const errorData = await response.json();
             throw new Error(errorData.error || `Echec de la suppression: ${response.status}`);
@@ -448,7 +447,7 @@ function setupCustomSelect() {
 }
 
 
-// Fonction pour basculer l'affichage de la recherce
+// Fonction pour basculer l'affichage de la recherche
 function toggleSearchVisibility() {
     const searchByNameContainer = document.getElementById('search-by-name-container');
     const hiddenInput = document.getElementById('search-type-select');
@@ -487,15 +486,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalConfirmButton = document.getElementById('modal-confirm-button');
     const modalCancelButton = document.getElementById('modal-cancel-button');
 
-    function closeModal() {
-        if (modalOverlay) {
-            modalOverlay.style.display = 'none';
-        }
-        if (modalConfirmButton) {
-            modalConfirmButton.dataset.deleteId = '';
-        }
-    }
-
     if (modalConfirmButton) {
         modalConfirmButton.addEventListener('click', () => {
             const id = modalConfirmButton.dataset.deleteId;
@@ -533,5 +523,5 @@ document.addEventListener('DOMContentLoaded', () => {
         createForm.addEventListener('submit', createPrestation);
     }
 
-    fetchAllPrestations();
+    // fetchAllPrestations();
 });
