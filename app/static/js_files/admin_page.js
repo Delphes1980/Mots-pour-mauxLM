@@ -64,7 +64,7 @@ function renderPrestations(prestations) {
     tableBody.innerHTML = '';
 
     if (!prestations || prestations.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Aucune prestation trouvée</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="2" style="text-align: center;">Aucune prestation trouvée</td></tr>';
         return;
     }
 
@@ -73,7 +73,6 @@ function renderPrestations(prestations) {
         tr.dataset.id = prestation.id;
 
         tr.innerHTML = `
-            <td data-label="ID">${prestation.id}</td>
             <td data-label="Nom" class="prestation-name-cell">${prestation.name}</td>
             <td class="actions-cell" data-label="Actions">
                 <button class="modify-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Modifier ${prestation.name}">Modifier</button>
@@ -117,12 +116,13 @@ async function fetchAllPrestations() {
         }
 
         const data = await response.json();
-        renderPrestations(data);
+        const filteredData = data.filter(prestation => prestation.name !== "Ghost prestation");
+        renderPrestations(filteredData);
     
     } catch (error) {
         console.error('Erreur lors de la récupération des prestations: ', error);
         if (tableBody) {
-            tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: red;">Erreur de chargement des données</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: red;">Erreur de chargement des données</td></tr>';
         }
     } finally {
         if (loadingSpinner) {
@@ -175,7 +175,9 @@ async function fetchPrestationByName() {
         } else if (data) {
             dataArray = [data];
         }
-        renderPrestations(dataArray);
+
+        const filteredData = dataArray.filter(prestation => prestation.name !== "Ghost prestation");
+        renderPrestations(filteredData);
 
     } catch (error) {
         console.error('Erreur lors de la recherche de la prestation: ', error);
@@ -201,6 +203,11 @@ async function createPrestation(event) {
 
     if (!name) {
         showFeedbackMessage('Veuillez entrer le nom d\'une prestation', true);
+        return;
+    }
+
+    if (name.toLowerCase() === "ghost prestation") {
+        showFeedbackMessage('Ce nom est réservé au système', true);
         return;
     }
 
@@ -232,7 +239,8 @@ async function createPrestation(event) {
             clearButton.style.display = 'none';
         }
 
-        if (searchTypeSelect && searchTypeSelect.value === 'all') {
+        const hiddenInput = document.getElementById('search-type-select');
+        if (hiddenInput && hiddenInput.value === 'all') {
             fetchAllPrestations();
         }
 
@@ -277,6 +285,12 @@ function handleModifyClick(id, currentName) {
 // Fonction pour la modification de la prestation
 async function modifyPrestation(id, newName) {
     if (!id || !newName) return;
+
+    // Empêche de renommer en "Ghost prestation"
+    if (newName.trim().toLowerCase() === "ghost prestation") {
+        showFeedbackMessage('Ce nom est réservé au système', true);
+        return;
+    }
 
     const data = { name: newName };
     const saveButton = document.querySelector(`.save-edit-button[data-id="${id}"]`);

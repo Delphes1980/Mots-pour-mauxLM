@@ -176,20 +176,20 @@
 
 /* Style pour le bouton 'Supprimer' */
 .delete-button {
-	background-color: var(--icon-color);
+	background-color: var(--delete-color);
 	color: var(--background-card);
 }
 
 /* Style pour le bouton 'Enregistrer' */
 .save-edit-button {
-	background-color: #2ecc71;
-	color: white;
+	background-color: var(--save-color);
+	color: var(--background-card);
 }
 
 /* Style pour le bouton 'Annuler' */
 .cancel-edit-button {
-	background-color: red;
-	color: white;
+	background-color: var(--icon-color);
+	color: var(--background-card);
 }
 
 /* Style pour le champ de modification en mode édition */
@@ -382,6 +382,11 @@
 .confirm-button:hover {
 	background-color: #c0392b;
 }
+
+.cancel-button:hover {
+	background-color: var(--writing-light);
+}
+
 
 /* ##### Code responsive ##### */
 @media (max-width: 768px) {
