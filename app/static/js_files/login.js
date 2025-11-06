@@ -90,7 +90,11 @@ function setupLogin() {
       const result = await response.json();
 
       if (response.ok) {
-        window.location.href = '/mon-espace';
+        if (result.user && result.user.is_admin === true) {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/mon-espace';
+        }
 
       } else {
         // Afficher le message d'erreur
@@ -168,10 +172,20 @@ async function checkLoginStatus() {
     });
 
     if (response.ok) {
+      const data = await response.json();
       // Utilisateur connecté
       if (loginLink) loginLink.style.display = 'none';
       if (logoutLink) logoutLink.style.display = 'inline-block';
-      if (espaceLink) espaceLink.style.display = 'inline-block';
+
+      // Admin connecté
+      if (espaceLink) {
+        espaceLink.style.display = 'inline-block';
+        if (data.is_admin === true) {
+          espaceLink.href = '/admin';
+        } else {
+          espaceLink.href = '/mon-espace';
+        }
+      }
     } else {
       // Utilisateur déconnecté
       if (loginLink) loginLink.style.display = 'inline-block';
@@ -196,8 +210,14 @@ async function redirectToContactPage() {
     });
 
     if (response.ok) {
-      // Utilisateur connecté
-      window.location.href = '/mon-espace';
+      const data = await response.json();
+      // Admin connecté
+      if (data.is_admin === true) {
+        window.location.href = '/admin';
+      } else {
+        // Utilisateur connecté
+        window.location.href = '/mon-espace';
+      }
     } else if (response.status === 401) {
       // Utilisateur déconnecté (retour à l'accueil)
       window.location.href = '/login';
