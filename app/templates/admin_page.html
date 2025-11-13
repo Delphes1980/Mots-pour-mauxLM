@@ -47,59 +47,91 @@
 			<div class="hero-box"><p id="hero-title">Page administrateur</p></div>
 			<hr class="line">
 
-			<!-- Champ de recherche avec menu déroulant inclus -->
-			<section class="search-container" aria-label="Gestion des prestations">
-			<div class="search-bar">
-				<!-- Menu déroulant -->
-				<div class="select-wrapper">
-					<div class="select-selected" id="admin-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les prestations">
-						Toutes les prestations
-					</div>
-					<div class="select-items select-hide" id="admin-select-items" role="listbox">
-						<div data-value="all">Toutes les prestations</div>
-						<div data-value="by-name">Prestation par nom</div>
-					</div>
-					<input type="hidden" id="search-type-select" value="all">
-				</div>
+			<div class="admin-layout">
+				<!-- Barre latérale -->
+				<aside class="admin-sidebar" role="navigation" aria-label="Menu d'administration">
+					<ul>
+						<li><button data-section="prestations">Gestion des Prestations</button></li>
+						<li><button data-section="utilisateurs">Gestion des Utilisateurs</button></li>
+						<li><button data-section="avis">Gestion des Avis</button></li>
+					</ul>
+				</aside>
 
-				<!-- Champ de recherche si 'par nom' est sélectionné -->
-				<div class="search-field" id="search-by-name-container" style="display: none;">
-					<input type="text" id="search-name-input" placeholder="Entrez le nom à rechercher" aria-label="Nom de la prestation à rechercher">
-					<i class="bx bx-x clear-input-button"></i>
-					<button id="search-name-button" class="search-button">Rechercher</button>
-				</div>
+				<!-- Contenu principal -->
+				<section class="admin-content">
+					<!-- ### Section Prestations ### -->
+					<section id="section-prestations" class="admin-section">
+						<!-- Champ de recherche avec menu déroulant inclus -->
+						<section class="search-container" aria-label="Gestion des prestations">
+							<div class="search-bar">
+								<!-- Menu déroulant -->
+								<div class="select-wrapper">
+									<div class="select-selected" id="admin-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les prestations">
+										Toutes les prestations
+									</div>
+									<div class="select-items select-hide" id="admin-select-items" role="listbox">
+										<div data-value="all">Toutes les prestations</div>
+										<div data-value="by-name">Prestation par nom</div>
+									</div>
+									<input type="hidden" id="search-type-select" value="all">
+								</div>
+
+								<!-- Champ de recherche si 'par nom' est sélectionné -->
+								<div class="search-field" id="search-by-name-container" style="display: none;">
+									<input type="text" id="search-name-input" placeholder="Entrez le nom à rechercher" aria-label="Nom de la prestation à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-name-button" class="search-button">Rechercher</button>
+								</div>
+							</div>
+						</section>
+
+						<!-- Tableau de résultat -->
+						<section class="result" aria-label="Résultats de la recherche">
+							<table class="result-table">
+								<thead>
+									<tr>
+										<th>Nom</th>
+										<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+									</tr>
+								</thead>
+								<tbody id="prestation-name-result">
+									<!-- Nom des prestations rentrées dynamiquement -->
+								</tbody>
+							</table>
+							<div id="loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+						</section>
+
+						<!-- Création d'une prestation -->
+						<section class="creation-container" aria-label="Créer une nouvelle prestation">
+							<h4>Créer une nouvelle prestation</h4>
+							<form class="creation-form" id="create-prestation-form">
+								<div class="creation-field">
+									<input type="text" id="creation" name="create-name" placeholder="Nom de la prestation" aria-label="Nom de la nouvelle prestation">
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="save-button-container">
+									<button id="create-prestation-button" class="save-button">Enregistrer</button>
+								</div>
+							</form>
+						</section>
+					</section>
+
+					<!-- ### Section Utilisateurs ### -->
+					<section id="section-users" class="admin-section" style="display:none;">
+						<!-- A compléter -->
+					</section>
+
+					<!-- ### Section Avis ### -->
+					<section id="section-reviews" class="admin-section" style="display:none;">
+						<!-- A compléter -->
+					</section>
+
+					<!-- ### Section Rendez-vous ### -->
+					<section id="section-appointments" class="admin-section" style="display:none;">
+						<!-- A compléter -->
+					</section>
+				</section>
 			</div>
-			</section>
-
-			<!-- Tableau de résultat -->
-			<section class="result" aria-label="Résultats de la recherche">
-				<table class="result-table">
-					<thead>
-						<tr>
-							<th>Nom</th>
-							<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
-						</tr>
-					</thead>
-					<tbody id="prestation-name-result">
-						<!-- Nom des prestations rentrées dynamiquement -->
-					</tbody>
-				</table>
-				<div id="loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
-			</section>
-
-			<!-- Création d'une prestation -->
-			<section class="creation-container" aria-label="Créer une nouvelle prestation">
-				<h4>Créer une nouvelle prestation</h4>
-				<form class="creation-form" id="create-prestation-form">
-					<div class="creation-field">
-						<input type="text" id="creation" name="create-name" placeholder="Nom de la prestation" aria-label="Nom de la nouvelle prestation">
-						<i class="bx bx-x clear-input-button"></i>
-					</div>
-					<div class="save-button-container">
-						<button id="create-prestation-button" class="save-button">Enregistrer</button>
-					</div>
-				</form>
-			</section>
 
 		</main>
 
@@ -118,6 +150,10 @@
 		<!-- Liens pour les fichiers JS -->
         <script src="{{ url_for('static', filename='js_files/admin_page.js') }}" defer></script>
 		<script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_prestations.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_users.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_reviews.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_appointments.js') }}" defer></script>
 
 		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 
