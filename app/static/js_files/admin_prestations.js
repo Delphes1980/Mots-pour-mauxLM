@@ -475,6 +475,7 @@ function toggleSearchVisibility() {
 }
 
 
+// Fonction d'initialisation pour la section prestations
 function init_prestations() {
     setupClearButton();
 
@@ -527,6 +528,12 @@ function init_prestations() {
 
 // Expose la fonction pour la barre latérale
 window.init_prestations = init_prestations;
+
+
+
+
+
+
 
 
 // document.addEventListener('DOMContentLoaded', () => {

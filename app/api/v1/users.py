@@ -157,6 +157,35 @@ class UserSearch(Resource):
             api.abort(400, error=str(e))
 
 
+@api.route('/search-partial')
+class UserSearchPartial(Resource):
+    @api.doc('Search users by partial email', params={'email': 'Fragment de l\'email'})
+    @api.marshal_list_with(user_response_model, code=_http.HTTPStatus.OK, description='Users retrieved successfully')
+    @jwt_required()
+    @api.response(200, 'Utilisateurs récupérés avec succès', user_response_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
+    @api.response(404, 'Aucun utilisateur trouvé', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def get(self):
+        """Rechercher des utilisateurs par fragment d'email"""
+        fragment = request.args.get('email')
+        if not fragment:
+            api.abort(400, error='Le fragment d\'email est requis')
+
+        current_user = get_jwt()
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        try:
+            users = facade.search_users_by_email_fragment(fragment)
+            return users, 200
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
 @api.route('/me')
 class CurrentUser(Resource):
     @api.doc('Get current user informations')

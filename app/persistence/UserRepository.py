@@ -51,3 +51,11 @@ class UserRepository(BaseRepository):
         except SQLAlchemyError:
             self.db.session.rollback()
             raise ValueError("Erreur lors de la création de l'utilisateur.")
+
+    def search_by_email_fragment(self, fragment):
+        """Recherche des utilisateurs dont l'email contient le fragment"""
+        try:
+            return self.db.session.query(User).filter(User.email.ilike(f'%{fragment}%')).all()
+        except SQLAlchemyError:
+            self.db.session.rollback()
+            raise ValueError("Erreur lors de la recherche d'utilisateur par email.")

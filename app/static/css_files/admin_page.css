@@ -438,6 +438,23 @@
 	display: block;
 }
 
+/* Style pour les containeurs des boutons 'Modifier', 'Supprimer' et 'Réinitialiser' */
+.actions-cell {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.actions-cell .action-top {
+	display: flex;
+	gap: 10px;
+}
+
+.actions-cell .action-bottom {
+	display: flex;
+	justify-content: flex-start;
+}
+
 
 /* ##### Code responsive ##### */
 @media (max-width: 768px) {

@@ -122,6 +122,27 @@ class UserService:
             raise CustomError("User not found", 404)
 
         return user
+    
+    def search_users_by_email_fragment(self, fragment):
+        """Search users by email fragment
+
+        Args:
+            fragment (str): The email fragment to search for
+
+        Returns:
+            list: List of users matching the email fragment
+
+        Raises:
+            CustomError: if the fragment is invalid(400)
+        """
+        if not fragment or not isinstance(fragment, str):
+            raise CustomError("Invalid email fragment", 400)
+        
+        users = self.user_repository.search_by_email_fragment(fragment)
+        if not users:
+            raise CustomError('No user found', 404)
+
+        return users
 
     def get_all_users(self):
         """Get all users

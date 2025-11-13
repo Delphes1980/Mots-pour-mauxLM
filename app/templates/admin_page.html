@@ -52,8 +52,9 @@
 				<aside class="admin-sidebar" role="navigation" aria-label="Menu d'administration">
 					<ul>
 						<li><button data-section="prestations">Gestion des Prestations</button></li>
-						<li><button data-section="utilisateurs">Gestion des Utilisateurs</button></li>
-						<li><button data-section="avis">Gestion des Avis</button></li>
+						<li><button data-section="users">Gestion des Utilisateurs</button></li>
+						<li><button data-section="reviews">Gestion des Avis</button></li>
+						<li><button data-section="appointments">Gestion des Rendez-vous</button></li>
 					</ul>
 				</aside>
 
@@ -98,7 +99,7 @@
 									<!-- Nom des prestations rentrées dynamiquement -->
 								</tbody>
 							</table>
-							<div id="loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+							<div id="prestation-loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
 						</section>
 
 						<!-- Création d'une prestation -->
@@ -118,7 +119,73 @@
 
 					<!-- ### Section Utilisateurs ### -->
 					<section id="section-users" class="admin-section" style="display:none;">
-						<!-- A compléter -->
+						<!-- Champ de recherche avec menu déroulant inclus -->
+						<section class="search-container" aria-label="Gestion des utilisateurs">
+							<div class="search-bar">
+								<!-- Menu déroulant -->
+								<div class="select-wrapper">
+									<div class="select-selected" id="user-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les utilisateurs">
+										Tous les utilisateurs
+									</div>
+									<div class="select-items select-hide" id="user-select-items" role="listbox">
+										<div data-value="all">Tous les utilisateurs</div>
+										<div data-value="by-email">Utilisateur par email</div>
+										<div data-value="by-name">Utilisateur par nom</div>
+										<div data-value="by-firstname">Utilisateur par prénom</div>
+										<div data-value="by-phone">Utilisateur par numéro de téléphone</div>
+									</div>
+									<input type="hidden" id="user-search-type-select" value="all">
+								</div>
+
+								<!-- Champ de recherche si 'par email' est sélectionné -->
+								<div class="search-field" id="search-by-email-container" style="display: none;">
+									<input type="text" id="search-email-input" placeholder="Entrez l'email à rechercher" aria-label="Email de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-email-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par nom' est sélectionné -->
+								<div class="search-field" id="search-by-user-name-container" style="display: none;">
+									<input type="text" id="search-user-name-input" placeholder="Entrez le nom à rechercher" aria-label="Nom de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-user-name-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par prénom' est sélectionné -->
+								<div class="search-field" id="search-by-firstname-container" style="display: none;">
+									<input type="text" id="search-user-firstname-input" placeholder="Entrez le prénom à rechercher" aria-label="Prénom de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-user-firstname-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par téléphone' est sélectionné -->
+								<div class="search-field" id="search-by-phone-container" style="display: none;">
+									<input type="text" id="search-user-phone-input" placeholder="Entrez le numéro de téléphone à rechercher" aria-label="Téléphone de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-user-phone-button" class="search-button">Rechercher</button>
+								</div>
+							</div>
+						</section>
+
+						<!-- Tableau de résultat -->
+						<section class="result" aria-label="Résultats de la recherche">
+							<table class="result-table">
+								<thead>
+									<tr>
+										<th>Nom</th>
+										<th>Prénom</th>
+										<th>Email</th>
+										<th>Adresse</th>
+										<th>Téléphone</th>
+										<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+									</tr>
+								</thead>
+								<tbody id="user-name-result">
+									<!-- Utilisateurs rentrés dynamiquement -->
+								</tbody>
+							</table>
+							<div id="user-loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+						</section>
 					</section>
 
 					<!-- ### Section Avis ### -->
@@ -163,6 +230,7 @@
 			<span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
 
 			<a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+			</div>
 		</footer>
 
 </body>
