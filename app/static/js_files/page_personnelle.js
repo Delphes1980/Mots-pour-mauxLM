@@ -28,23 +28,55 @@ function mapInputToUserField(name) {
 
 // Fonction pour les messages d'alerte
 function showFeedbackMessage(message, isError = false) {
-  const banner = document.getElementById('feedback-message');
-  if (!banner) return;
+	const banner = document.getElementById('feedback-message');
+	if (!banner) return;
 
-  banner.textContent = message;
-  banner.classList.remove('error', 'show');
-  if (isError) banner.classList.add('error');
+	banner.textContent = message;
+	banner.classList.remove('error', 'show');
+	if (isError) banner.classList.add('error');
 
-  banner.style.display = 'block';
-  setTimeout(() => banner.classList.add('show'), 10);
+	banner.style.display = 'block';
+	setTimeout(() => banner.classList.add('show'), 10);
 
-  setTimeout(() => {
-    banner.classList.remove('show');
-    setTimeout(() => {
-      banner.style.display = 'none';
-      banner.classList.remove('error');
-    }, 300);
-  }, 4000);
+	setTimeout(() => {
+		banner.classList.remove('show');
+		setTimeout(() => {
+			banner.style.display = 'none';
+			banner.classList.remove('error');
+		}, 300);
+	}, 4000);
+}
+
+
+// Bouton pour effacer le champ
+function setupPersonalClearButton() {
+    const inputFields = document.querySelectorAll('#personal-info-form .form-field input');
+
+    inputFields.forEach(input => {
+        const clearButton = input.nextElementSibling;
+
+        if (clearButton) {
+            clearButton.style.display = 'none';
+
+            input.addEventListener('input', () => {
+                if (clearButton) {
+                    if (input.value.length > 0) {
+                        clearButton.style.display = 'block';
+                    } else {
+                        clearButton.style.display = 'none';
+                    }
+                }
+            });
+
+            if (clearButton) {
+                clearButton.addEventListener('click', () => {
+                    input.value = '';
+                    clearButton.style.display = 'none';
+                    input.focus();
+                });
+            }
+        }
+    });
 }
 
 
@@ -100,10 +132,61 @@ function setupModifierButton(modifierButton, inputFields) {
 		const isEditing = modifierButton.textContent === 'Modifier';
 		toggleEditMode(modifierButton, inputFields);
 
-		if (!isEditing) {
-			saveUserData(inputFields);
+		if (isEditing) {
+			// Crée 2 boutons 'Enregistrer' et 'Annuler'
+			const buttonContainer = modifierButton.parentNode;
+			const buttonWrapper = document.createElement('div');
+			buttonWrapper.className = 'button-wrapper';
+
+			const saveButton = document.createElement('button');
+			saveButton.textContent = 'Enregistrer';
+			saveButton.className = 'save-info-button';
+
+			const cancelButton = document.createElement('button');
+			cancelButton.textContent = 'Annuler';
+			cancelButton.className = 'cancel-info-button';
+
+			buttonWrapper.appendChild(saveButton);
+			buttonWrapper.appendChild(cancelButton);
+
+			// Supprime le bouton 'Modifier'
+			modifierButton.remove();
+
+			// Ajoute le conteneur avec les 2 boutons
+			buttonContainer.appendChild(buttonWrapper);
+
+			// Gère le bouton 'Enregistrer'
+			saveButton.addEventListener('click', () => {
+				saveUserData(inputFields);
+				restoreModifierButton(buttonContainer);
+			});
+
+			// Gère le bouton 'Annuler'
+			cancelButton.addEventListener('click', () => {
+				loadUserData();
+				restoreModifierButton(buttonContainer);
+			});
 		}
 	});
+}
+
+
+// Fonction qui remet le bouton 'Modifier'
+function restoreModifierButton(container) {
+	// Supprime les boutons 'Enregistrer' et 'Annuler'
+	container.querySelectorAll('.modify-info-button').forEach(button => button.remove())
+
+	// Réinjecte le bouton 'Modifier'
+	const modifierButton = document.createElement('button');
+	modifierButton.textContent = 'Modifier';
+	modifierButton.className = 'modify-info-button';
+	modifierButton.id = 'modifier-button';
+
+	container.appendChild(modifierButton);
+
+	// Réattache le comportement
+	const inputFields = document.querySelectorAll('#personal-info-form input');
+	setupModifierButton(modifierButton, inputFields);
 }
 
 
@@ -114,16 +197,14 @@ function toggleEditMode(modifierButton, inputFields) {
 	inputFields.forEach(input => {
 		if (!input || !input.id) return;
 
-		// On ne permet pas de modifier le mail
-		if (input.id !== 'email') {
-			input.readOnly = !isEditing;
+		input.readOnly = !isEditing;
+
+		if (isEditing) {
+			input.classList.add('editable');
+		} else {
+			input.classList.remove('editable');
 		}
 	});
-
-	// Met à jour le style et le texte du bouton
-	modifierButton.textContent = isEditing ? 'Enregistrer' : 'Modifier';
-	modifierButton.style.backgroundColor = isEditing ? 'var(--writing-light)' : 'var(--background-button)';
-	modifierButton.style.color = isEditing ? 'var(--writing-dark)' : 'var(--background-card)';
 }
 
 
@@ -492,6 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	loadUserData(inputFields);
 	setupModifierButton(modifierButton, inputFields);
+	setupPersonalClearButton();
 	setupPasswordModal();
 
 	// Commentaires

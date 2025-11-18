@@ -46,6 +46,7 @@
 .form-field {
 	margin-bottom: 15px;
 	width: 80%;
+	position: relative;
 }
 
 /* Style pour les titres des champs (label)*/
@@ -96,7 +97,52 @@
 	margin-top: 20px;
 }
 
-/* Style pour le conteneur des 2 autres boutons */
+/* Style pour le conteneur des boutons 'Enregistrer' et 'Modifier' */
+.button-wrapper {
+	display: flex;
+	justify-content: center;
+	gap: 15px;
+	width: 100%;
+}
+
+/* Style pour le bouton 'Enregistrer' */
+.save-info-button {
+	background-color: var(--save-color);
+	color: var(--background-card);
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+	width: 60%;
+}
+
+/* Style pour le bouton 'Annuler' */
+.cancel-info-button {
+	background-color: var(--icon-color);
+	color: var(--background-card);
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+	width: 60%;
+}
+
+/* Style pour les champs modifiables après avoir appuyé sur 'Modifier' */
+input.editable {
+	border: 2px solid var(--button-hover);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+	transition: border-color 0.3s ease, box-shadow 03s ease;
+}
+
+/* Style pour le conteneur des boutons 'Prendre rdv' et 'Laisser un commentaire' */
 .button-container {
 	display: flex;
 	flex-direction: row;
@@ -334,6 +380,19 @@
 .cancel-button {
 	background-color: var(--delete-color);
 	color: var(--background-card);
+}
+
+/* Style pour la croix pour effacer l'input */
+.clear-input-button {
+	position: absolute;
+	top: 40px;
+	right: 8px;
+	transform: translateY(-50%);
+	color: var(--writing-medium);
+	cursor: pointer;
+	font-size: 1.2em;
+	display: none;
+	z-index: 10;
 }
 
 

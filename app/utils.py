@@ -199,27 +199,27 @@ def name_validation(names: str, names_name: str):
 def email_validation(email: str):
         """ Validates the email address """
         if email is None:
-            raise ValueError('Expected email but received None')
+            raise ValueError('Email attendu mais aucun reçu')
         type_validation(email, 'email', str)
         if not validate_email(email):
-            raise ValueError("Invalid email: email must have format exemple@exemple.com")
+            raise ValueError("Adresse e-mail invalide : l'adresse e-mail doit être au format exemple@exemple.com")
         return email
 
 def validate_password(plain_password):
         """ Validates the password to ensure it meets the requirements """
         if plain_password is None:
-            raise ValueError("Expected password but received None")
+            raise ValueError("Mot de passe attendu mais aucun reçu")
         if len(plain_password) < 8:
-            raise ValueError("Invalid password: password must be at least 8 characters")
+            raise ValueError("Mot de passe invalide : le mot de passe doit comporter au moins 8 caractères")
         if not re.search(r'\d', plain_password):
-            raise ValueError("Invalid password: password must contain at least one digit")
+            raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins un chiffre")
         if not re.search(r'[A-Z]', plain_password):
-             raise ValueError("Invalid password: password must contain at least one uppercase lettre")
+             raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins une lettre majuscule")
         if not re.search(r'[a-z]', plain_password):
-            raise ValueError("Invalid password: password must contain at least one lowercase letter")
+            raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins une lettre minuscule")
         special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
         if not re.search(special_chars, plain_password):
-            raise ValueError("Invalid password: password must contain at least one special character")
+            raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins un caractère spécial")
         return plain_password
 
 def hash_password(validated_password):
