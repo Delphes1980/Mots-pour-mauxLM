@@ -75,8 +75,8 @@ function renderPrestations(prestations) {
         tr.innerHTML = `
             <td data-label="Nom" class="prestation-name-cell">${prestation.name}</td>
             <td class="actions-cell prestation-actions" data-label="Actions">
-                <button class="modify-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Modifier ${prestation.name}">Modifier</button>
-                <button class="delete-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Supprimer ${prestation.name}">Supprimer</button>
+                <button class="modify-button prestation-modify-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Modifier ${prestation.name}">Modifier</button>
+                <button class="delete-button prestation-delete-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Supprimer ${prestation.name}">Supprimer</button>
             </td>
             `;
             tableBody.appendChild(tr);
@@ -313,7 +313,7 @@ async function modifyPrestation(id, newName) {
 
 
 // Fonction qui gère la confirmation de la suppression d'une prestation
-function deleteConfirmation(id, name) {
+function deletePrestationConfirmation(id, name) {
     const modalOverlay = document.getElementById('confirmation-modal-overlay');
     const modalMessage = document.getElementById('modal-message');
     const modalConfirmButton = document.getElementById('modal-confirm-button');
@@ -321,15 +321,25 @@ function deleteConfirmation(id, name) {
     if (!modalOverlay || !modalMessage || !modalConfirmButton) return;
 
     modalMessage.textContent = `Êtes-vous sûr de vouloir supprimer la prestation: "${name}?`;
-
-    modalConfirmButton.dataset.deleteId = id;
-
     modalOverlay.style.display = 'flex';
+
+    const newConfirmButton = modalConfirmButton.cloneNode(true);
+    modalConfirmButton.parentNode.replaceChild(newConfirmButton, modalConfirmButton);
+
+    newConfirmButton.dataset.deleteId = id;
+
+    newConfirmButton.addEventListener('click', () => {
+        const deleteId = newConfirmButton.dataset.deleteId;
+        if (deleteId) {
+            deletePrestation(deleteId);
+        }
+        closePrestationModal();
+    });
 }
 
 
 // Fonction qui ferme la modale
-function closeModal() {
+function closePrestationModal() {
     const modalOverlay = document.getElementById('confirmation-modal-overlay');
     const modalConfirmButton = document.getElementById('modal-confirm-button');
 
@@ -371,16 +381,16 @@ async function deletePrestation(id) {
 // Fonction qui gère les boutons 'Modifier' et 'Supprimer'
 function attachActionListeners() {
     // Ecouteur pour le bouton 'Supprimer'
-    document.querySelectorAll('.delete-button').forEach(button => {
+    document.querySelectorAll('.prestation-delete-button').forEach(button => {
         button.addEventListener('click', () => {
             const id = button.dataset.id;
             const name = button.dataset.name;
-            deleteConfirmation(id, name);
+            deletePrestationConfirmation(id, name);
         });
     });
 
     // Ecouteur pour le bouton 'Modifier'
-    document.querySelectorAll('.modify-button').forEach(button => {
+    document.querySelectorAll('.prestation-modify-button').forEach(button => {
         button.addEventListener('click', () => {
             const id = button.dataset.id;
             const currentName = button.dataset.name;
@@ -484,27 +494,16 @@ function init_prestations() {
 
     // Ecouteurs pour la modale
     const modalOverlay = document.getElementById('confirmation-modal-overlay');
-    const modalConfirmButton = document.getElementById('modal-confirm-button');
     const modalCancelButton = document.getElementById('modal-cancel-button');
 
-    if (modalConfirmButton) {
-        modalConfirmButton.addEventListener('click', () => {
-            const id = modalConfirmButton.dataset.deleteId;
-            if (id) {
-                deletePrestation(id);
-            }
-            closeModal();
-        });
-    }
-
     if (modalCancelButton) {
-        modalCancelButton.addEventListener('click', closeModal);
+        modalCancelButton.addEventListener('click', closePrestationModal);
     }
 
     if (modalOverlay) {
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) {
-                closeModal();
+                closePrestationModal();
             }
         });
     }

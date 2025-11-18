@@ -14,7 +14,7 @@ function mapInputToUserField(name) {
 	};
 
 	// Ignore le mot de passe pour le remplissage
-	if (name === 'password') {
+	if (name === 'password' || name === 'current_password' || name === 'new_password' || name === 'confirm_password') {
 		return null;
 	}
 
@@ -72,19 +72,16 @@ async function loadUserData() {
 
 		const firstName = data['first_name'];
 		if (firstName) {
-			const fisrtNameSpan = document.getElementById('user_firstname');
-			if (fisrtNameSpan) {
-				fisrtNameSpan.textContent = firstName;
+			const firstNameSpan = document.getElementById('user_firstname');
+			if (firstNameSpan) {
+				firstNameSpan.textContent = firstName;
 			}
 		}
 
 		inputFields.forEach(input => {
 			const apiFieldKey = mapInputToUserField(input.name);
 
-			if (input.name === 'password') {
-				input.value = '********';
-			} else if (apiFieldKey && data[apiFieldKey] !== undefined) {
-				// Remplissage des autres champs
+			if (input.name !== 'password' && apiFieldKey && data[apiFieldKey] !== undefined) {
 				input.value = data[apiFieldKey];
 			}
 		});
@@ -117,8 +114,8 @@ function toggleEditMode(modifierButton, inputFields) {
 	inputFields.forEach(input => {
 		if (!input || !input.id) return;
 
-		// On ne permet pas de modifier le mail et le mot de passe
-		if (input.id !== 'email' && input.id !== 'password') {
+		// On ne permet pas de modifier le mail
+		if (input.id !== 'email') {
 			input.readOnly = !isEditing;
 		}
 	});
@@ -135,7 +132,7 @@ function saveUserData(inputFields) {
 	const updateData = {};
 
 	inputFields.forEach(input => {
-		if (!input || !input.name || input.id == 'email' || input.id === 'password') return;
+		if (!input || !input.name || input.id == 'email') return;
 
 		const key = mapInputToUserField(input.name);
 		if (!key || typeof input.value !== 'string') return;
@@ -347,7 +344,7 @@ function toggleReviewEditMode(modifierReviewButton) {
 			}
 
 			if (text && textarea) {
-				text.innerHTML = `<p>${textarea.value || "Commentaire vide)"}</p>`;
+				text.innerHTML = `<p>${textarea.value || "Commentaire vide"}</p>`;
 			}
 		}
 	});
@@ -409,6 +406,75 @@ async function saveAllReviewData() {
 }
 
 
+// Fonction pour la modale de modification de mot de passe
+function setupPasswordModal() {
+	const passwordModal = document.getElementById('password-modal');
+	const openButton = document.getElementById('open-password-modal');
+	const cancelButton = document.getElementById('cancel-password-change');
+	const passwordForm = document.getElementById('password-change-form');
+
+	if (!passwordModal || !openButton || !cancelButton || !passwordForm) return;
+
+	// Ouvre la modale
+	openButton.addEventListener('click', () => {
+		passwordModal.style.display = 'flex';
+	});
+
+	// Ferme la modale (Annuler)
+	cancelButton.addEventListener('click', () => {
+		passwordModal.style.display = 'none';
+		passwordForm.reset();
+	});
+
+	// Soumission du formulaire de mot de passe
+	passwordForm.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		const oldPassword = document.getElementById('current-password').value;
+		const newPassword = document.getElementById('new-password').value;
+		const confirmPassword = document.getElementById('confirm-password').value;
+
+		if (newPassword !== confirmPassword) {
+			showFeedbackMessage("Les nouveaux mots de passe ne correspondent pas", true);
+			return;
+		}
+
+		if (!window.currentUserId) {
+			showFeedbackMessage("Impossible d'identifier l'utilisateur", true);
+			return;
+		}
+
+		const data = {
+			old_password: oldPassword,
+			new_password: newPassword
+		};
+
+		try {
+			const response = await fetch(`${API_USERS_BASE_URL}/${window.currentUserId}`, {
+				method: 'PATCH',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			});
+
+			if (response.ok) {
+				showFeedbackMessage('Mot de passe modifié avec succès !');
+				passwordModal.style.display = 'none';
+				passwordForm.reset();
+			} else {
+				const errorData = await response.json();
+				showFeedbackMessage(errorData.error || "Erreur lors de la modification du mot de passe", true);
+			}
+		} catch (error) {
+			console.error("Erreur lors de la modification du mot de passe: ", error);
+			showFeedbackMessage('Erreur lors de la modification du mot de passe. Veuillez réessayer plus tard', true);
+		}
+	});
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
 	// Infos personnelles
 	const modifierButton = document.getElementById('modifier-button');
@@ -426,6 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	loadUserData(inputFields);
 	setupModifierButton(modifierButton, inputFields);
+	setupPasswordModal();
 
 	// Commentaires
 	const modifierReviewButton = document.getElementById('modifier-review-button');

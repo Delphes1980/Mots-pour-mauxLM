@@ -399,7 +399,7 @@ async function modifyUser(id, userData) {
 
 
 // Fonction qui gère la confirmation de la suppression d'un utilisateur
-function deleteConfirmation(id, name) {
+function deleteUserConfirmation(id, name) {
 	const modalOverlay = document.getElementById('confirmation-modal-overlay');
 	const modalMessage = document.getElementById('modal-message');
 	const modalConfirmButton = document.getElementById('modal-confirm-button');
@@ -407,15 +407,25 @@ function deleteConfirmation(id, name) {
 	if (!modalOverlay || !modalMessage || !modalConfirmButton) return;
 
 	modalMessage.textContent = `Êtes-vous sûr de vouloir supprimer l'utilisateur: "${name}"?`;
-
-	modalConfirmButton.dataset.deleteId = id;
-
 	modalOverlay.style.display = 'flex';
+
+	const newConfirmButton = modalConfirmButton.cloneNode(true);
+	modalConfirmButton.parentNode.replaceChild(newConfirmButton, modalConfirmButton);
+
+	newConfirmButton.dataset.deleteId = id;
+
+	newConfirmButton.addEventListener('click', () => {
+		const deleteId = newConfirmButton.dataset.deleteId;
+		if (deleteId) {
+			deleteUser(deleteId);
+		}
+		closeUserModal();
+	});
 }
 
 
 // Fonction qui ferme la modale
-function closeModal() {
+function closeUserModal() {
     const modalOverlay = document.getElementById('confirmation-modal-overlay');
     const modalConfirmButton = document.getElementById('modal-confirm-button');
 
@@ -470,7 +480,7 @@ function resetPasswordConfirmation(id, name) {
 
 	newConfirmButton.addEventListener('click', () => {
 		resetPassword(id);
-		closeModal();
+		closeUserModal();
 	});
 }
 
@@ -505,7 +515,7 @@ function attachUserActionListeners() {
 	// Ecouteur pour le bouton 'Supprimer'
 	document.querySelectorAll('.user-delete-button').forEach(button => {
 		button.addEventListener('click', () => {
-			deleteConfirmation(button.dataset.id, button.dataset.name);
+			deleteUserConfirmation(button.dataset.id, button.dataset.name);
 		});
 	});
 
