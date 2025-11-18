@@ -52,7 +52,8 @@ user_me_response_model = api.model('UserMeResponse', {
 	'email': fields.String(required=True, description='Email de l\'utilisateur'),
 	'address': fields.String(required=False, description='Adresse de l\'utilisateur'),
 	'phone_number': fields.String(required=False, description='Numéro de téléphone de l\'utilisateur'),
-	'is_admin': fields.Boolean(required=True, description='Si l\'utilisateur est admin')
+	'is_admin': fields.Boolean(required=True, description='Si l\'utilisateur est admin'),
+    'created_at': fields.DateTime(required=True, description='Date de création de l\'utilisateur')
 })
 
 # Définir le modèle de données pour la réponse de user/me/review
@@ -101,7 +102,7 @@ class UserList(Resource):
 
 
     @api.doc('Get all users')
-    @api.marshal_list_with(user_response_model, code=_http.HTTPStatus.OK, description='List of users retrieved successfully')
+    @api.marshal_list_with(user_me_response_model, code=_http.HTTPStatus.OK, description='List of users retrieved successfully')
     @jwt_required()
     @api.response(200, 'Liste des utilisateurs récupérée avec succès', user_response_model)
     @api.response(401, 'Vous devez vous connecter', error_model)
@@ -128,7 +129,7 @@ class UserList(Resource):
 @api.route('/search')
 class UserSearch(Resource):
     @api.doc('Get a user by mail', params={'email': 'Email de l\'utilisateur'})
-    @api.marshal_with(user_response_model, code=_http.HTTPStatus.OK, description='User retrieved successfully')
+    @api.marshal_with(user_me_response_model, code=_http.HTTPStatus.OK, description='User retrieved successfully')
     @jwt_required()
     @api.response(200, 'Utilisateur récupéré avec succès', user_response_model)
     @api.response(401, 'Vous devez vous connecter', error_model)
@@ -160,7 +161,7 @@ class UserSearch(Resource):
 @api.route('/search-partial')
 class UserSearchPartial(Resource):
     @api.doc('Search users by partial email', params={'email': 'Fragment de l\'email'})
-    @api.marshal_list_with(user_response_model, code=_http.HTTPStatus.OK, description='Users retrieved successfully')
+    @api.marshal_list_with(user_me_response_model, code=_http.HTTPStatus.OK, description='Users retrieved successfully')
     @jwt_required()
     @api.response(200, 'Utilisateurs récupérés avec succès', user_response_model)
     @api.response(401, 'Vous devez vous connecter', error_model)

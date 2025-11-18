@@ -128,6 +128,7 @@
 	border: 1px solid #ddd;
 	text-align: left;
 	font-family: 'Lexend', sans-serif;
+	font-size: 0.80em;
 	vertical-align: middle;
 }
 
@@ -136,6 +137,7 @@
 	background-color: var(--background-color);
 	color: var(--writing-dark);
 	font-weight: 600;
+	font-size:0.85em;
 }
 
 /* Style pour masquer l'en-tête de la colonne 'actions' */
@@ -151,16 +153,45 @@
 /* Style pour le conteneur des boutons d'action ('Modifier' et 'Supprimer') */
 .actions-cell {
 	display: flex;
+	flex-direction: column;
 	gap: 10px;
 	justify-content: flex-end;
 	border: none !important;
 	background-color: transparent !important;
 }
 
+/* Style pour les boutons 'Modifier' et 'Supprimer' de admin_prestations */
+.prestation-actions,
+.prestation-actions .save-edit-button,
+.prestation-actions .cancel-edit-button {
+	flex-direction: row !important;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 10px;
+}
+
+/* Style pour les boutons 'Modifier' et 'Supprimer' de admin_users */
+.actions-cell .action-top {
+	display: flex;
+	gap: 10px;
+}
+
+/* Style pour le bouton 'Réinitialiser le mot de passe' de admin_users */
+.actions-cell .action-bottom {
+	display: flex;
+	justify-content: flex-start;
+}
+
 /* Style pour les boutons 'Modifier', 'Supprimer', 'Enregistrer' et 'Annuler' */
-.modify-button, .delete-button, .save-edit-button, .cancel-edit-button {
+.modify-button,
+.delete-button,
+.save-edit-button,
+.cancel-edit-button,
+.reset-pass-button,
+.user-save-edit-button,
+.user-cancel-edit-button {
 	padding: 5px 10px;
-	font-size: 0.9em;
+	font-size: 0.8em;
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
@@ -181,14 +212,20 @@
 }
 
 /* Style pour le bouton 'Enregistrer' */
-.save-edit-button {
+.save-edit-button, .user-save-edit-button {
 	background-color: var(--save-color);
 	color: var(--background-card);
 }
 
 /* Style pour le bouton 'Annuler' */
-.cancel-edit-button {
+.cancel-edit-button, .user-cancel-edit-button {
 	background-color: var(--icon-color);
+	color: var(--background-card);
+}
+
+/* Style pour le bouton 'Réinitialiser le mot de passe' (admin_user) */
+.reset-pass-button {
+	background-color: var(--background-chip);
 	color: var(--background-card);
 }
 
@@ -314,7 +351,7 @@
 	color: var(--background-form);
 }
 
-/* Style pour la modale */
+/* Style pour la modale de confirmation */
 .modal-overlay {
 	display: none;
 	position: fixed;
@@ -373,14 +410,14 @@
 	transition: background-color 0.2s ease;
 }
 
-/* Style du bouton 'Confirmer' */
+/* Style du bouton 'Confirmer' de la modale */
 .confirm-button {
 	background-color: var(--icon-color);
 	color: var(--background-card);
 }
 
 .confirm-button:hover {
-	background-color: #c0392b;
+	background-color: var(--delete-color);
 }
 
 .cancel-button:hover {
@@ -391,7 +428,7 @@
 .admin-layout {
 	display: flex;
 	gap: 30px;
-	max-width: 1200px;
+	max-width: 100%;
 	margin: 0 auto;
 }
 
@@ -438,21 +475,33 @@
 	display: block;
 }
 
-/* Style pour les containeurs des boutons 'Modifier', 'Supprimer' et 'Réinitialiser' */
-.actions-cell {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
+/* Style pour le menu déroulant du filtre de la pagination (admin_users) */
+.pagination-select-wrapper {
+	width: 135px;
 }
 
-.actions-cell .action-top {
-	display: flex;
-	gap: 10px;
+.pagination-select-wrapper .select-selected {
+	height: 36px;
+	padding: 8px 10px;
 }
 
-.actions-cell .action-bottom {
-	display: flex;
-	justify-content: flex-start;
+.pagination-select-wrapper .select-selected:after {
+	top: 15px;
+}
+
+/* Style qui agrandit la largeur de la page de résultats */
+main#main-content {
+	max-width: 1500px;
+}
+
+/* Style qui permet au tableau des utilisateurs à prendre tout l'espace */
+#section-users .search-container, #section-users .result {
+	max-width: none;
+}
+
+/* Style qui évite le retour à la ligne */
+#section-users .user-cell-phone, #section-users .user-cell-date {
+	white-space: nowrap;
 }
 
 

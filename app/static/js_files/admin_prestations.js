@@ -74,7 +74,7 @@ function renderPrestations(prestations) {
 
         tr.innerHTML = `
             <td data-label="Nom" class="prestation-name-cell">${prestation.name}</td>
-            <td class="actions-cell" data-label="Actions">
+            <td class="actions-cell prestation-actions" data-label="Actions">
                 <button class="modify-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Modifier ${prestation.name}">Modifier</button>
                 <button class="delete-button" data-id="${prestation.id}" data-name="${prestation.name}" aria-label="Supprimer ${prestation.name}">Supprimer</button>
             </td>
@@ -256,13 +256,13 @@ function handleModifyClick(id, currentName) {
         nameCell.innerHTML = `
             <input type="text" id="edit-input-${id}" value="${currentName}" class="modify-input" aria-label="Modifier le nom de la prestation">
         `;
-
+        
         actionsCell.innerHTML = `
             <button class="save-edit-button" data-id="${id}" aria-label="Enregister la modification">Enregistrer</button>
             <button class="cancel-edit-button" data-id="${id}" data-original-name="${currentName}" aria-label="Annuler la modification">Annuler</button>
             `;
 
-        attachSaveAndCancelListeners(id, currentName);
+        attachPrestationSaveAndCancelListeners(id, currentName);
     }
 }
 
@@ -392,7 +392,7 @@ function attachActionListeners() {
 
 
 // Fonction qui gère les boutons 'Enregistrer' et 'Annuler'
-function attachSaveAndCancelListeners(id, originalName) {
+function attachPrestationSaveAndCancelListeners(id, originalName) {
     // Ecouteur pour le bouton 'Enregistrer'
     const saveButton = document.querySelector(`.save-edit-button[data-id="${id}"]`);
     if (saveButton) {
@@ -528,61 +528,3 @@ function init_prestations() {
 
 // Expose la fonction pour la barre latérale
 window.init_prestations = init_prestations;
-
-
-
-
-
-
-
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     setupClearButton();
-
-//     const searchNameButton = document.getElementById('search-name-button');
-//     const createForm = document.getElementById('create-prestation-form');
-
-//     // Ecouteurs pour la modale
-//     const modalOverlay = document.getElementById('confirmation-modal-overlay');
-//     const modalConfirmButton = document.getElementById('modal-confirm-button');
-//     const modalCancelButton = document.getElementById('modal-cancel-button');
-
-//     if (modalConfirmButton) {
-//         modalConfirmButton.addEventListener('click', () => {
-//             const id = modalConfirmButton.dataset.deleteId;
-//             if (id) {
-//                 deletePrestation(id);
-//             }
-//             closeModal();
-//         });
-//     }
-
-//     if (modalCancelButton) {
-//         modalCancelButton.addEventListener('click', closeModal);
-//     }
-
-//     if (modalOverlay) {
-//         modalOverlay.addEventListener('click', (e) => {
-//             if (e.target === modalOverlay) {
-//                 closeModal();
-//             }
-//         });
-//     }
-
-//     setupCustomSelect();
-
-//     toggleSearchVisibility();
-
-//     if (searchNameButton) {
-//         searchNameButton.addEventListener('click', (e) => {
-//             e.preventDefault();
-//             fetchPrestationByName();
-//         });
-//     }
-
-//     if (createForm) {
-//         createForm.addEventListener('submit', createPrestation);
-//     }
-
-//     // fetchAllPrestations();
-// });

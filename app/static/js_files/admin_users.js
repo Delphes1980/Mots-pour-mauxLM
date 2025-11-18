@@ -59,6 +59,21 @@ function showFeedbackMessage(message, isError = false) {
 }
 
 
+// Fonction qui gère le format date de la colonne 'Date d'inscription'
+function formatDate(dateString) {
+	if (!dateString) {
+		return 'N/A';
+	}
+
+	const date = new Date(dateString);
+	return date.toLocaleDateString('fr-FR', {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric'
+	});
+}
+
+
 // Fonction qui affiche les lignes du tableau
 function renderUsers(users) {
 	const tableBody = document.getElementById('user-name-result');
@@ -67,7 +82,7 @@ function renderUsers(users) {
 	tableBody.innerHTML = '';
 
 	if (!users || users.length === 0) {
-		tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Aucun utilisateur trouvé</td></tr';
+		tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Aucun utilisateur trouvé</td></tr';
 		return;
 	}
 
@@ -76,18 +91,19 @@ function renderUsers(users) {
 		tr.dataset.id = user.id;
 
 		tr.innerHTML = `
-		<td data-label="Nom" class="user-cell-lastname">${user.last_name || 'N/A'}</td>
 		<td data-label="Prénom" class="user-cell-firstname">${user.first_name || 'N/A'}</td>
+		<td data-label="Nom" class="user-cell-lastname">${user.last_name || 'N/A'}</td>
 		<td data-label="Email" class="user-cell-email">${user.email}</td>
 		<td data-label="Adresse" class="user-cell-address">${user.address || 'N/A'}</td>
 		<td data-label="Téléphone" class="user-cell-phone">${user.phone_number || 'N/A'}</td>
+		<td data-label="Date d'inscription" class="user-cell-date">${formatDate(user.created_at)}</td>
 		<td class="actions-cell" data-label="Actions">
 			<div class="action-top">
 				<button class="modify-button user-modify-button" data-id="${user.id}" aria-label="Modifier ${user.first_name}">Modifier</button>
 				<button class="delete-button user-delete-button" data-id="${user.id}" data-name="${user.first_name} ${user.last_name}" aria-label="Spprimer ${user.first_name}">Supprimer</button>
 			</div>
 			<div class="action-bottom">
-				<button class="reset-pass-button" data-id="${user.id}" data-name="${user.first_name} ${user.last_name}" aria-label="Réinitialiser le mot de passe de ${user.first_name}">Réinitialiser Mdp</button>
+				<button class="reset-pass-button" data-id="${user.id}" data-name="${user.first_name} ${user.last_name}" aria-label="Réinitialiser le mot de passe de ${user.first_name}">Réinitialiser le mot de passe</button>
 			</div>
 		</td>
 		`;
@@ -102,7 +118,7 @@ function renderUsers(users) {
 function displayPaginatedUsers() {
 	const filteredUsers = filterUsersFromCache();
 	// Filtre le Ghost user
-	const usersToDisplay = filteredUsers.filter(user => user.email.toLowerCase() !== "deleted@system.local");
+	const usersToDisplay = filteredUsers.filter(user => user.email.toLowerCase() !== "deleted@system.local" && !user.is_admin);
 	const totalUsers = usersToDisplay.length;
 
 	let totalPages = 1;
@@ -298,7 +314,11 @@ async function fetchUserByEmail() {
 		let results = Array.isArray(data) ? data : (data ? [data] : []);
 
 		// Filtre Ghost user
-		results = results.filter(user => user.email && user.email.toLowerCase() !== 'deleted@system.local');
+		results = results.filter(user =>
+			user.email &&
+			user.email.toLowerCase() !== 'deleted@system.local' &&
+			!user.is_admin
+		);
 
 		// Réinitialise la pagination
 		currentUserPage = 1;
@@ -541,12 +561,12 @@ function handleUserModifyClick(user) {
 			`;
 	}
 
-	attachSaveAndCancelListeners(user);
+	attachUserSaveAndCancelListeners(user);
 }
 
 
 // Fonction qui gère les boutons 'Enregistrer' et 'Annuler'
-function attachSaveAndCancelListeners(originalUser) {
+function attachUserSaveAndCancelListeners(originalUser) {
 	const id = originalUser.id;
 
 	// Ecouteur pour le bouton 'Enregistrer'
@@ -696,37 +716,73 @@ function filterUsersFromCache() {
 		});
 	}
 
-	return results;
+	return results.filter(user =>
+		user.email &&
+		user.email.toLowerCase() !== 'deleted@system.local' &&
+		!user.is_admin
+	);
 }
 
 
 // Configure la pagination avec le filtre (par 10, 20, 50 ou tous)
 function setupPaginationFilter() {
-	let paginationSelect = document.getElementById('user-pagination-select');
-	if (!paginationSelect) {
-		paginationSelect = document.createElement('select');
-		paginationSelect.id = 'user-pagination-select';
-		paginationSelect.className = 'pagination-select';
-		paginationSelect.innerHTML = `
-			<option value="10">10 par page</option>
-			<option value="20">20 par page</option>
-			<option value="50">50 par page</option>
-			<option value="all">Tous</option>
-		`;
+	const searchContainer = document.querySelector('#section-users .search-bar');
+	if (!searchContainer) return;
 
-		const searchContainer = document.querySelector('#section-users .search-bar');
-		if (searchContainer) {
-			searchContainer.appendChild(paginationSelect);
-		}
+	if (document.getElementById('pagination-select-wrapper')) {
+		return;
 	}
 
-	// Définit la valeur par défaut
-	paginationSelect.value = usersPerPage;
+	const paginationSelectWrapper = document.createElement('div');
+	paginationSelectWrapper.className = 'select-wrapper pagination-select-wrapper';
+	paginationSelectWrapper.id = 'pagination-select-wrapper';
 
-	paginationSelect.addEventListener('change', (e) => {
-		usersPerPage = parseInt(e.target.value, 10);
-		currentUserPage = 1;
-		displayPaginatedUsers();
+	paginationSelectWrapper.innerHTML = `
+		<div class="select-selected" id="pagination-select-selected" tabindex="0" role="combobox" aria-label="Nombre d'utilisateurs par page">
+			10 par page
+		</div>
+		<div class="select-items select-hide" id="pagination-select-items" role="listbox">
+			<div data-value="all">Tous</div>
+			<div data-value="10">10 par page</div>
+			<div data-value="20">20 par page</div>
+			<div data-value="50">50 par page</div>
+		</div>
+		<input type="hidden" id="pagination-hidden-input" value="10">
+	`;
+
+	searchContainer.appendChild(paginationSelectWrapper);
+
+	const selected = document.getElementById('pagination-select-selected');
+	const items = document.getElementById('pagination-select-items');
+	const hiddenInput = document.getElementById('pagination-hidden-input');
+
+	if (!selected || !items || !hiddenInput) return;
+
+	selected.addEventListener('click', () => {
+		items.classList.toggle('select-hide');
+	});
+
+	items.querySelectorAll('div').forEach(item => {
+		item.addEventListener('click', () => {
+			selected.textContent = item.textContent;
+			hiddenInput.value = item.dataset.value;
+			items.classList.add('select-hide');
+
+			const value = hiddenInput.value;
+			if (value === 'all') {
+				usersPerPage = 0;
+			} else {
+				usersPerPage = parseInt(value, 10);
+			}
+			currentUserPage = 1;
+			displayPaginatedUsers();
+		});
+	});
+
+	document.addEventListener('click', (e) => {
+		if (!selected.contains(e.target) && !items.contains(e.target)) {
+			items.classList.add('select-hide');
+		}
 	});
 }
 
