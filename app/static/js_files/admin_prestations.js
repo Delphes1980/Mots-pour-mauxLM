@@ -3,7 +3,7 @@ let editingPrestationId = null;
 
 
 // Bouton pour effacer le champ
-function setupClearButton() {
+function setupPrestationClearButton() {
     const inputFields = document.querySelectorAll('.search-field input, .creation-field input');
 
     inputFields.forEach(input => {
@@ -477,7 +477,7 @@ function toggleSearchVisibility() {
 
 // Fonction d'initialisation pour la section prestations
 function init_prestations() {
-    setupClearButton();
+    setupPrestationClearButton();
 
     const searchNameButton = document.getElementById('search-name-button');
     const createForm = document.getElementById('create-prestation-form');

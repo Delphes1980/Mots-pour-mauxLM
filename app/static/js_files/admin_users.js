@@ -6,7 +6,7 @@ let usersPerPage = 10;
 
 
 // Bouton pour effacer le champ
-function setupClearButton() {
+function setupUserClearButton() {
     const inputFields = document.querySelectorAll('#section-users .search-field input');
 
     inputFields.forEach(input => {
@@ -793,7 +793,7 @@ function init_users() {
 		return;
 	}
 
-	setupClearButton();
+	setupUserClearButton();
 	setupUserCustomSelect();
 	setupPaginationFilter();
 	toggleUserSearchVisibility();
