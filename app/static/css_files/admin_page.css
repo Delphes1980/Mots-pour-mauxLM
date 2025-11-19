@@ -504,12 +504,77 @@ main#main-content {
 	white-space: nowrap;
 }
 
+/* Style pour le conteneur de pagination */
+.pagination-controls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	margin-top: 20px;
+	flex-wrap: wrap;
+}
+
+.pagination-info, .pagination-total {
+	font-family: 'Lexend', sans-serif;
+	font-size: 0.9em;
+	color: var(--writing-medium);
+}
+
+/* Style pour les boutons de la pagination (admin_users) */
+.pagination-button {
+	padding: 8px 15px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	background-color: var(--background-button);
+	color: var(--background-card);
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pagination-button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pagination-button:disabled {
+	background-color: var(--writing-light);
+	color: var(--writing-medium);
+	cursor: not-allowed;
+	box-shadow: none;
+	transform: none;
+}
+
 
 /* ##### Code responsive ##### */
 @media (max-width: 768px) {
-	.search-container, .result, .creation-container {
-		padding: 15px;
+	/* Structure générale */
+	.main-content, .admin-layout {
+		grid-template-columns: 1fr;
+		flex-direction: column;
+		gap: 30px;
+		padding: 10px;
 	}
+	/* Conteneurs principaux */
+	.search-container,
+	.result,
+	.creation-container,
+	.client-info,
+	.review-info-container,
+	.admin-sidebar {
+		padding: 15px;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	/* Titres */
+	.client-info h2,
+	.review-info-container h2 {
+		font-size: 1.3em;
+		text-align: center;
+	}
+	/* Barre de recherche */
 	.search-bar {
 		flex-direction: column;
 		align-items: stretch;
@@ -519,13 +584,17 @@ main#main-content {
 	}
 	.search-field {
 		flex-direction: column;
-	}
-	.search-field input[type="text"], .search-button {
 		width: 100%;
 	}
+	.search-field input[type="text"],
+	.search-button {
+		width: 100%;
+	}
+	/* Formulaire de création */
 	.creation-form {
 		grid-template-columns: 1fr;
 	}
+	/* Tableau de résultats */
 	.result-table thead {
 		display: none;
 	}
@@ -563,5 +632,48 @@ main#main-content {
 	}
 	.result-table td.actions-cell::before {
 		display: none;
+	}
+	/* Boutons d'action dans les tableaux */
+	.actions-cell .action-top,
+	.actions-cell .action-bottom {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 8px;
+	}
+	.actions-cell buttons {
+		width: 100%;
+	}
+	/* Pagination */
+	.pagination-controls {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+	}
+	.pagination-button {
+		width: 100%;
+		text-align: center;
+	}
+	/* Menu latéral */
+	.admin-sidebar {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+	.admin-sidebar button {
+		width: 100%;
+	}
+	/* Champs de formulaire */
+	.form-field {
+		width: 100%;
+	}
+	.modify-info-button,
+	.modify-review-button,
+	.modify-password-button {
+		width: 100%;
+	}
+	/* Boutons de contact */
+	.button-container {
+		flex-direction: column;
+		gap: 10px;
+		margin-top: 20px;
 	}
 }
