@@ -215,7 +215,7 @@ To fully test all API endpoints (e.g., retrieving all users/ reviews) and simula
 ```	
 docker-compose exec web bash
 ```
-**3 - Create the admin account:** Inside the container shell, launch the Python inerpreter and execute the commands to create the admin user (replace the password placeholder):
+**3 - Create the admin account:** Inside the container shell, launch the Python interpreter and execute the commands to create the admin user (replace the password placeholder):
 ```bash
 python3
 ```
@@ -294,6 +294,7 @@ You can now enjoy the web site and visit the different pages as a user do.
 - Frontend: HTML5, CSS3, JavaScript ES6
 - Backend: Python, Flask, Flask-RestX, Flask-JWT-Extended, Flask-Mail
 - Database: PostgreSQL
+- Containerization: Docker
 
 ---
 
