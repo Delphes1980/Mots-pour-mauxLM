@@ -797,8 +797,50 @@ function setupPaginationFilter() {
 }
 
 
+// Fonction qui réinitialise la section après chaque clic ailleurs
+function resetUsersSection() {
+	currentUserPage = 1;
+	usersPerPage = 10;
+
+	// Reset du menu déroulant
+	const searchSelectInput = document.getElementById('user-search-type-select');
+	const searchSelectText =  document.getElementById('user-select-selected');
+	if (searchSelectInput) {
+		searchSelectInput.value = 'all';
+	}
+	if (searchSelectText) {
+		searchSelectText.textContent = 'Tous les utilisateurs';
+	}
+
+	// Reset du menu déroulant de la pagination
+	const paginSelectInput = document.getElementById('pagination-hidden-input');
+	const paginSelectText = document.getElementById('pagination-select-selected');
+	if (paginSelectInput) {
+		paginSelectInput.value = '10';
+	}
+	if (paginSelectText) {
+		paginSelectText.textContent = '10 par page';
+	}
+
+	// Vide les champs de recherche
+	const inputs = document.querySelectorAll('#section-users .search-field input');
+	inputs.forEach(input => {
+		input.value = '';
+		const clearButton = input.nextElementSibling;
+		if (clearButton && clearButton.classList.contains('clear-input-button')) {
+			clearButton.style.display = 'none';
+		}
+	});
+
+	toggleUserSearchVisibility();
+	fetchAllUsers();
+}
+
+
 // Fonction d'initialisation pour la section Utilisateurs
 function init_users() {
+	resetUsersSection();
+
 	if (window.usersInitialized) {
 		return;
 	}

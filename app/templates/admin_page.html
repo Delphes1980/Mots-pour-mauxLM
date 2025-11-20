@@ -9,6 +9,9 @@
 	<!-- Liens pour les fichiers CSS -->
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/styles.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_page.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_prestations.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_users.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_create_user.css') }}">
 	<!-- Liens pour le favicon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
 	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
@@ -53,6 +56,7 @@
 					<ul>
 						<li><button data-section="prestations">Gestion des Prestations</button></li>
 						<li><button data-section="users">Gestion des Utilisateurs</button></li>
+						<li><button data-section="create-user">Ajouter un utilisateur</button></li>
 						<li><button data-section="reviews">Gestion des Avis</button></li>
 						<li><button data-section="appointments">Gestion des Rendez-vous</button></li>
 					</ul>
@@ -189,6 +193,30 @@
 						</section>
 					</section>
 
+					<!-- Section Création d'un Utilisateur -->
+					<section id="section-create-user" class="admin-section" style="display: none;">
+						<section class="create-user-container" aria-label="Créer un nouvel utilisateur">
+							<h4>Créer un nouvel utilisateur</h4>
+							<form class="creation-form" id="create-user-form">
+								<div class="creation-field">
+									<input type="text" id="new-user-firstname" name="first_name" placeholder="Prénom" required>
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="creation-field">
+									<input type="text" id="new-user-lastname" name="last_name" placeholder="Nom" required>
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="creation-field">
+									<input type="email" id="new-user-email" name="email" placeholder="Email" required>
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="save-button-container">
+									<button id="create-user-button" class="save-button">Créer</button>
+								</div>
+							</form>
+						</section>
+					</section>
+
 					<!-- ### Section Avis ### -->
 					<section id="section-reviews" class="admin-section" style="display:none;">
 						<!-- A compléter -->
@@ -222,6 +250,7 @@
 		<script src="{{ url_for('static', filename='js_files/admin_users.js') }}" defer></script>
 		<script src="{{ url_for('static', filename='js_files/admin_reviews.js') }}" defer></script>
 		<script src="{{ url_for('static', filename='js_files/admin_appointments.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_create_user.js') }}" defer></script>
 
 		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 

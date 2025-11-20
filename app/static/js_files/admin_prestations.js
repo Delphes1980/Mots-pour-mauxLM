@@ -485,9 +485,51 @@ function toggleSearchVisibility() {
 }
 
 
+// Fonction qui réinitialise la section après chaque clic ailleurs
+function resetPrestationsSection() {
+    // Reset du menu déroulant
+    const searchSelectInput = document.getElementById('search-type-select');
+    const searchSelectText = document.getElementById('admin-select-selected');
+    if (searchSelectInput) {
+        searchSelectInput.value = 'all';
+    }
+    if (searchSelectText) {
+        searchSelectText.textContent = 'Toutes les prestations';
+    }
+
+    // Vide les champs de recherche
+    const nameInput = document.getElementById('search-name-input');
+    if (nameInput) {
+        nameInput.value = '';
+        const clearButton = nameInput.nextElementSibling;
+        if (clearButton && clearButton.classList.contains('clear-input-button')) {
+            clearButton.style.display = 'none';
+        }
+    }
+
+    toggleSearchVisibility();
+    fetchAllPrestations();
+}
+
+
 // Fonction d'initialisation pour la section prestations
 function init_prestations() {
+    resetPrestationsSection();
+
+    fetchAllPrestations();
+    if (window.prestationsInitialized) {
+        return;
+    }
+
     setupPrestationClearButton();
+    setupCustomSelect();
+
+    // Gestion unique du toggle initial
+    const searchByNameContainer = document.getElementById('search-by-name-container');
+    const hiddenInput = document.getElementById('search-type-select');
+    if (searchByNameContainer && hiddenInput && hiddenInput.value === 'all') {
+        searchByNameContainer.style.display = 'none';
+    }
 
     const searchNameButton = document.getElementById('search-name-button');
     const createForm = document.getElementById('create-prestation-form');
@@ -508,7 +550,6 @@ function init_prestations() {
         });
     }
 
-    setupCustomSelect();
     toggleSearchVisibility();
 
     if (searchNameButton) {
@@ -523,7 +564,8 @@ function init_prestations() {
     }
 
     fetchAllPrestations();
+
+    window.prestationsInitialized = true;
 }
 
-// Expose la fonction pour la barre latérale
 window.init_prestations = init_prestations;
