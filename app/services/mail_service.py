@@ -78,7 +78,7 @@ def send_appointment_notifications(user_email, practitioner_email, **context):
 
 def send_password_reset_notification(user_email, temp_password):
     """Envoie un email à l'utilisateur après réinitialisation de son mot de passe par l'admin"""
-    # 🔍 Vérification des variables SMTP (Debug)
+    # Vérification des variables SMTP (Debug)
     print("MAIL_USERNAME:", current_app.config.get("MAIL_USERNAME"))
     print("MAIL_PASSWORD:", current_app.config.get("MAIL_PASSWORD"))
     print("MAIL_SERVER:", current_app.config.get("MAIL_SERVER"))
