@@ -74,6 +74,66 @@ class UserService:
 
         return self.user_repository.create_user(**kwargs)
 
+    def admin_create_user(self, temp_password, **kwargs):
+        """Create a new user with the provided data by admin
+        
+        Args:
+            temp_password (str): Temporary password for the user
+            **kwargs: User data (first_name, last_name, email, address, phone_number, is_admin)
+            
+        Returns:
+            User: Created User
+
+        Raises:
+            CustomError: if the data are invalids(400) or if the email already exists(409)
+        """
+        kwargs['password'] = temp_password
+
+        validate_init_args(User, **kwargs)
+
+        # Valider les données
+        first_name = kwargs.get('first_name')
+        try:
+            name_validation(first_name, 'first_name')
+        except ValueError as e:
+            raise CustomError(str(e), 400)
+
+        last_name = kwargs.get('last_name')
+        try:
+            name_validation(last_name, 'last_name')
+        except ValueError as e:
+            raise CustomError(str(e), 400)
+
+        email = kwargs.get('email')
+        try:
+            email_validation(email)
+        except ValueError as e:
+            raise CustomError(str(e), 400)
+
+        address = kwargs.get('address')
+        try:
+            address_validation(address)
+        except (ValueError, TypeError) as e:
+            raise CustomError(str(e), 400)
+
+        phone_number = kwargs.get('phone_number')
+        try:
+            validate_phone_number(phone_number)
+        except (ValueError, TypeError) as e:
+            raise CustomError(str(e), 400)
+
+        is_admin_value = kwargs.get('is_admin')
+        try:
+            kwargs['is_admin'] = admin_validation(is_admin_value)
+        except TypeError as e:
+            raise CustomError(str(e), 400)
+
+        existing_user = self.user_repository.get_by_attribute("email", email)
+        if existing_user:
+            raise CustomError("Email already exists", 409)
+
+        return self.user_repository.admin_create_user(**kwargs)
+
     def get_user_by_id(self, user_id):
         """Get a user by its ID
 

@@ -22,6 +22,16 @@ class TestFacadeSimple(BaseTest):
         self.assertIsNotNone(self.facade.prestation_service)
         self.assertIsNotNone(self.facade.authentication_service)
 
+    def test_facade_has_new_methods(self):
+        """Test que la façade expose les nouvelles méthodes"""
+        # Vérifier que les nouvelles méthodes existent
+        self.assertTrue(hasattr(self.facade, 'admin_create_user'))
+        self.assertTrue(hasattr(self.facade, 'search_users_by_email_fragment'))
+        
+        # Vérifier que ce sont des méthodes appelables
+        self.assertTrue(callable(getattr(self.facade, 'admin_create_user')))
+        self.assertTrue(callable(getattr(self.facade, 'search_users_by_email_fragment')))
+
     def test_create_user_delegation(self):
         """Test délégation create_user"""
         result = self.facade.create_user(
@@ -566,6 +576,157 @@ class TestFacadeSimple(BaseTest):
         from app.utils import CustomError
         with self.assertRaises(CustomError):
             self.facade.get_review_by_id(review.id)
+
+    def test_admin_create_user_delegation(self):
+        """Test délégation admin_create_user"""
+        temp_password = "TempPassword123!"
+        
+        result = self.facade.admin_create_user(
+            temp_password=temp_password,
+            first_name="AdminCreated",
+            last_name="User",
+            email="admin.created@example.com",
+            address="123 Admin St",
+            phone_number="0123456789"
+        )
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.first_name, "AdminCreated")
+        self.assertEqual(result.last_name, "User")
+        self.assertEqual(result.email, "admin.created@example.com")
+        self.assertEqual(result.address, "123 Admin St")
+        self.assertEqual(result.phone_number, "0123456789")
+        
+        # Vérifier que le mot de passe temporaire fonctionne
+        from app.utils import verify_password
+        self.assertTrue(verify_password(result.password, temp_password))
+
+    def test_admin_create_user_minimal_data_delegation(self):
+        """Test délégation admin_create_user avec données minimales"""
+        temp_password = "MinimalTemp456!"
+        
+        result = self.facade.admin_create_user(
+            temp_password=temp_password,
+            first_name="Minimal",
+            last_name="User",
+            email="minimal@example.com"
+        )
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(result.first_name, "Minimal")
+        self.assertEqual(result.last_name, "User")
+        self.assertEqual(result.email, "minimal@example.com")
+        self.assertIsNone(result.address)
+        self.assertIsNone(result.phone_number)
+        
+        # Vérifier que le mot de passe temporaire fonctionne
+        from app.utils import verify_password
+        self.assertTrue(verify_password(result.password, temp_password))
+
+    def test_search_users_by_email_fragment_delegation(self):
+        """Test délégation search_users_by_email_fragment"""
+        # Créer des utilisateurs de test
+        user1 = self.facade.create_user(
+            first_name="John",
+            last_name="Doe",
+            email="john.doe@company.com",
+            password="Password123!"
+        )
+        user2 = self.facade.create_user(
+            first_name="Jane",
+            last_name="Smith",
+            email="jane.smith@company.com",
+            password="Password456!"
+        )
+        user3 = self.facade.create_user(
+            first_name="Bob",
+            last_name="Johnson",
+            email="bob@example.org",
+            password="Password789!"
+        )
+        
+        # Test recherche par domaine
+        result = self.facade.search_users_by_email_fragment("company")
+        
+        self.assertEqual(len(result), 2)
+        emails = [u.email for u in result]
+        self.assertIn("john.doe@company.com", emails)
+        self.assertIn("jane.smith@company.com", emails)
+        self.assertNotIn("bob@example.org", emails)
+
+    def test_search_users_by_email_fragment_single_result_delegation(self):
+        """Test délégation search_users_by_email_fragment avec un seul résultat"""
+        user = self.facade.create_user(
+            first_name="Unique",
+            last_name="User",
+            email="unique.user@special.com",
+            password="Password123!"
+        )
+        
+        result = self.facade.search_users_by_email_fragment("unique")
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].email, "unique.user@special.com")
+        self.assertEqual(result[0].first_name, "Unique")
+
+    def test_search_users_by_email_fragment_no_results_delegation(self):
+        """Test délégation search_users_by_email_fragment sans résultats"""
+        # Créer un utilisateur
+        self.facade.create_user(
+            first_name="Test",
+            last_name="User",
+            email="test@example.com",
+            password="Password123!"
+        )
+        
+        # Rechercher quelque chose qui n'existe pas
+        from app.utils import CustomError
+        with self.assertRaises(CustomError) as context:
+            self.facade.search_users_by_email_fragment("nonexistent")
+        
+        self.assertIn("No user found", str(context.exception))
+
+    def test_admin_create_user_and_search_integration_delegation(self):
+        """Test intégration admin_create_user et search_users_by_email_fragment via facade"""
+        # Créer des utilisateurs via admin
+        admin_user1 = self.facade.admin_create_user(
+            temp_password="AdminTemp1!",
+            first_name="AdminUser1",
+            last_name="Test",
+            email="admin.user1@test.com"
+        )
+        admin_user2 = self.facade.admin_create_user(
+            temp_password="AdminTemp2!",
+            first_name="AdminUser2",
+            last_name="Test",
+            email="admin.user2@test.com"
+        )
+        
+        # Créer un utilisateur normal
+        normal_user = self.facade.create_user(
+            first_name="NormalUser",
+            last_name="Test",
+            email="normal.user@test.com",
+            password="NormalPass123!"
+        )
+        
+        # Rechercher tous les utilisateurs test.com
+        result = self.facade.search_users_by_email_fragment("test.com")
+        
+        self.assertEqual(len(result), 3)
+        emails = [u.email for u in result]
+        self.assertIn("admin.user1@test.com", emails)
+        self.assertIn("admin.user2@test.com", emails)
+        self.assertIn("normal.user@test.com", emails)
+        
+        # Rechercher spécifiquement les utilisateurs admin
+        admin_result = self.facade.search_users_by_email_fragment("admin.user")
+        
+        self.assertEqual(len(admin_result), 2)
+        admin_emails = [u.email for u in admin_result]
+        self.assertIn("admin.user1@test.com", admin_emails)
+        self.assertIn("admin.user2@test.com", admin_emails)
+        self.assertNotIn("normal.user@test.com", admin_emails)
 
 
 if __name__ == '__main__':

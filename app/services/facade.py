@@ -16,6 +16,9 @@ class Facade:
     # User CRUD operations
     def create_user(self, **kwargs):
         return self.user_service.create_user(**kwargs)
+    
+    def admin_create_user(self, temp_password, **kwargs):
+        return self.user_service.admin_create_user(temp_password, **kwargs)
 
     def get_user_by_id(self, user_id):
         return self.user_service.get_user_by_id(user_id)

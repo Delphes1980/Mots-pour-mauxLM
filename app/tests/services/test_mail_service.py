@@ -18,12 +18,13 @@ class TestMailServiceSimple(BaseTest):
 
     def test_mail_service_functions_exist(self):
         """Test que les fonctions principales existent"""
-        from app.services.mail_service import send_mail_async, send_appointment_notifications, send_password_reset_notification
+        from app.services.mail_service import send_mail_async, send_appointment_notifications, send_password_reset_notification, send_user_created_by_admin_password
         
         # Vérifier que ce sont bien des fonctions
         self.assertTrue(callable(send_mail_async))
         self.assertTrue(callable(send_appointment_notifications))
         self.assertTrue(callable(send_password_reset_notification))
+        self.assertTrue(callable(send_user_created_by_admin_password))
 
     def test_mail_configuration_keys(self):
         """Test que les clés de configuration mail sont définies"""
@@ -180,6 +181,88 @@ class TestMailServiceSimple(BaseTest):
             # On accepte les erreurs de connexion SMTP mais pas les erreurs de code
             if "SMTP" not in str(e) and "Connection" not in str(e) and "Mail" not in str(e):
                 self.fail(f"Erreur de structure dans les templates mail: {e}")
+
+    def test_send_user_created_by_admin_password_function_exists(self):
+        """Test que la fonction send_user_created_by_admin_password existe"""
+        try:
+            from app.services.mail_service import send_user_created_by_admin_password
+            self.assertTrue(callable(send_user_created_by_admin_password))
+        except ImportError:
+            self.fail("La fonction send_user_created_by_admin_password n'existe pas")
+
+    def test_send_user_created_by_admin_password_parameters(self):
+        """Test que send_user_created_by_admin_password a les bons paramètres"""
+        from app.services.mail_service import send_user_created_by_admin_password
+        import inspect
+        
+        sig = inspect.signature(send_user_created_by_admin_password)
+        params = list(sig.parameters.keys())
+        
+        self.assertIn('user_email', params)
+        self.assertIn('temp_password', params)
+
+    def test_send_user_created_by_admin_password_execution(self):
+        """Test que send_user_created_by_admin_password s'exécute sans erreur de structure"""
+        from app.services.mail_service import send_user_created_by_admin_password
+        
+        try:
+            send_user_created_by_admin_password(
+                user_email="test@example.com",
+                temp_password="TempPass123!"
+            )
+            self.assertTrue(True)
+        except Exception as e:
+            # Accepter les erreurs SMTP mais pas les erreurs de code
+            if "SMTP" not in str(e) and "Connection" not in str(e) and "Mail" not in str(e):
+                self.fail(f"Erreur de structure dans send_user_created_by_admin_password: {e}")
+
+    def test_appointment_notifications_missing_context_keys(self):
+        """Test que send_appointment_notifications valide les clés requises"""
+        from app.services.mail_service import send_appointment_notifications
+        
+        # Test avec clés manquantes
+        with self.assertRaises(ValueError) as context:
+            send_appointment_notifications(
+                user_email="test@example.com",
+                practitioner_email="practitioner@example.com"
+                # Manque user_full_name, prestation_name, message
+            )
+        
+        error_message = str(context.exception)
+        self.assertIn("manquantes", error_message)
+
+    def test_appointment_notifications_complete_context(self):
+        """Test send_appointment_notifications avec contexte complet"""
+        from app.services.mail_service import send_appointment_notifications
+        
+        try:
+            send_appointment_notifications(
+                user_email="client@example.com",
+                practitioner_email="melanie@example.com",
+                user_full_name="Marie Dupont",
+                prestation_name="Thérapie cognitive",
+                message="Je souhaite prendre rendez-vous pour la semaine prochaine"
+            )
+            self.assertTrue(True)
+        except Exception as e:
+            # Accepter les erreurs SMTP mais pas les erreurs de code
+            if "SMTP" not in str(e) and "Connection" not in str(e) and "Mail" not in str(e):
+                self.fail(f"Erreur avec contexte complet: {e}")
+
+    def test_password_reset_notification_execution(self):
+        """Test que send_password_reset_notification s'exécute correctement"""
+        from app.services.mail_service import send_password_reset_notification
+        
+        try:
+            send_password_reset_notification(
+                user_email="user@example.com",
+                temp_password="NewTempPass456!"
+            )
+            self.assertTrue(True)
+        except Exception as e:
+            # Accepter les erreurs SMTP mais pas les erreurs de code
+            if "SMTP" not in str(e) and "Connection" not in str(e) and "Mail" not in str(e):
+                self.fail(f"Erreur dans send_password_reset_notification: {e}")
 
 
 if __name__ == '__main__':

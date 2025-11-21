@@ -160,7 +160,9 @@ function init_create_user() {
 		const data = getCreateUserFormData();
 
 		const isValid = await validateCreateUserData(data);
-		if (!isValid) return;
+		if (!isValid) {
+			return;
+		}
 
 		await createUser(data);
 	});

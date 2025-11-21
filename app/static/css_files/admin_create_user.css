@@ -1,5 +1,5 @@
 /* Style pour le conteneur */
-#section-create-user .create-user-container {
+#section-create_user .create-user-container {
 	max-width: 700px;
 	margin: 30px auto;
 	padding: 25px;
@@ -9,7 +9,7 @@
 }
 
 /* Style pour le titre */
-#section-create-user h4 {
+#section-create_user h4 {
 	font-family: 'DM Serif Display', serif;
 	font-size: 1.5em;
 	margin-bottom: 20px;
@@ -18,7 +18,7 @@
 }
 
 /* Style pour le conteneur des champs */
-#section-create-user .creation-form {
+#section-create_user .creation-form {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -45,8 +45,8 @@
 }
 
 /* Style pour les champs du formulaire */
-#section-create-user .creation-form input[type="text"],
-#section-create-user .creation-form input[type="email"] {
+#section-create_user .creation-form input[type="text"],
+#section-create_user .creation-form input[type="email"] {
 	width: 60%;
 	padding: 10px;
 	border: 1px solid var(--writing-medium);
@@ -60,7 +60,7 @@
 }
 
 /* Style pour la croix pour effacer l'input */
-#section-create-user .clear-input-button {
+#section-create_user .clear-input-button {
 	position: absolute;
 	top: 15px;
 	right: 8px;
@@ -72,26 +72,26 @@
 	z-index: 10;
 }
 
-#section-create-user .creation-field .clear-input-button {
+#section-create_user .creation-field .clear-input-button {
 	right: 135px;
 }
 
 
 /* ##### Code responsive ##### */
 @media (max-width: 768px) {
-	#section-create-user .create-user-container {
+	#section-create_user .create-user-container {
 		width: 100%;
 		padding: 15px;
 		margin: 15px auto;
 	}
-	#section-create-user .creation-form input[type="text"],
-	#section-create-user .creation-form input[type="email"] {
+	#section-create_user .creation-form input[type="text"],
+	#section-create_user .creation-form input[type="email"] {
 		width: 100%;
 	}
 	#create-user-button {
 		width: 100%;
 	}
-	#section-create-user .creation-field .clear-input-button {
+	#section-create_user .creation-field .clear-input-button {
 		right: 10px;
 	}
 }

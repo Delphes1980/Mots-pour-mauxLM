@@ -598,6 +598,198 @@ class TestUserServiceSimple(BaseTest):
         # Doit pouvoir être vérifié
         self.assertTrue(verify_password(user.password, 'Password123!'))
 
+    def test_admin_create_user_success(self):
+        """Test création utilisateur par admin avec succès"""
+        temp_password = 'TempPass123!'
+        user = self.user_service.admin_create_user(
+            temp_password=temp_password,
+            first_name='John',
+            last_name='Doe',
+            email='john@example.com',
+            address='123 Main St',
+            phone_number='0123456789'
+        )
+        
+        self.assertIsNotNone(user.id)
+        self.assertEqual(user.first_name, 'John')
+        self.assertEqual(user.last_name, 'Doe')
+        self.assertEqual(user.email, 'john@example.com')
+        self.assertEqual(user.address, '123 Main St')
+        self.assertEqual(user.phone_number, '0123456789')
+        self.assertFalse(user.is_admin)
+        # Vérifier que le mot de passe temporaire est utilisé
+        self.assertTrue(verify_password(user.password, temp_password))
+
+    def test_admin_create_user_minimal_data(self):
+        """Test création par admin avec données minimales"""
+        temp_password = 'TempPass456!'
+        user = self.user_service.admin_create_user(
+            temp_password=temp_password,
+            first_name='Jane',
+            last_name='Smith',
+            email='jane@example.com'
+        )
+        
+        self.assertIsNotNone(user.id)
+        self.assertEqual(user.first_name, 'Jane')
+        self.assertEqual(user.last_name, 'Smith')
+        self.assertEqual(user.email, 'jane@example.com')
+        self.assertIsNone(user.address)
+        self.assertIsNone(user.phone_number)
+        self.assertFalse(user.is_admin)
+        self.assertTrue(verify_password(user.password, temp_password))
+
+    def test_admin_create_user_as_admin(self):
+        """Test création d'un utilisateur admin par admin"""
+        temp_password = 'AdminTemp789!'
+        user = self.user_service.admin_create_user(
+            temp_password=temp_password,
+            first_name='Admin',
+            last_name='User',
+            email='admin@example.com',
+            is_admin=True
+        )
+        
+        self.assertTrue(user.is_admin)
+        self.assertTrue(verify_password(user.password, temp_password))
+
+    def test_admin_create_user_duplicate_email(self):
+        """Test création par admin avec email existant"""
+        # Créer premier utilisateur
+        self.user_service.create_user(
+            first_name='John',
+            last_name='Doe',
+            email='john@example.com',
+            password='Password123!'
+        )
+        
+        # Tenter de créer un autre avec même email via admin
+        with self.assertRaises(CustomError) as context:
+            self.user_service.admin_create_user(
+                temp_password='TempPass123!',
+                first_name='Jane',
+                last_name='Smith',
+                email='john@example.com'
+            )
+        
+        self.assertIn('Email already exists', str(context.exception))
+
+    def test_admin_create_user_invalid_email(self):
+        """Test création par admin avec email invalide"""
+        with self.assertRaises(CustomError):
+            self.user_service.admin_create_user(
+                temp_password='TempPass123!',
+                first_name='John',
+                last_name='Doe',
+                email='invalid-email'
+            )
+
+    def test_admin_create_user_password_override(self):
+        """Test que admin_create_user ignore le mot de passe fourni et utilise le temporaire"""
+        temp_password = 'AdminTempPass123!'
+        user = self.user_service.admin_create_user(
+            temp_password=temp_password,
+            first_name='John',
+            last_name='Doe',
+            email='john@example.com',
+            password='IgnoredPassword456!'  # Ce mot de passe doit être ignoré
+        )
+        
+        # Vérifier que seul le mot de passe temporaire fonctionne
+        self.assertTrue(verify_password(user.password, temp_password))
+        self.assertFalse(verify_password(user.password, 'IgnoredPassword456!'))
+
+    def test_search_users_by_email_fragment_success(self):
+        """Test recherche par fragment d'email avec succès"""
+        # Créer des utilisateurs de test
+        self.user_service.create_user(
+            first_name='John',
+            last_name='Doe',
+            email='john.doe@example.com',
+            password='Password123!'
+        )
+        self.user_service.create_user(
+            first_name='Jane',
+            last_name='Smith',
+            email='jane.smith@example.com',
+            password='Password456!'
+        )
+        self.user_service.create_user(
+            first_name='Bob',
+            last_name='Johnson',
+            email='bob@company.com',
+            password='Password789!'
+        )
+        
+        # Test recherche par fragment
+        users = self.user_service.search_users_by_email_fragment('example')
+        self.assertEqual(len(users), 2)
+        
+        emails = [u.email for u in users]
+        self.assertIn('john.doe@example.com', emails)
+        self.assertIn('jane.smith@example.com', emails)
+
+    def test_search_users_by_email_fragment_single_result(self):
+        """Test recherche par fragment avec un seul résultat"""
+        self.user_service.create_user(
+            first_name='John',
+            last_name='Doe',
+            email='john.doe@example.com',
+            password='Password123!'
+        )
+        
+        users = self.user_service.search_users_by_email_fragment('john.doe')
+        self.assertEqual(len(users), 1)
+        self.assertEqual(users[0].email, 'john.doe@example.com')
+
+    def test_search_users_by_email_fragment_no_results(self):
+        """Test recherche par fragment sans résultats"""
+        with self.assertRaises(CustomError) as context:
+            self.user_service.search_users_by_email_fragment('nonexistent')
+        
+        self.assertIn('No user found', str(context.exception))
+
+    def test_search_users_by_email_fragment_invalid_input(self):
+        """Test recherche par fragment avec entrée invalide"""
+        # Test avec fragment vide
+        with self.assertRaises(CustomError) as context:
+            self.user_service.search_users_by_email_fragment('')
+        
+        self.assertIn('Invalid email fragment', str(context.exception))
+        
+        # Test avec None
+        with self.assertRaises(CustomError) as context:
+            self.user_service.search_users_by_email_fragment(None)
+        
+        self.assertIn('Invalid email fragment', str(context.exception))
+        
+        # Test avec type incorrect
+        with self.assertRaises(CustomError) as context:
+            self.user_service.search_users_by_email_fragment(123)
+        
+        self.assertIn('Invalid email fragment', str(context.exception))
+
+    def test_search_users_by_email_fragment_case_insensitive(self):
+        """Test que la recherche par fragment est insensible à la casse"""
+        self.user_service.create_user(
+            first_name='John',
+            last_name='Doe',
+            email='john.doe@Example.COM',
+            password='Password123!'
+        )
+        
+        # Test avec différentes casses
+        users_lower = self.user_service.search_users_by_email_fragment('example')
+        users_upper = self.user_service.search_users_by_email_fragment('EXAMPLE')
+        users_mixed = self.user_service.search_users_by_email_fragment('ExAmPlE')
+        
+        self.assertEqual(len(users_lower), 1)
+        self.assertEqual(len(users_upper), 1)
+        self.assertEqual(len(users_mixed), 1)
+        
+        self.assertEqual(users_lower[0].email, users_upper[0].email)
+        self.assertEqual(users_upper[0].email, users_mixed[0].email)
+
 
 if __name__ == '__main__':
     unittest.main()
