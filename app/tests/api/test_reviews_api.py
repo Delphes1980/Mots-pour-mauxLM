@@ -293,10 +293,12 @@ class TestReviewsAPI(BaseTest):
         response_data = json.loads(response.data)
         self.assertEqual(len(response_data), 2)
         
-        # Vérifier que les user_id sont présents (modèle admin)
+        # Vérifier que les objets user et prestation sont présents (modèle admin)
         for review in response_data:
-            self.assertIn('user_id', review)
-            self.assertIn('prestation_id', review)
+            self.assertIn('user', review)
+            self.assertIn('prestation', review)
+            self.assertIn('id', review['user'])
+            self.assertIn('id', review['prestation'])
     
     def test_get_all_reviews_as_regular_user(self):
         """Test récupération de tous les commentaires en tant qu'utilisateur normal"""
@@ -339,7 +341,7 @@ class TestReviewsAPI(BaseTest):
         self.assertEqual(len(response_data), 2)  # Seulement les commentaires de prestation1
         
         for review in response_data:
-            self.assertEqual(review['prestation_id'], str(self.prestation1.id))
+            self.assertEqual(review['prestation']['id'], str(self.prestation1.id))
     
     def test_get_review_by_id_as_admin(self):
         """Test récupération d'un commentaire par ID en tant qu'admin"""

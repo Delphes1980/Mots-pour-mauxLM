@@ -152,6 +152,7 @@ function displayPaginatedUsers() {
 // Fonction qui crée les boutons 'Suivant' et 'Précédent' pour la pagination
 function setupPaginationControls(totalPages, totalUsers) {
 	let controlsContainer = document.getElementById('user-pagination-controls');
+
 	if (!controlsContainer) {
 		controlsContainer = document.createElement('div');
 		controlsContainer.id = 'user-pagination-controls';
@@ -175,12 +176,14 @@ function setupPaginationControls(totalPages, totalUsers) {
 		return;
 	}
 
+	// Bouton 'Précédent'
 	const prevButton = document.createElement('button');
 	prevButton.textContent = 'Précédent';
 	prevButton.className = 'pagination-button';
 	if (currentUserPage === 1) {
 		prevButton.disabled = true;
 	}
+
 	prevButton.addEventListener('click', () => {
 		if (currentUserPage > 1) {
 			currentUserPage--;
@@ -188,10 +191,12 @@ function setupPaginationControls(totalPages, totalUsers) {
 		}
 	});
 
+	// Info page
 	const pageInfo = document.createElement('span');
 	pageInfo.textContent = `Page ${currentUserPage} / ${totalPages}`;
 	pageInfo.className = 'pagination-info';
 
+	// Bouton 'Suivant'
 	const nextButton = document.createElement('button');
 	nextButton.textContent = 'Suivant';
 	nextButton.className = 'pagination-button';
@@ -225,7 +230,7 @@ async function fetchAllUsers() {
 			headers: {
 				'Content-Type': 'application/json'
 			}
-		});
+		}); 
 
 		if (!response.ok) {
 			if (response.status === 403 || response.status === 401) {
@@ -303,7 +308,7 @@ async function fetchUserByEmail() {
 				return;
 			}
 			if (response.status === 403 || response.status === 401) {
-				showFeedbackMessage('Accès refusé ou erreur de connextion', true);
+				showFeedbackMessage('Accès refusé ou erreur de connexion', true);
 				return;
 			}
 			throw new Error(`Erreur HTTP: ${response.status}`);
@@ -641,7 +646,7 @@ function setupUserCustomSelect() {
 }
 
 
-// Fonction pour basculer l'affichage de la recherche
+// Fonction qui gère l'affichage des inputs de la recherche
 function toggleUserSearchVisibility() {
 	const selectedValue = document.getElementById('user-search-type-select').value;
 
@@ -735,36 +740,36 @@ function filterUsersFromCache() {
 
 
 // Configure la pagination avec le filtre (par 10, 20, 50 ou tous)
-function setupPaginationFilter() {
+function setupUserPaginationFilter() {
 	const searchContainer = document.querySelector('#section-users .search-bar');
 	if (!searchContainer) return;
 
-	if (document.getElementById('pagination-select-wrapper')) {
+	if (document.getElementById('user-pagination-select-wrapper')) {
 		return;
 	}
 
 	const paginationSelectWrapper = document.createElement('div');
 	paginationSelectWrapper.className = 'select-wrapper pagination-select-wrapper';
-	paginationSelectWrapper.id = 'pagination-select-wrapper';
+	paginationSelectWrapper.id = 'user-pagination-select-wrapper';
 
 	paginationSelectWrapper.innerHTML = `
-		<div class="select-selected" id="pagination-select-selected" tabindex="0" role="combobox" aria-label="Nombre d'utilisateurs par page">
+		<div class="select-selected" id="user-pagination-select-selected" tabindex="0" role="combobox" aria-label="Nombre d'utilisateurs par page">
 			10 par page
 		</div>
-		<div class="select-items select-hide" id="pagination-select-items" role="listbox">
+		<div class="select-items select-hide" id="user-pagination-select-items" role="listbox">
 			<div data-value="all">Tous</div>
 			<div data-value="10">10 par page</div>
 			<div data-value="20">20 par page</div>
 			<div data-value="50">50 par page</div>
 		</div>
-		<input type="hidden" id="pagination-hidden-input" value="10">
+		<input type="hidden" id="user-pagination-hidden-input" value="10">
 	`;
 
 	searchContainer.appendChild(paginationSelectWrapper);
 
-	const selected = document.getElementById('pagination-select-selected');
-	const items = document.getElementById('pagination-select-items');
-	const hiddenInput = document.getElementById('pagination-hidden-input');
+	const selected = document.getElementById('user-pagination-select-selected');
+	const items = document.getElementById('user-pagination-select-items');
+	const hiddenInput = document.getElementById('user-pagination-hidden-input');
 
 	if (!selected || !items || !hiddenInput) return;
 
@@ -813,8 +818,8 @@ function resetUsersSection() {
 	}
 
 	// Reset du menu déroulant de la pagination
-	const paginSelectInput = document.getElementById('pagination-hidden-input');
-	const paginSelectText = document.getElementById('pagination-select-selected');
+	const paginSelectInput = document.getElementById('user-pagination-hidden-input');
+	const paginSelectText = document.getElementById('user-pagination-select-selected');
 	if (paginSelectInput) {
 		paginSelectInput.value = '10';
 	}
@@ -847,7 +852,7 @@ function init_users() {
 
 	setupUserClearButton();
 	setupUserCustomSelect();
-	setupPaginationFilter();
+	setupUserPaginationFilter();
 	toggleUserSearchVisibility();
 
 	document.getElementById('search-email-button').addEventListener('click', (e) => {

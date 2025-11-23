@@ -80,7 +80,6 @@ class TestUsersAdminCreateAPI(BaseTest):
             'first_name': 'John',
             'last_name': 'Doe',
             'email': 'john@example.com',
-            'password': 'TempPassword123!',  # Ce mot de passe sera remplacé par un temporaire
             'address': '123 Main St',
             'phone_number': '0123456789'
         }
@@ -102,17 +101,18 @@ class TestUsersAdminCreateAPI(BaseTest):
         self.assertEqual(response_data['phone_number'], '0123456789')
         self.assertIn('id', response_data)
         
-        # Vérifier que l'utilisateur existe en DB
+        # Vérifier que l'utilisateur existe en DB avec un mot de passe généré
         user = User.query.filter_by(email='john@example.com').first()
         self.assertIsNotNone(user)
+        self.assertIsNotNone(user.password)
+        self.assertTrue(user.password.startswith('$2b$'))
 
     def test_admin_create_user_minimal_data(self):
         """Test création avec données minimales"""
         data = {
             'first_name': 'Jane',
             'last_name': 'Smith',
-            'email': 'jane@example.com',
-            'password': 'TempPassword123!'
+            'email': 'jane@example.com'
         }
         
         response = self.client.post(
@@ -133,8 +133,7 @@ class TestUsersAdminCreateAPI(BaseTest):
         data = {
             'first_name': 'John',
             'last_name': 'Doe',
-            'email': 'john@example.com',
-            'password': 'TempPassword123!'
+            'email': 'john@example.com'
         }
         
         response = self.client.post(
@@ -148,8 +147,7 @@ class TestUsersAdminCreateAPI(BaseTest):
         data2 = {
             'first_name': 'Jane',
             'last_name': 'Smith',
-            'email': 'john@example.com',
-            'password': 'TempPassword456!'
+            'email': 'john@example.com'
         }
         
         response = self.client.post(
@@ -167,7 +165,7 @@ class TestUsersAdminCreateAPI(BaseTest):
         invalid_data_sets = [
             {},  # Pas de données
             {'first_name': 'John'},  # Données manquantes
-            {'first_name': 'John', 'last_name': 'Doe', 'email': 'invalid-email', 'password': 'TempPassword123!'},  # Email invalide
+            {'first_name': 'John', 'last_name': 'Doe', 'email': 'invalid-email'},  # Email invalide
         ]
         
         for data in invalid_data_sets:
@@ -186,8 +184,7 @@ class TestUsersAdminCreateAPI(BaseTest):
         data = {
             'first_name': 'John',
             'last_name': 'Doe',
-            'email': 'john@example.com',
-            'password': 'TempPassword123!'
+            'email': 'john@example.com'
         }
         
         response = user_client.post(
@@ -209,8 +206,7 @@ class TestUsersAdminCreateAPI(BaseTest):
         data = {
             'first_name': 'John',
             'last_name': 'Doe',
-            'email': 'john@example.com',
-            'password': 'TempPassword123!'
+            'email': 'john@example.com'
         }
         
         response = unauthenticated_client.post(
@@ -226,8 +222,7 @@ class TestUsersAdminCreateAPI(BaseTest):
         data = {
             'first_name': 'John',
             'last_name': 'Doe',
-            'email': 'john@example.com',
-            'password': 'TempPassword123!'
+            'email': 'john@example.com'
         }
         
         response = self.client.post(
@@ -241,9 +236,11 @@ class TestUsersAdminCreateAPI(BaseTest):
         response_data = json.loads(response.data)
         self.assertEqual(response_data['email'], 'john@example.com')
         
-        # Vérifier que l'utilisateur existe en DB
+        # Vérifier que l'utilisateur existe en DB avec un mot de passe généré
         user = User.query.filter_by(email='john@example.com').first()
         self.assertIsNotNone(user)
+        self.assertIsNotNone(user.password)
+        self.assertTrue(user.password.startswith('$2b$'))
 
     def test_admin_create_user_response_format(self):
         """Test le format de la réponse"""
@@ -251,7 +248,6 @@ class TestUsersAdminCreateAPI(BaseTest):
             'first_name': 'John',
             'last_name': 'Doe',
             'email': 'john@example.com',
-            'password': 'TempPassword123!',
             'address': '123 Main St',
             'phone_number': '0123456789'
         }
@@ -278,8 +274,7 @@ class TestUsersAdminCreateAPI(BaseTest):
         data = {
             'first_name': 'John',
             'last_name': 'Doe',
-            'email': 'john@example.com',
-            'password': 'OriginalPassword123!'  # Ce mot de passe sera ignoré
+            'email': 'john@example.com'
         }
         
         response = self.client.post(
@@ -294,17 +289,12 @@ class TestUsersAdminCreateAPI(BaseTest):
         user = User.query.filter_by(email='john@example.com').first()
         self.assertIsNotNone(user)
         
-        # Vérifier que le mot de passe original ne fonctionne pas (il a été remplacé par un temporaire)
-        old_credentials = {
-            'email': 'john@example.com',
-            'password': 'OriginalPassword123!'
-        }
-        login_response = self.app.test_client().post(
-            '/auth/login',
-            data=json.dumps(old_credentials),
-            content_type='application/json'
-        )
-        self.assertEqual(login_response.status_code, 401)
+        # Vérifier qu'un mot de passe a été généré (le champ password ne doit pas être vide)
+        self.assertIsNotNone(user.password)
+        self.assertTrue(len(user.password) > 0)
+        
+        # Vérifier que c'est bien un hash bcrypt
+        self.assertTrue(user.password.startswith('$2b$'))
 
 
 if __name__ == '__main__':

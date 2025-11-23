@@ -1,0 +1,157 @@
+/* Style qui agrandit la largeur de la page de résultats */
+main#main-content {
+	max-width: 1500px;
+}
+
+/* Prend toute la largeur de la page */
+#section-reviews .search-container,
+#section-reviews .result {
+	max-width: none;
+}
+
+/* Evite les retours à la ligne */
+#section-reviews td[data-label="Date de création"],
+#section-reviews td[data-label="Email"] {
+	white-space: nowrap;
+}
+
+/* Style pour le conteneur des étoiles */
+.rating-stars {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+}
+
+/* Style pour les étoiles */
+.rating-stars .star {
+	font-size: 1.2em;
+	color: var(--writing-dark);
+}
+
+/* Style pour le menu déroulant du filtre de la pagination (admin_users) */
+.pagination-select-wrapper {
+	width: 135px;
+}
+
+.pagination-select-wrapper .select-selected {
+	height: 36px;
+	padding: 8px 10px;
+}
+
+.pagination-select-wrapper .select-selected:after {
+	top: 15px;
+}
+
+/* Style pour la pagination */
+#section-reviews .pagination-controls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	margin-top: 20px;
+	flex-wrap: wrap;
+}
+
+.pagination-info, .pagination-total {
+	font-family: 'Lexend', sans-serif;
+	font-size: 0.9em;
+	color: var(--writing-medium);
+}
+
+/* Style pour les boutons de la pagination */
+.pagination-button {
+	padding: 8px 15px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	background-color: var(--background-button);
+	color: var(--background-card);
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pagination-button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pagination-button:disabled {
+	background-color: var(--writing-light);
+	color: var(--writing-medium);
+	cursor: not-allowed;
+	box-shadow: none;
+	transform: none;
+}
+
+
+/* ##### Code responsive ##### */
+/* Style pour les écrans jusqu'à 1024px */
+@media screen and (max-width: 1024px) {
+	main#main-content {
+		max-width: 100%;
+		padding: 0 20px;
+	}
+	#section-reviews .search-container,
+	#section-reviews .result {
+		padding: 0 10px;
+	}
+	.pagination-select-wrapper {
+		width: 100%;
+	}
+	.pagination-select-wrapper .select-selected {
+		width: 100%;
+		box-sizing: border-box;
+	}
+	#section-reviews .pagination-controls {
+		flex-direction: column;
+		gap: 10px;
+	}
+}
+
+/* Style pour les écrans jusqu'à 768px */
+@media screen and (max-width) {
+	#section-reviews table {
+		width: 100%;
+		display: block;
+		overflow-x: auto;
+	}
+	#section-reviews td[data-label],
+	#section-reviews th {
+		font-size: 0.85em;
+		padding: 6px;
+	}
+	.rating-stars .star {
+		font-size: 1em;
+	}
+	.pagination-button {
+		width: 100%;
+		padding: 10px;
+		font-size: 0.9em;
+	}
+	.pagination-info,
+	.pagination-total {
+		text-align: center;
+		font-size: 0.85em;
+	}
+}
+
+/* Style pour les écrans jusqu'à 480px */
+@media screen and (max-width: 480px) {
+	#section-reviews td[data-label="Email"],
+	#section-reviews td[data-label="Date de création"] {
+		white-space: normal;
+		word-break: break-word;
+	}
+	.pagination-button {
+		font-size: 0.8em;
+		padding: 8px;
+	}
+	.rating-stars {
+		gap: 2px;
+	}
+	.rating-stars .star {
+		font-size: 0.9em;
+	}
+}

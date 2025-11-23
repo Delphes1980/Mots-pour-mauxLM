@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_prestations.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_users.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_create_user.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_reviews.css') }}">
 	<!-- Liens pour le favicon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
 	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
@@ -219,7 +220,66 @@
 
 					<!-- ### Section Avis ### -->
 					<section id="section-reviews" class="admin-section" style="display:none;">
-						<!-- A compléter -->
+						<!-- Champ de recherche avec menu déroulant inclus -->
+						<section class="search-container" aria-label="Gestion des avis">
+							<div class="search-bar">
+								<!-- Menu déroulant -->
+								<div class="select-wrapper">
+									<div class="select-selected" id="review-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les avis">
+										Tous les avis
+									</div>
+									<div class="select-items select-hide" id="review-select-items" role="listbox">
+										<div data-value="all">Tous les avis</div>
+										<div data-value="by-user">Avis par utilisateur</div>
+										<div data-value="by-prestation">Avis par prestation</div>
+										<div data-value="by-prestation-and-user">Avis par prestation et utilisateur</div>
+									</div>
+									<input type="hidden" id="review-search-type-select" value="all">
+								</div>
+
+								<!-- Champ de recherche si 'par utilisateur' est sélectionné -->
+								<div class="search-field" id="search-by-user-container" style="display: none;">
+									<input type="text" id="search-user-input" placeholder="Entrez l'email à rechercher" aria-label="Nom de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="review-search-user-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par prestation' est sélectionné -->
+								<div class="search-field" id="search-by-prestation-container" style="display: none;">
+									<input type="text" id="search-prestation-input" placeholder="Entrez le nom de la prestation à rechercher" aria-label="Nom de la prestation à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="review-search-prestation-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par prestation et utilisateur' est sélectionné -->
+								<div class="search-field" id="search-by-prestation-and-user-container" style="display: none;">
+									<input type="text" id="search-prestation-and-user-input" placeholder="Entrez l'email de l'utilisateur, le nom de la prestation à rechercher" aria-label="Prestation et utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="review-search-prestation-and-user-button" class="search-button">Rechercher</button>
+								</div>
+							</div>
+						</section>
+
+							<!-- Tableau de résultat -->
+						<section class="result" aria-label="Résultats de la recherche">
+							<table class="result-table">
+								<thead>
+									<tr>
+										<th>Email</th>
+										<th>Prénom et Nom</th>
+										<th>Note</th>
+										<th>Avis</th>
+										<th>Date de création</th>
+										<th>Prestation</th>
+										<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+									</tr>
+								</thead>
+								<tbody id="review-result">
+									<!-- Avis rentrés dynamiquement -->
+								</tbody>
+							</table>
+							<div id="review-loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+						</section>
 					</section>
 
 					<!-- ### Section Rendez-vous ### -->

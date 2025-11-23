@@ -58,19 +58,19 @@ class TestUserServiceAdminCreateIntegration(BaseTest):
         users_data = [
             {
                 'temp_password': 'TempPass1!',
-                'first_name': 'User1',
+                'first_name': 'UserOne',
                 'last_name': 'Test',
                 'email': 'user1@example.com'
             },
             {
                 'temp_password': 'TempPass2!',
-                'first_name': 'User2',
+                'first_name': 'UserTwo',
                 'last_name': 'Test',
                 'email': 'user2@example.com'
             },
             {
                 'temp_password': 'TempPass3!',
-                'first_name': 'User3',
+                'first_name': 'UserThree',
                 'last_name': 'Test',
                 'email': 'user3@example.com'
             }
@@ -140,13 +140,13 @@ class TestUserServiceAdminCreateIntegration(BaseTest):
         admin_created_users = [
             {
                 'temp_password': 'AdminTemp1!',
-                'first_name': 'AdminUser1',
+                'first_name': 'AdminUserOne',
                 'last_name': 'Test',
                 'email': 'admin.user1@test.com'
             },
             {
                 'temp_password': 'AdminTemp2!',
-                'first_name': 'AdminUser2',
+                'first_name': 'AdminUserTwo',
                 'last_name': 'Test',
                 'email': 'admin.user2@test.com'
             }

@@ -691,13 +691,13 @@ class TestFacadeSimple(BaseTest):
         # Créer des utilisateurs via admin
         admin_user1 = self.facade.admin_create_user(
             temp_password="AdminTemp1!",
-            first_name="AdminUser1",
+            first_name="AdminUserOne",
             last_name="Test",
             email="admin.user1@test.com"
         )
         admin_user2 = self.facade.admin_create_user(
             temp_password="AdminTemp2!",
-            first_name="AdminUser2",
+            first_name="AdminUserTwo",
             last_name="Test",
             email="admin.user2@test.com"
         )
