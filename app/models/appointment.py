@@ -8,9 +8,18 @@ from .user import User
 from .prestation import Prestation
 
 
+#~Définition des status possibles
+class AppointmentStatus:
+	PENDING = "PENDING"  # En attente de validation
+	CONFIRMED = "CONFIRMED"  # Validé par le praticien
+	CANCELLED = "CANCELLED"  # Annulé
+	COMPLETED = "COMPLETED"  # Terminé
+
+
 class Appointment(BaseEntity):
 	__tablename__ = 'appointments'
 	_message: Mapped[str] = mapped_column("message", Text, nullable=False)
+	_status: Mapped[str] = mapped_column("status", String(20), nullable=False, default=AppointmentStatus.PENDING)
 	_user_id: Mapped[str] = mapped_column("user_id", String(36), ForeignKey('users.id'), nullable=False)
 	_prestation_id: Mapped[str] = mapped_column("prestation_id", String(36), ForeignKey('prestations.id'), nullable=False)
 	_user: Mapped["User"] = relationship("User", back_populates="appointments", lazy=True)
@@ -29,7 +38,8 @@ class Appointment(BaseEntity):
 	@user.setter
 	def user(self, value):
 		self._user = self.set_user(value)
-		self._user_id = value.id
+		if value:
+			self._user_id = value.id
 
 	@user.expression
 	def user(cls):
@@ -69,7 +79,8 @@ class Appointment(BaseEntity):
 	@prestation.setter
 	def prestation(self, value):
 		self._prestation = self.set_prestation(value)
-		self._prestation_id = value.id
+		if value:
+			self._prestation_id = value.id
 
 	@prestation.expression
 	def prestation(cls):
@@ -85,3 +96,24 @@ class Appointment(BaseEntity):
 	@hybrid_property
 	def prestation_id(self):
 		return self._prestation_id
+	
+	@hybrid_property
+	def status(self):
+		return self._status
+	
+	@status.setter
+	def status(self, value):
+		self._status = self.validate_status(value)
+
+	def validate_status(self, status: str):
+		""" Validate the status """
+		allowed_statuses = [
+			AppointmentStatus.PENDING, 
+			AppointmentStatus.CONFIRMED,
+			AppointmentStatus.CANCELLED,
+			AppointmentStatus.COMPLETED
+		]
+
+		if status not in allowed_statuses:
+			raise ValueError(f"Invalid status: {status}. Allowed statuses are: {', '.join(allowed_statuses)}")
+		return status

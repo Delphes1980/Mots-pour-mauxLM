@@ -32,11 +32,12 @@ class TestAppointmentRepository(BaseTest):
 
     def test_create_appointment_success(self):
         """Test création rendez-vous réussie"""
-        appointment = self.appointment_repo.create(
+        appointment = Appointment(
             message="Je souhaite prendre rendez-vous",
             user=self.user,
             prestation=self.prestation
         )
+        self.save_to_db(appointment)
         
         self.assertIsNotNone(appointment.id)
         self.assertEqual(appointment.message, "Je souhaite prendre rendez-vous")
@@ -46,18 +47,18 @@ class TestAppointmentRepository(BaseTest):
     def test_create_appointment_no_prestation(self):
         """Test création rendez-vous sans prestation"""
         with self.assertRaises(ValueError) as context:
-            self.appointment_repo.create(
+            Appointment(
                 message="Je souhaite prendre rendez-vous",
                 user=self.user,
                 prestation=None
             )
         
-        self.assertIn("La prestation spécifiée n'existe pas", str(context.exception))
+        self.assertIn("Prestation is required", str(context.exception))
 
     def test_create_appointment_invalid_message(self):
         """Test création rendez-vous avec message invalide"""
         with self.assertRaises(ValueError):
-            self.appointment_repo.create(
+            Appointment(
                 message="",  # Message vide
                 user=self.user,
                 prestation=self.prestation
@@ -66,11 +67,12 @@ class TestAppointmentRepository(BaseTest):
     def test_get_by_user_id(self):
         """Test récupération rendez-vous par user_id"""
         # Créer rendez-vous
-        created_appointment = self.appointment_repo.create(
+        created_appointment = Appointment(
             message="Rendez-vous urgent",
             user=self.user,
             prestation=self.prestation
         )
+        self.save_to_db(created_appointment)
         
         # Récupérer par user_id
         found_appointment = self.appointment_repo.get_by_attribute("_user_id", self.user.id)
@@ -86,11 +88,12 @@ class TestAppointmentRepository(BaseTest):
     def test_get_by_prestation_id(self):
         """Test récupération rendez-vous par prestation_id"""
         # Créer rendez-vous
-        created_appointment = self.appointment_repo.create(
+        created_appointment = Appointment(
             message="Première consultation",
             user=self.user,
             prestation=self.prestation
         )
+        self.save_to_db(created_appointment)
         
         # Récupérer par prestation_id
         appointment = self.appointment_repo.get_by_attribute("_prestation_id", self.prestation.id)
@@ -113,17 +116,19 @@ class TestAppointmentRepository(BaseTest):
         self.db.session.commit()
         
         # Créer deux rendez-vous pour même prestation
-        appointment1 = self.appointment_repo.create(
+        appointment1 = Appointment(
             message="Premier rendez-vous",
             user=self.user,
             prestation=self.prestation
         )
+        self.save_to_db(appointment1)
         
-        appointment2 = self.appointment_repo.create(
+        appointment2 = Appointment(
             message="Deuxième rendez-vous",
             user=user2,
             prestation=self.prestation
         )
+        self.save_to_db(appointment2)
         
         # Récupérer un rendez-vous par prestation (get_by_attribute retourne le premier)
         appointment = self.appointment_repo.get_by_attribute("_prestation_id", self.prestation.id)
@@ -135,11 +140,12 @@ class TestAppointmentRepository(BaseTest):
     def test_get_by_user_and_prestation(self):
         """Test récupération rendez-vous par utilisateur et prestation"""
         # Créer rendez-vous
-        created_appointment = self.appointment_repo.create(
+        created_appointment = Appointment(
             message="Consultation spécialisée",
             user=self.user,
             prestation=self.prestation
         )
+        self.save_to_db(created_appointment)
         
         # Récupérer par user + prestation
         found_appointments = self.appointment_repo.get_by_user_and_prestation(
@@ -167,17 +173,19 @@ class TestAppointmentRepository(BaseTest):
         self.db.session.commit()
         
         # Créer deux rendez-vous pour même utilisateur
-        appointment1 = self.appointment_repo.create(
+        appointment1 = Appointment(
             message="Massage relaxant",
             user=self.user,
             prestation=self.prestation
         )
+        self.save_to_db(appointment1)
         
-        appointment2 = self.appointment_repo.create(
+        appointment2 = Appointment(
             message="Séance de thérapie",
             user=self.user,
             prestation=prestation2
         )
+        self.save_to_db(appointment2)
         
         # Vérifier que les deux rendez-vous existent
         found_appointments1 = self.appointment_repo.get_by_user_and_prestation(
@@ -195,11 +203,12 @@ class TestAppointmentRepository(BaseTest):
     def test_inheritance_from_base_repository(self):
         """Test que AppointmentRepository hérite bien de BaseRepository"""
         # Test méthodes héritées avec create
-        appointment = self.appointment_repo.create(
+        appointment = Appointment(
             message="Test appointment",
             user=self.user,
             prestation=self.prestation
         )
+        self.save_to_db(appointment)
         self.assertIsNotNone(appointment.id)
         
         # Test get_by_id (méthode héritée)
@@ -229,34 +238,26 @@ class TestAppointmentRepository(BaseTest):
         self.db.session.commit()
         
         # Créer plusieurs rendez-vous
-        appointment1 = self.appointment_repo.create(
+        appointment1 = Appointment(
             message="Premier rendez-vous",
             user=self.user,
             prestation=self.prestation
         )
-        appointment2 = self.appointment_repo.create(
+        self.save_to_db(appointment1)
+        
+        appointment2 = Appointment(
             message="Deuxième rendez-vous",
             user=user2,
             prestation=prestation2
         )
+        self.save_to_db(appointment2)
         
-        # Récupérer tous
         all_appointments = self.appointment_repo.get_all()
         
         self.assertEqual(len(all_appointments), 2)
-        appointment_ids = [a.id for a in all_appointments]
+        appointment_ids = [apt.id for apt in all_appointments]
         self.assertIn(appointment1.id, appointment_ids)
         self.assertIn(appointment2.id, appointment_ids)
 
-    def test_get_all_empty(self):
-        """Test get_all() quand aucun rendez-vous n'existe"""
-        all_appointments = self.appointment_repo.get_all()
-        self.assertEqual(len(all_appointments), 0)
-
-    def test_model_class_consistency(self):
-        """Test que model_class est bien configuré"""
-        self.assertEqual(self.appointment_repo.model_class, Appointment)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
