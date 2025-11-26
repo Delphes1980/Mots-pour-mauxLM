@@ -1,6 +1,6 @@
 from flask import jsonify
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import (create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies, get_jwt_identity)
+from flask_jwt_extended import (create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies, get_jwt, get_jwt_identity)
 from app.services import facade
 from app.utils import (compare_data_and_model, CustomError)
 
@@ -16,9 +16,18 @@ login_model = api.model('Login', {
     'password': fields.String(required=True, description='Mot de passe de l\'utilisateur')
 })
 
+# Objet Utilisateur
+user_fields = api.model('UserLoginDetails', {
+	'id': fields.String(description='ID de l\'utilisateur'),
+	'email': fields.String(description='Email de l\'utilisateur'),
+	'is_admin': fields.Boolean(description='Statut administrateur')
+})
+
 # Définir le modèle de données pour la réponse
 login_response_model = api.model('LoginResponse', {
-    'access_token': fields.String(required=True, description='Token d\'authentification')
+    'access_token': fields.String(required=True, description='Token d\'authentification'),
+    'message': fields.String(description='Message de succès'),
+    'user': fields.Nested(user_fields, description='Détails de l\'utilisateur connecté')
 })
 
 # Définir le modèle de données pour l'erreur
@@ -30,6 +39,13 @@ error_model = api.model('Error', {
 msg_model = api.model('Message', {
     'message': fields.String(description='Message'),
     'user': fields.String(description='Utilisateur')
+})
+
+# Définir le modèle de données pour la réponse de statut
+status_response_model = api.model('StatusResponseModel', {
+	'message': fields.String(description='Message de statut'),
+	'user_id': fields.String(description='ID de l\'utilisateur'),
+	'is_admin': fields.Boolean(description='Statut administrateur')
 })
 
 
@@ -66,7 +82,12 @@ class Login(Resource):
 
         response = jsonify({
             'message': 'Authentification réussie',
-            'access_token': access_token
+            'access_token': access_token,
+            'user' : {
+                'id': str(user.id),
+                'email': user.email,
+                'is_admin': user.is_admin
+            }
             })
         set_access_cookies(response, access_token)
         return response
@@ -79,8 +100,6 @@ class Logout(Resource):
     @api.response(200, 'Déconnexion réussie', msg_model)
     def post(self):
         """Déconnecter un utilisateur"""
-        # current_user = get_jwt_identity()
-        # return {'message': 'Utilisateur déconnecté avec succès'}, 200
         response = jsonify({'message': 'Déconnexion réussie'})
         unset_jwt_cookies(response)  # Retire les cookies JWT du navigateur
         return response
@@ -90,8 +109,15 @@ class Logout(Resource):
 class AuthenticationStatus(Resource):
     @api.doc('Connection status')
     @jwt_required()
-    @api.response(200, 'Connecté', msg_model)
+    @api.response(200, 'Connecté', status_response_model)
     def get(self):
         """Vérifier l'état de la connexion"""
         current_user = get_jwt_identity()
-        return {'message': 'Connecté', 'user': current_user}, 200
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+            
+        return ({
+            'message': 'Connecté',
+            'user_id': current_user,
+            'is_admin': is_admin
+        }), 200

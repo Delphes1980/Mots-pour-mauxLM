@@ -32,7 +32,7 @@ class TestAuthenticationService(BaseTest):
         from app.utils import CustomError
         with self.assertRaises(CustomError) as context:
             self.auth_service.login("invalid-email", "Password123!")
-        self.assertIn("email", str(context.exception).lower())
+        self.assertIn("adresse e-mail invalide", str(context.exception).lower())
 
     def test_login_empty_email(self):
         """Test login avec email vide"""

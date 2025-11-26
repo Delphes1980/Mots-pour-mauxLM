@@ -29,23 +29,23 @@ function isPasswordSecure(password) {
 
 // Fonction pour les messages d'alerte
 function showFeedbackMessage(message, isError = false) {
-  const banner = document.getElementById('feedback-message');
-  if (!banner) return;
+	const banner = document.getElementById('feedback-message');
+	if (!banner) return;
 
-  banner.textContent = message;
-  banner.classList.remove('error', 'show');
-  if (isError) banner.classList.add('error');
+	banner.textContent = message;
+	banner.classList.remove('error', 'show');
+	if (isError) banner.classList.add('error');
 
-  banner.style.display = 'block';
-  setTimeout(() => banner.classList.add('show'), 10);
+	banner.style.display = 'block';
+	setTimeout(() => banner.classList.add('show'), 10);
 
-  setTimeout(() => {
-    banner.classList.remove('show');
-    setTimeout(() => {
-      banner.style.display = 'none';
-      banner.classList.remove('error');
-    }, 100);
-  }, 3000);
+	setTimeout(() => {
+		banner.classList.remove('show');
+		setTimeout(() => {
+		banner.style.display = 'none';
+		banner.classList.remove('error');
+		}, 100);
+	}, 3000);
 }
 
 

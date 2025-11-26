@@ -24,13 +24,28 @@ review_response_model = api.model('ReviewResponse', {
     'prestation_id': fields.String(attribute=lambda review: f"{review.prestation_id}", required=True, description='L\'ID de la prestation associé au commentaire'),
 })
 
+# Définir le modèle de données pour le nom de la prestation liée à l'avis
+prestation_details_model = api.model('PrestationDetails', {
+	'id': fields.String(required=True, description='ID de la prestation'),
+	'name': fields.String(required=True, description='Le nom de la prestation')
+})
+
+# Définir le modèle de données pour l'utilisateur pour l'admin
+user_admin_details_model = api.model('UserAdminDetails', {
+	'id': fields.String(required=True, description='ID de l\'utilisateur'),
+	'first_name': fields.String(required=True, description='Le prénom de l\'utilisateur'),
+	'last_name': fields.String(required=True, description='Le nom de l\'utilisateur'),
+	'email': fields.String(required=True, description='L\'email de l\'utilisateur')
+})
+
 # Définir le modèle de données pour la réponse pour l'admin
 admin_review_response_model = api.model('AdminReviewResponse', {
     'id': fields.String(required=True, description='ID du commentaire'),
     'rating': fields.Integer(required=True, description='La note du commentaire'),
     'text': fields.String(required=True, description='Le texte du commentaire'),
-    'prestation_id': fields.String(attribute=lambda review: f"{review.prestation_id}", required=True, description='L\'ID de la prestation associée au commentaire'),
-    'user_id': fields.String(attribute=lambda review: f"{review.user_id}", required=True, description='L\'ID de l\'utilisateur associé au commentaire')
+    'created_at': fields.DateTime(description='Date de création'),
+    'prestation': fields.Nested(prestation_details_model, description='Les détails de la prestation associée au commentaire'),
+    'user': fields.Nested(user_admin_details_model, description='Les détails de l\'utilisateur associé au commentaire')
 })
 
 # Définir le modèle de données pour la mise à jour du commentaire
@@ -182,6 +197,40 @@ class UserReviewList(Resource):
 
             reviews = facade.get_review_by_user(user_id)
             return reviews, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
+@api.route('/by-user/<user_id>')
+class ReviewsByUser(Resource):
+    @api.doc('Get all reviews for a specific user')
+    @api.marshal_list_with(admin_review_response_model, code=_http.HTTPStatus.OK, description='List of reviews retrieved successfully')
+    @jwt_required()
+    @api.response(200, 'Liste des commentaires récupérée avec succès', admin_review_response_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(403, 'Vous n\avez pas les droits administrateur', error_model)
+    @api.response(404, 'Utilisateur non trouvé', error_model)
+    @api.response(500, 'Erreur intern du serveur', error_model)
+    def get(self, user_id):
+        """Récupérer tous les commentaires d'un utilisateur spécifique"""
+        current_user = get_jwt()
+
+        # Vérifier que l'utilisateur a les drois admin
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        try:
+            validate_entity_id(user_id, 'user_id')
+            existing_user = facade.get_user_by_id(user_id)
+            if not existing_user:
+                raise CustomError('L\'utilisateur n\'existe pas', 404)
+
+            reviews = facade.get_review_by_user(user_id)
+            return reviews, 200
+        
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:

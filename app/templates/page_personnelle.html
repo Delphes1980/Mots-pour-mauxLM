@@ -62,37 +62,39 @@
 							<div class="form-field">
 								<label for="firstName">Prénom</label>
 								<input type="text" id="firstName" name="firstName" value="" readonly aria-label="Prénom (Lecture seule)">
+								<i class="bx bx-x clear-input-button"></i>
 							</div>
 
 							<!-- Champ pour le nom -->
 							<div class="form-field">
 								<label for="lastName">Nom</label>
-								<input type="text" id="lastName" name="lastName" value=""readonly aria-label="Nom (Lecture seule)">
+								<input type="text" id="lastName" name="lastName" value="" readonly aria-label="Nom (Lecture seule)">
+								<i class="bx bx-x clear-input-button"></i>
 							</div>
 
 							<!-- Champ pour l'adresse -->
 							<div class="form-field">
 								<label for="address">Adresse</label>
 								<input type="text" id="address" name="address" placeholder="Adresse (facultatif)" value="" readonly aria-label="Adresse">
+								<i class="bx bx-x clear-input-button"></i>
 							</div>
 
 							<!-- Champ pour le téléphone -->
 							<div class="form-field">
 								<label for="phone">Téléphone</label>
 								<input type="tel" id="phone" name="phone" placeholder="Téléphone (facultatif)" value="" readonly aria-label="Téléphone">
+								<i class="bx bx-x clear-input-button"></i>
 							</div>
 
 							<!-- Champ pour l'email -->
 							<div class="form-field">
 								<label for="email">E-mail</label>
 								<input type="email" id="email" name="email" value="" readonly aria-label="Adresse email (Lecture seule)">
+								<i class="bx bx-x clear-input-button"></i>
 							</div>
 
-							<!-- Champ pour le mot de passe -->
-							<div class="form-field">
-								<label for="password">Mot de passe</label>
-								<input type="password" id="password" name="password" value="" readonly disabled>
-							</div>
+							<!-- Bouton 'Modifier le mot de passe' -->
+							<button type="button" id="open-password-modal" class="modify-password-button" aria-label="Modifier le mot de passe">Modifier mon mot de passe</button>
 
 							<button type="submit" class="modify-info-button" id="modifier-button" aria-label="Modifier vos informations personnelles">Modifier</button>
 						</form>
@@ -114,6 +116,31 @@
 					<button type="submit" class="modify-review-button" id="modifier-review-button" aria-label="Modifier vos commentaires">Modifier</button>
                 </div>
             </div>
+
+			<!-- Modale pour modification du mot de passe -->
+			<div id="password-modal" class="modal-overlay">
+				<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+					<h4 id="modal-title">Changer de mot de passe</h4>
+					<form id="password-change-form">
+						<div class="form-field modal-field">
+							<label for="current-password">Mot de passe actuel</label>
+							<input type="password" id="current-password" name="current_password" required>
+						</div>
+						<div class="form-field modal-field">
+							<label for="new-password">Nouveau mot de passe</label>
+							<input type="password" id="new-password" name="new_password" required>
+						</div>
+						<div class="form-field modal-field">
+							<label for="confirm-password">Confirmer le nouveau mot de passe</label>
+							<input type="password" id="confirm-password" name="confirm_password" required>
+						</div>
+						<div class="modal-buttons">
+							<button type="button" id="cancel-password-change" class="modal-button cancel-button">Annuler</button>
+							<button type="submit" class="modal-button confirm-button">Enregistrer</button>
+						</div>
+					</form>
+				</div>
+			</div>
     	</main>
 
 		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>

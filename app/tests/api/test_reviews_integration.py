@@ -357,7 +357,8 @@ class TestReviewsIntegration(BaseTest):
         response = self.client.get(f'/reviews/{created_reviews[0]}')
         self.assertEqual(response.status_code, 200)
         specific_review = json.loads(response.data)
-        self.assertIn('user_id', specific_review)  # Modèle admin
+        self.assertIn('user', specific_review)  # Modèle admin
+        self.assertIn('id', specific_review['user'])  # Vérifier que l'objet user a un id
         
         # 4. Supprimer un commentaire
         response = self.client.delete(f'/reviews/{created_reviews[0]}')

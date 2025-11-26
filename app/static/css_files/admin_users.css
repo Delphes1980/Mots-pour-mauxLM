@@ -1,0 +1,129 @@
+/* Style pour les boutons 'Modifier' et 'Supprimer' de admin_users */
+.actions-cell .action-top {
+	display: flex;
+	gap: 10px;
+}
+
+/* Style pour le bouton 'Réinitialiser le mot de passe' de admin_users */
+.actions-cell .action-bottom {
+	display: flex;
+	justify-content: flex-start;
+}
+
+/* Style pour le bouton 'Réinitialiser le mot de passe' (admin_user) */
+.reset-pass-button {
+	background-color: var(--background-chip);
+	color: var(--background-card);
+}
+
+/* Style pour le champ de saisie */
+.creation-form input[type="text"], .creation-form input[type="email"] {
+	padding: 10px;
+	border: 1px solid var(--writing-medium);
+	border-radius: 8px;
+	background-color: var(--background-form);
+	font-family: 'Lexend', sans-serif;
+	color: var(--writing-dark);
+	font-size: 1em;
+	width: 100%;
+	box-sizing: border-box;
+	height: 42px;
+}
+
+/* Style pour le menu déroulant du filtre de la pagination (admin_users) */
+.pagination-select-wrapper {
+	width: 135px;
+}
+
+.pagination-select-wrapper .select-selected {
+	height: 36px;
+	padding: 8px 10px;
+}
+
+.pagination-select-wrapper .select-selected:after {
+	top: 15px;
+}
+
+/* Style qui agrandit la largeur de la page de résultats */
+main#main-content {
+	max-width: 1500px;
+}
+
+/* Style qui permet au tableau des utilisateurs à prendre tout l'espace */
+#section-users .search-container, #section-users .result {
+	max-width: none;
+}
+
+/* Style qui évite le retour à la ligne */
+#section-users .user-cell-phone, #section-users .user-cell-date {
+	white-space: nowrap;
+}
+
+/* Style pour le conteneur de pagination (admin_users) */
+.pagination-controls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	margin-top: 20px;
+	flex-wrap: wrap;
+}
+
+.pagination-info, .pagination-total {
+	font-family: 'Lexend', sans-serif;
+	font-size: 0.9em;
+	color: var(--writing-medium);
+}
+
+/* Style pour les boutons de la pagination (admin_users) */
+.pagination-button {
+	padding: 8px 15px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	background-color: var(--background-button);
+	color: var(--background-card);
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pagination-button:hover {
+	background-color: var(--button-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pagination-button:disabled {
+	background-color: var(--writing-light);
+	color: var(--writing-medium);
+	cursor: not-allowed;
+	box-shadow: none;
+	transform: none;
+}
+
+
+/* ##### Code responsive ##### */
+@media (max-width: 768px) {
+	/* Pagination */
+	.pagination-controls {
+		flex-direction: column;
+		gap: 10px;
+	}
+	.pagination-button {
+		width: 100%;
+	}
+	/* Boutons d'action */
+	.actions-cell .action-top {
+		flex-direction: column;
+		width: 100%;
+	}
+	.actions-cell .action-bottom {
+		width: 100%;
+		margin-top: 10px;
+	}
+	.actions-cell button {
+		width: 100%;
+		margin-bottom: 5px;
+	}
+}

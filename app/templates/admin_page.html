@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Mots pour maux LM - Admin</title>
+
+	<!-- Liens pour les fichiers CSS -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/styles.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_page.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_prestations.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_users.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_create_user.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_reviews.css') }}">
+	<!-- Liens pour le favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
+	<link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest') }}">
+	<!-- Liens pour Google fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+	<!-- Lien pour l'icône de croix -->
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+		<header class="header">
+			<div class="logo-container">
+				<img class="logo" src="{{ url_for('static', filename='images/Logo Clair.png') }}" alt="Mots pour maux LM logo">
+			</div>
+			<div class="nav-container">
+				<nav id="nav-links" role="navigation" aria-label="Menu principal">
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+					<a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+					<a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+					<a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+					<a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+					<a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+					<a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+					<a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
+				</nav>
+			</div>
+		</header>
+
+		<main id="main-content" role="main" aria-labelledby="hero-title">
+			<div class="hero-box"><p id="hero-title">Page administrateur</p></div>
+			<hr class="line">
+
+			<div class="admin-layout">
+				<!-- Barre latérale -->
+				<aside class="admin-sidebar" role="navigation" aria-label="Menu d'administration">
+					<ul>
+						<li><button data-section="prestations">Gestion des Prestations</button></li>
+						<li><button data-section="users">Gestion des Utilisateurs</button></li>
+						<li><button data-section="create_user">Ajouter un utilisateur</button></li>
+						<li><button data-section="reviews">Gestion des Avis</button></li>
+						<li><button data-section="appointments">Gestion des Rendez-vous</button></li>
+					</ul>
+				</aside>
+
+				<!-- Contenu principal -->
+				<section class="admin-content">
+					<!-- ### Section Prestations ### -->
+					<section id="section-prestations" class="admin-section">
+						<!-- Champ de recherche avec menu déroulant inclus -->
+						<section class="search-container" aria-label="Gestion des prestations">
+							<div class="search-bar">
+								<!-- Menu déroulant -->
+								<div class="select-wrapper">
+									<div class="select-selected" id="admin-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les prestations">
+										Toutes les prestations
+									</div>
+									<div class="select-items select-hide" id="admin-select-items" role="listbox">
+										<div data-value="all">Toutes les prestations</div>
+										<div data-value="by-name">Prestation par nom</div>
+									</div>
+									<input type="hidden" id="search-type-select" value="all">
+								</div>
+
+								<!-- Champ de recherche si 'par nom' est sélectionné -->
+								<div class="search-field" id="search-by-name-container" style="display: none;">
+									<input type="text" id="search-name-input" placeholder="Entrez le nom à rechercher" aria-label="Nom de la prestation à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-name-button" class="search-button">Rechercher</button>
+								</div>
+							</div>
+						</section>
+
+						<!-- Tableau de résultat -->
+						<section class="result" aria-label="Résultats de la recherche">
+							<table class="result-table">
+								<thead>
+									<tr>
+										<th>Nom</th>
+										<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+									</tr>
+								</thead>
+								<tbody id="prestation-name-result">
+									<!-- Nom des prestations rentrées dynamiquement -->
+								</tbody>
+							</table>
+							<div id="prestation-loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+						</section>
+
+						<!-- Création d'une prestation -->
+						<section class="creation-container" aria-label="Créer une nouvelle prestation">
+							<h4>Créer une nouvelle prestation</h4>
+							<form class="creation-form" id="create-prestation-form">
+								<div class="creation-field">
+									<input type="text" id="creation" name="create-name" placeholder="Nom de la prestation" aria-label="Nom de la nouvelle prestation">
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="save-button-container">
+									<button id="create-prestation-button" class="save-button">Enregistrer</button>
+								</div>
+							</form>
+						</section>
+					</section>
+
+					<!-- ### Section Utilisateurs ### -->
+					<section id="section-users" class="admin-section" style="display:none;">
+						<!-- Champ de recherche avec menu déroulant inclus -->
+						<section class="search-container" aria-label="Gestion des utilisateurs">
+							<div class="search-bar">
+								<!-- Menu déroulant -->
+								<div class="select-wrapper">
+									<div class="select-selected" id="user-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les utilisateurs">
+										Tous les utilisateurs
+									</div>
+									<div class="select-items select-hide" id="user-select-items" role="listbox">
+										<div data-value="all">Tous les utilisateurs</div>
+										<div data-value="by-email">Utilisateur par email</div>
+										<div data-value="by-name">Utilisateur par nom</div>
+										<div data-value="by-firstname">Utilisateur par prénom</div>
+										<div data-value="by-phone">Utilisateur par numéro de téléphone</div>
+									</div>
+									<input type="hidden" id="user-search-type-select" value="all">
+								</div>
+
+								<!-- Champ de recherche si 'par email' est sélectionné -->
+								<div class="search-field" id="search-by-email-container" style="display: none;">
+									<input type="text" id="search-email-input" placeholder="Entrez l'email à rechercher" aria-label="Email de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-email-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par nom' est sélectionné -->
+								<div class="search-field" id="search-by-user-name-container" style="display: none;">
+									<input type="text" id="search-user-name-input" placeholder="Entrez le nom à rechercher" aria-label="Nom de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-user-name-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par prénom' est sélectionné -->
+								<div class="search-field" id="search-by-firstname-container" style="display: none;">
+									<input type="text" id="search-user-firstname-input" placeholder="Entrez le prénom à rechercher" aria-label="Prénom de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-user-firstname-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par téléphone' est sélectionné -->
+								<div class="search-field" id="search-by-phone-container" style="display: none;">
+									<input type="text" id="search-user-phone-input" placeholder="Entrez le numéro de téléphone à rechercher" aria-label="Téléphone de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="search-user-phone-button" class="search-button">Rechercher</button>
+								</div>
+							</div>
+						</section>
+
+						<!-- Tableau de résultat -->
+						<section class="result" aria-label="Résultats de la recherche">
+							<table class="result-table">
+								<thead>
+									<tr>
+										<th>Prénom</th>
+										<th>Nom</th>
+										<th>Email</th>
+										<th>Adresse</th>
+										<th>Téléphone</th>
+										<th>Date d'inscription</th>
+										<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+									</tr>
+								</thead>
+								<tbody id="user-name-result">
+									<!-- Utilisateurs rentrés dynamiquement -->
+								</tbody>
+							</table>
+							<div id="user-loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+						</section>
+					</section>
+
+					<!-- Section Création d'un Utilisateur -->
+					<section id="section-create_user" class="admin-section" style="display: none;">
+						<section class="create-user-container" aria-label="Créer un nouvel utilisateur">
+							<h4>Créer un nouvel utilisateur</h4>
+							<form class="creation-form" id="create-user-form">
+								<div class="creation-field">
+									<input type="text" id="new-user-firstname" name="first_name" placeholder="Prénom" required>
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="creation-field">
+									<input type="text" id="new-user-lastname" name="last_name" placeholder="Nom" required>
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="creation-field">
+									<input type="email" id="new-user-email" name="email" placeholder="Email" required>
+									<i class="bx bx-x clear-input-button"></i>
+								</div>
+								<div class="save-button-container">
+									<button id="create-user-button" class="save-button">Créer</button>
+								</div>
+							</form>
+						</section>
+					</section>
+
+					<!-- ### Section Avis ### -->
+					<section id="section-reviews" class="admin-section" style="display:none;">
+						<!-- Champ de recherche avec menu déroulant inclus -->
+						<section class="search-container" aria-label="Gestion des avis">
+							<div class="search-bar">
+								<!-- Menu déroulant -->
+								<div class="select-wrapper">
+									<div class="select-selected" id="review-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les avis">
+										Tous les avis
+									</div>
+									<div class="select-items select-hide" id="review-select-items" role="listbox">
+										<div data-value="all">Tous les avis</div>
+										<div data-value="by-user">Avis par utilisateur</div>
+										<div data-value="by-prestation">Avis par prestation</div>
+										<div data-value="by-prestation-and-user">Avis par prestation et utilisateur</div>
+									</div>
+									<input type="hidden" id="review-search-type-select" value="all">
+								</div>
+
+								<!-- Champ de recherche si 'par utilisateur' est sélectionné -->
+								<div class="search-field" id="search-by-user-container" style="display: none;">
+									<input type="text" id="search-user-input" placeholder="Entrez l'email à rechercher" aria-label="Nom de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="review-search-user-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par prestation' est sélectionné -->
+								<div class="search-field" id="search-by-prestation-container" style="display: none;">
+									<input type="text" id="search-prestation-input" placeholder="Entrez le nom de la prestation à rechercher" aria-label="Nom de la prestation à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="review-search-prestation-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par prestation et utilisateur' est sélectionné -->
+								<div class="search-field" id="search-by-prestation-and-user-container" style="display: none;">
+									<input type="text" id="search-prestation-and-user-input" placeholder="Entrez l'email de l'utilisateur, le nom de la prestation à rechercher" aria-label="Prestation et utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="review-search-prestation-and-user-button" class="search-button">Rechercher</button>
+								</div>
+							</div>
+						</section>
+
+							<!-- Tableau de résultat -->
+						<section class="result" aria-label="Résultats de la recherche">
+							<table class="result-table">
+								<thead>
+									<tr>
+										<th>Email</th>
+										<th>Prénom et Nom</th>
+										<th>Note</th>
+										<th>Avis</th>
+										<th>Date de création</th>
+										<th>Prestation</th>
+										<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+									</tr>
+								</thead>
+								<tbody id="review-result">
+									<!-- Avis rentrés dynamiquement -->
+								</tbody>
+							</table>
+							<div id="review-loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+						</section>
+					</section>
+
+					<!-- ### Section Rendez-vous ### -->
+					<section id="section-appointments" class="admin-section" style="display:none;">
+						<!-- A compléter -->
+					</section>
+				</section>
+			</div>
+
+		</main>
+
+		<!-- Modale pour le message de confirmation -->
+		<div id="confirmation-modal-overlay" class="modal-overlay" style="display: none;">
+			<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+				<h4 id="modal-title">Confirmation requise</h4>
+				<p id="modal-message">Voulez-vous vraiment continuer?</p>
+				<div class="modal-buttons">
+					<button id="modal-cancel-button" class="modal-button cancel-button">Annuler</button>
+					<button id="modal-confirm-button" class="modal-button confirm-button">Confirmer</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Liens pour les fichiers JS -->
+        <script src="{{ url_for('static', filename='js_files/admin_page.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_prestations.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_users.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_reviews.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_appointments.js') }}" defer></script>
+		<script src="{{ url_for('static', filename='js_files/admin_create_user.js') }}" defer></script>
+
+		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
+
+		<hr class="line">
+		<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+			<div class="footer-content">
+			<span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
+			<a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+			</div>
+		</footer>
+
+</body>
+</html>

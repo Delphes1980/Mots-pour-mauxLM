@@ -51,3 +51,47 @@ class UserRepository(BaseRepository):
         except SQLAlchemyError:
             self.db.session.rollback()
             raise ValueError("Erreur lors de la création de l'utilisateur.")
+
+    def admin_create_user(self, first_name, last_name, email, address=None, phone_number=None, is_admin=False, password=None):
+        try:
+            # Valider les données
+            first_name = name_validation(first_name, 'first_name')
+            last_name = name_validation(last_name, 'last_name')
+            email = email_validation(email)
+            address = address_validation(address)
+            phone_number = validate_phone_number(phone_number)
+
+            # Vérifier si l'utilisateur existe déjà
+            existing_user = self.get_by_attribute("email", email)
+            if existing_user:
+                raise ValueError("Un utilisateur avec cet email existe déjà.")
+            
+            # Utiliser un mot de passe temporaire généré
+            if not password:
+                raise ValueError("Mot de passe temporaire manquant pour la création admin")
+            password = validate_password(password)
+
+            # Créer un nouvel utilisateur
+            new_user = User(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password=password,
+                address=address,
+                phone_number=phone_number,
+                is_admin=is_admin
+            )
+            self.db.session.add(new_user)
+            self.db.session.commit()
+            return new_user
+        except SQLAlchemyError:
+            self.db.session.rollback()
+            raise ValueError("Erreur lors de la création de l'utilisateur.")
+
+    def search_by_email_fragment(self, fragment):
+        """Recherche des utilisateurs dont l'email contient le fragment"""
+        try:
+            return self.db.session.query(User).filter(User.email.ilike(f'%{fragment}%')).all()
+        except SQLAlchemyError:
+            self.db.session.rollback()
+            raise ValueError("Erreur lors de la recherche d'utilisateur par email.")
