@@ -1,9 +1,9 @@
 from app.persistence.AppointmentRepository import AppointmentRepository
 from app.persistence.UserRepository import UserRepository
 from app.persistence.PrestationRepository import PrestationRepository
-from app.models.appointment import Appointment
+from app.models.appointment import Appointment, AppointmentStatus
 from app.utils import (text_field_validation, validate_entity_id, CustomError)
-from app.services.mail_service import send_appointment_notifications
+from app.services.mail_service import send_appointment_notifications, send_appointment_status_notification
 from flask import current_app
 
 class AppointmentService:
@@ -54,6 +54,7 @@ class AppointmentService:
 
 		new_appointment = self.appointment_repository.create_appointment(message, user, prestation)
 
+		# Notification Email
 		practitioner_email = current_app.config.get("MAIL_RECIPIENT_PRACTITIONER")
 
 		if practitioner_email:
@@ -225,3 +226,96 @@ class AppointmentService:
 		self.appointment_repository.db.session.commit()
 
 		return reassigned_appointments
+
+	def update_appointment_status(self, appointment_id, **kwargs):
+		"""Update the status of an appointment
+		
+		Args:
+			appointment_id (str): The ID of the appointment
+			**kwargs: Appointment data (message, user_id, prestation_id, status)
+
+		Returns:
+			Appointment: The udpated appointment
+
+		Raises:
+			CustomError: If the IDs are invalid(400) or if the appointment is not found(404)
+		"""
+		try:
+			# Vérifier l'ID du RDV
+			appointment_id = validate_entity_id(appointment_id, 'appointment_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
+
+		# Récupération du RDV
+		appointment = self.appointment_repository.get_by_id(appointment_id)
+		if not appointment:
+			raise CustomError("Rendez-vous non trouvé", 404)
+		
+		# Vérification de l'utilisateur
+		user_id = appointment.user_id
+		try:
+			try:
+				validate_entity_id(user_id, 'user_id')
+			except (ValueError, TypeError) as e:
+				raise CustomError(str(e), 400)
+		
+			user = self.user_repository.get_by_id(user_id)
+			if not user:
+				raise CustomError("Utilisateur lié au rendez-vous introuvable", 404)
+		
+		except Exception as e:
+			raise CustomError(f"Erreur lors de la récupération de l'utilisateur lié au rendez-vous: {e}", 500)
+
+		# Vérification de la prestation
+		prestation_id = appointment.prestation_id
+		try:
+			try:
+				validate_entity_id(prestation_id, 'prestation_id')
+			except (ValueError, TypeError) as e:
+				raise CustomError(str(e), 400)
+		
+			prestation = self.prestation_repository.get_by_id(prestation_id)
+			if not prestation:
+				raise CustomError("Prestation introuvable", 404)
+			
+		except Exception as e:
+			raise CustomError(f"Erreur lors de la récupération de la prestation liée au rendez-vous: {e}", 500)
+
+		# Extraction et validation du nouveau status
+		new_status = kwargs.get('status')
+		if not new_status:
+			raise CustomError("Le champ 'status' est requis", 400)
+
+		allowed = [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED, AppointmentStatus.CANCELLED, AppointmentStatus.COMPLETED]
+
+		if new_status not in allowed:
+			raise CustomError("Statut de rendez-vous invalide", 400)
+
+		try:
+			update_data = {'status': new_status}
+
+			updated_appointment = self.appointment_repository.update(appointment_id, **update_data)
+
+			if new_status in [AppointmentStatus.CONFIRMED, AppointmentStatus.CANCELLED]:
+				try:
+					message = appointment.message
+
+					context = {
+						'user_full_name' : f"{user.first_name} {user.last_name}",
+						'prestation_name' : prestation.name,
+						'message' : message,
+						'status' : new_status
+					}
+
+					send_appointment_status_notification(
+						user_email=user.email,
+						**context
+					)
+
+				except Exception as e:
+					print(f"Erreur lors de l'envoi de l'email de statut pour le RDV {appointment.id}: {e}")
+
+			return updated_appointment
+
+		except Exception as e:
+			raise CustomError(f"Erreur lors de la mise à jour du status du rendez-vous: {e}", 500)

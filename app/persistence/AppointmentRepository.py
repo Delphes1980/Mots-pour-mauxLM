@@ -39,8 +39,8 @@ class AppointmentRepository(BaseRepository):
 
             # Créer un nouveau rendez-vous
             new_appointment = Appointment(
-                message=message, 
                 user=user,
+                message=message,
                 prestation=prestation
             )
             self.db.session.add(new_appointment)

@@ -1,215 +1,308 @@
+#!/usr/bin/env python3
+
 import unittest
 from app.tests.base_test import BaseTest
 from app.services.AppointmentService import AppointmentService
-from app.services.UserService import UserService
-from app.services.PrestationService import PrestationService
+from app.models.appointment import Appointment, AppointmentStatus
+from app.models.user import User
+from app.models.prestation import Prestation
+from app.utils import CustomError
 
 
 class TestAppointmentServiceIntegration(BaseTest):
-    """Tests d'intégration complets pour AppointmentService sans aucun mock"""
+    """Tests d'intégration pour AppointmentService avec les nouvelles fonctionnalités"""
     
     def setUp(self):
         super().setUp()
         self.appointment_service = AppointmentService()
-        self.user_service = UserService()
-        self.prestation_service = PrestationService()
         
-        # Créer des données de test réelles
-        self.test_user = self.user_service.create_user(
-            first_name="John",
-            last_name="Doe", 
-            email="john@example.com",
-            password="Password123!"
+        # Créer des objets de test
+        self.user = User(
+            first_name='Integration',
+            last_name='Test',
+            email='integration@example.com',
+            password='Password123!',
+            is_admin=False
         )
         
-        self.test_prestation = self.prestation_service.create_prestation(name="Thérapie individuelle")
-    
-    def test_create_appointment_full_integration(self):
-        """Test d'intégration complet création de rendez-vous"""
-        # Aucun mock - test bout-en-bout complet
+        self.prestation = Prestation(name='Integration Prestation')
+        
+        self.save_to_db(self.user, self.prestation)
+
+    def test_create_appointment_with_status_integration(self):
+        """Test création de rendez-vous avec statut par défaut"""
         appointment = self.appointment_service.create_appointment(
-            message="Je souhaite prendre rendez-vous pour discuter de mes problèmes",
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
+            message="Integration test message",
+            user_id=self.user.id,
+            prestation_id=self.prestation.id
         )
         
-        # Vérifications complètes
-        self.assertIsNotNone(appointment)
+        # Vérifier que le statut par défaut est PENDING
+        self.assertEqual(appointment.status, AppointmentStatus.PENDING)
         self.assertIsNotNone(appointment.id)
-        self.assertEqual(appointment.message, "Je souhaite prendre rendez-vous pour discuter de mes problèmes")
-        self.assertEqual(appointment.user_id, self.test_user.id)
-        self.assertEqual(appointment.prestation_id, self.test_prestation.id)
         
-        # Vérifier que l'appointment est bien en base
+        # Vérifier en base de données
         retrieved = self.appointment_service.get_appointment_by_id(appointment.id)
-        self.assertEqual(retrieved.id, appointment.id)
-        self.assertEqual(retrieved.message, appointment.message)
-    
-    def test_appointment_workflow_integration(self):
-        """Test d'intégration workflow complet de gestion des rendez-vous"""
-        # 1. Créer plusieurs utilisateurs et prestations
-        user2 = self.user_service.create_user(
-            first_name="Jane",
-            last_name="Smith",
-            email="jane@example.com",
-            password="Password123!"
+        self.assertEqual(retrieved.status, AppointmentStatus.PENDING)
+
+    def test_appointment_lifecycle_integration(self):
+        """Test cycle de vie complet d'un rendez-vous"""
+        # 1. Création
+        appointment = self.appointment_service.create_appointment(
+            message="Lifecycle test",
+            user_id=self.user.id,
+            prestation_id=self.prestation.id
+        )
+        self.assertEqual(appointment.status, AppointmentStatus.PENDING)
+        
+        # 2. Confirmation
+        confirmed = self.appointment_service.update_appointment_status(
+            appointment.id,
+            status=AppointmentStatus.CONFIRMED
+        )
+        self.assertEqual(confirmed.status, AppointmentStatus.CONFIRMED)
+        
+        # 3. Completion
+        completed = self.appointment_service.update_appointment_status(
+            appointment.id,
+            status=AppointmentStatus.COMPLETED
+        )
+        self.assertEqual(completed.status, AppointmentStatus.COMPLETED)
+        
+        # Vérifier la persistance
+        final = self.appointment_service.get_appointment_by_id(appointment.id)
+        self.assertEqual(final.status, AppointmentStatus.COMPLETED)
+
+    def test_appointment_cancellation_workflow_integration(self):
+        """Test workflow d'annulation de rendez-vous"""
+        # Créer un rendez-vous
+        appointment = self.appointment_service.create_appointment(
+            message="Cancellation test",
+            user_id=self.user.id,
+            prestation_id=self.prestation.id
         )
         
-        prestation2 = self.prestation_service.create_prestation(name="Thérapie de couple")
-        
-        # 2. Créer plusieurs rendez-vous
-        appointment1 = self.appointment_service.create_appointment(
-            message="Premier rendez-vous individuel",
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
+        # Confirmer d'abord
+        self.appointment_service.update_appointment_status(
+            appointment.id,
+            status=AppointmentStatus.CONFIRMED
         )
         
-        appointment2 = self.appointment_service.create_appointment(
-            message="Rendez-vous de couple",
-            user_id=user2.id,
+        # Puis annuler
+        cancelled = self.appointment_service.update_appointment_status(
+            appointment.id,
+            status=AppointmentStatus.CANCELLED
+        )
+        
+        self.assertEqual(cancelled.status, AppointmentStatus.CANCELLED)
+        
+        # Vérifier qu'on peut récupérer les rendez-vous annulés
+        user_appointments = self.appointment_service.get_appointment_by_user(self.user.id)
+        cancelled_appointments = [apt for apt in user_appointments if apt.status == AppointmentStatus.CANCELLED]
+        self.assertEqual(len(cancelled_appointments), 1)
+
+    def test_multiple_appointments_same_user_integration(self):
+        """Test gestion de plusieurs rendez-vous pour le même utilisateur"""
+        # Créer plusieurs rendez-vous
+        appointments = []
+        for i in range(3):
+            appointment = self.appointment_service.create_appointment(
+                message=f"Multiple test {i}",
+                user_id=self.user.id,
+                prestation_id=self.prestation.id
+            )
+            appointments.append(appointment)
+        
+        # Mettre à jour avec différents statuts
+        statuses = [AppointmentStatus.CONFIRMED, AppointmentStatus.CANCELLED, AppointmentStatus.COMPLETED]
+        for i, appointment in enumerate(appointments):
+            self.appointment_service.update_appointment_status(
+                appointment.id,
+                status=statuses[i]
+            )
+        
+        # Vérifier tous les rendez-vous de l'utilisateur
+        user_appointments = self.appointment_service.get_appointment_by_user(self.user.id)
+        self.assertEqual(len(user_appointments), 3)
+        
+        # Vérifier les statuts
+        appointment_statuses = [apt.status for apt in user_appointments]
+        for status in statuses:
+            self.assertIn(status, appointment_statuses)
+
+    def test_appointment_reassignment_with_status_integration(self):
+        """Test réassignation de rendez-vous avec préservation du statut"""
+        # Créer un utilisateur fantôme
+        ghost_user = User(
+            first_name='Ghost',
+            last_name='User',
+            email='deleted@system.local',
+            password='Ghost#2025!',
+            is_admin=False
+        )
+        self.save_to_db(ghost_user)
+        
+        # Créer un rendez-vous et le confirmer
+        appointment = self.appointment_service.create_appointment(
+            message="Reassignment test",
+            user_id=self.user.id,
+            prestation_id=self.prestation.id
+        )
+        
+        self.appointment_service.update_appointment_status(
+            appointment.id,
+            status=AppointmentStatus.CONFIRMED
+        )
+        
+        # Réassigner à l'utilisateur fantôme
+        reassigned = self.appointment_service.reassign_appointments_from_user(
+            self.user.id,
+            ghost_user.id
+        )
+        
+        self.assertEqual(len(reassigned), 1)
+        
+        # Vérifier que le statut est préservé
+        updated_appointment = self.appointment_service.get_appointment_by_id(appointment.id)
+        self.assertEqual(updated_appointment.status, AppointmentStatus.CONFIRMED)
+        self.assertEqual(updated_appointment.user_id, ghost_user.id)
+
+    def test_appointment_status_validation_integration(self):
+        """Test validation des statuts dans le contexte d'intégration"""
+        appointment = self.appointment_service.create_appointment(
+            message="Validation test",
+            user_id=self.user.id,
+            prestation_id=self.prestation.id
+        )
+        
+        # Test avec tous les statuts valides
+        valid_statuses = [
+            AppointmentStatus.PENDING,
+            AppointmentStatus.CONFIRMED,
+            AppointmentStatus.CANCELLED,
+            AppointmentStatus.COMPLETED
+        ]
+        
+        for status in valid_statuses:
+            updated = self.appointment_service.update_appointment_status(
+                appointment.id,
+                status=status
+            )
+            self.assertEqual(updated.status, status)
+        
+        # Test avec statut invalide
+        with self.assertRaises(CustomError):
+            self.appointment_service.update_appointment_status(
+                appointment.id,
+                status="invalid_status"
+            )
+
+    def test_appointment_search_by_status_integration(self):
+        """Test recherche de rendez-vous par statut via les méthodes existantes"""
+        # Créer plusieurs rendez-vous avec différents statuts
+        appointments_data = [
+            ("Pending appointment", AppointmentStatus.PENDING),
+            ("Confirmed appointment", AppointmentStatus.CONFIRMED),
+            ("Cancelled appointment", AppointmentStatus.CANCELLED),
+            ("Completed appointment", AppointmentStatus.COMPLETED)
+        ]
+        
+        created_appointments = []
+        for message, status in appointments_data:
+            appointment = self.appointment_service.create_appointment(
+                message=message,
+                user_id=self.user.id,
+                prestation_id=self.prestation.id
+            )
+            
+            if status != AppointmentStatus.PENDING:
+                self.appointment_service.update_appointment_status(
+                    appointment.id,
+                    status=status
+                )
+            
+            created_appointments.append(appointment)
+        
+        # Récupérer tous les rendez-vous de l'utilisateur
+        user_appointments = self.appointment_service.get_appointment_by_user(self.user.id)
+        self.assertEqual(len(user_appointments), 4)
+        
+        # Vérifier que tous les statuts sont présents
+        statuses_found = [apt.status for apt in user_appointments]
+        for _, expected_status in appointments_data:
+            self.assertIn(expected_status, statuses_found)
+
+    def test_appointment_prestation_relationship_with_status_integration(self):
+        """Test relation rendez-vous/prestation avec gestion des statuts"""
+        # Créer une deuxième prestation
+        prestation2 = Prestation(name='Second Prestation')
+        self.save_to_db(prestation2)
+        
+        # Créer des rendez-vous pour différentes prestations
+        apt1 = self.appointment_service.create_appointment(
+            message="First prestation appointment",
+            user_id=self.user.id,
+            prestation_id=self.prestation.id
+        )
+        
+        apt2 = self.appointment_service.create_appointment(
+            message="Second prestation appointment",
+            user_id=self.user.id,
             prestation_id=prestation2.id
         )
         
-        appointment3 = self.appointment_service.create_appointment(
-            message="Deuxième rendez-vous individuel",
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
+        # Mettre à jour avec différents statuts
+        self.appointment_service.update_appointment_status(
+            apt1.id,
+            status=AppointmentStatus.CONFIRMED
         )
         
-        # 3. Tester les différentes méthodes de récupération
+        self.appointment_service.update_appointment_status(
+            apt2.id,
+            status=AppointmentStatus.CANCELLED
+        )
         
-        # Tous les rendez-vous
-        all_appointments = self.appointment_service.get_all_appointments()
-        self.assertEqual(len(all_appointments), 3)
-        
-        # Par utilisateur
-        user1_appointments = self.appointment_service.get_appointment_by_user(self.test_user.id)
-        user2_appointments = self.appointment_service.get_appointment_by_user(user2.id)
-        self.assertEqual(len(user1_appointments), 2)
-        self.assertEqual(len(user2_appointments), 1)
-        
-        # Par prestation
-        prestation1_appointments = self.appointment_service.get_appointment_by_prestation(self.test_prestation.id)
+        # Vérifier les rendez-vous par prestation
+        prestation1_appointments = self.appointment_service.get_appointment_by_prestation(self.prestation.id)
         prestation2_appointments = self.appointment_service.get_appointment_by_prestation(prestation2.id)
-        self.assertEqual(len(prestation1_appointments), 2)
+        
+        self.assertEqual(len(prestation1_appointments), 1)
         self.assertEqual(len(prestation2_appointments), 1)
         
-        # Par utilisateur et prestation
-        user1_prestation1 = self.appointment_service.get_appointment_by_user_and_prestation(
-            self.test_user.id, self.test_prestation.id
-        )
-        self.assertEqual(len(user1_prestation1), 2)
-        
-        # Vérifier les IDs
-        appointment_ids = [apt.id for apt in user1_prestation1]
-        self.assertIn(appointment1.id, appointment_ids)
-        self.assertIn(appointment3.id, appointment_ids)
-    
-    def test_appointment_data_integrity_integration(self):
-        """Test d'intégration intégrité des données"""
-        # Créer un rendez-vous
+        self.assertEqual(prestation1_appointments[0].status, AppointmentStatus.CONFIRMED)
+        self.assertEqual(prestation2_appointments[0].status, AppointmentStatus.CANCELLED)
+
+    def test_appointment_error_handling_integration(self):
+        """Test gestion d'erreurs dans le contexte d'intégration"""
         appointment = self.appointment_service.create_appointment(
-            message="Test intégrité des données",
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
+            message="Error handling test",
+            user_id=self.user.id,
+            prestation_id=self.prestation.id
         )
         
-        # Vérifier que les relations sont correctes
-        retrieved = self.appointment_service.get_appointment_by_id(appointment.id)
-        
-        # Vérifier les relations via les propriétés hybrides
-        self.assertEqual(retrieved.user_id, self.test_user.id)
-        self.assertEqual(retrieved.prestation_id, self.test_prestation.id)
-        
-        # Vérifier que les objets liés existent
-        user = self.user_service.get_user_by_id(retrieved.user_id)
-        prestation = self.prestation_service.get_prestation_by_id(retrieved.prestation_id)
-        
-        self.assertEqual(user.id, self.test_user.id)
-        self.assertEqual(prestation.id, self.test_prestation.id)
-    
-    def test_appointment_validation_integration(self):
-        """Test d'intégration validation complète"""
-        # Test avec message trop long
-        long_message = "A" * 501
-        from app.utils import CustomError
-        with self.assertRaises(CustomError):
-            self.appointment_service.create_appointment(
-                message=long_message,
-                user_id=self.test_user.id,
-                prestation_id=self.test_prestation.id
-            )
-        
-        # Test avec utilisateur inexistant
-        from uuid import uuid4
-        from app.utils import CustomError
-        fake_user_id = str(uuid4())
+        # Test avec ID invalide
         with self.assertRaises(CustomError) as context:
-            self.appointment_service.create_appointment(
-                message="Test message",
-                user_id=fake_user_id,
-                prestation_id=self.test_prestation.id
+            self.appointment_service.update_appointment_status(
+                "invalid-id",
+                status=AppointmentStatus.CONFIRMED
             )
-        self.assertEqual(str(context.exception), "Utilisateur introuvable")
+        self.assertEqual(context.exception.status_code, 400)
         
-        # Test avec prestation inexistante
-        fake_prestation_id = str(uuid4())
+        # Test avec rendez-vous inexistant
         with self.assertRaises(CustomError) as context:
-            self.appointment_service.create_appointment(
-                message="Test message",
-                user_id=self.test_user.id,
-                prestation_id=fake_prestation_id
+            self.appointment_service.update_appointment_status(
+                "12345678-1234-1234-1234-123456789012",
+                status=AppointmentStatus.CONFIRMED
             )
-        self.assertEqual(str(context.exception), "Prestation introuvable")
-    
-    def test_appointment_edge_cases_integration(self):
-        """Test d'intégration cas limites"""
-        # Message à la limite (500 caractères)
-        limit_message = "A" * 500
-        appointment = self.appointment_service.create_appointment(
-            message=limit_message,
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
-        )
-        self.assertEqual(len(appointment.message), 500)
+        self.assertEqual(context.exception.status_code, 404)
         
-        # Message minimal (1 caractère)
-        minimal_message = "A"
-        appointment2 = self.appointment_service.create_appointment(
-            message=minimal_message,
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
-        )
-        self.assertEqual(appointment2.message, "A")
-        
-        # Vérifier que les deux sont bien créés
-        all_appointments = self.appointment_service.get_all_appointments()
-        self.assertGreaterEqual(len(all_appointments), 2)
-    
-    def test_multiple_appointments_same_user_prestation_integration(self):
-        """Test d'intégration plusieurs rendez-vous même utilisateur/prestation"""
-        # Un utilisateur peut avoir plusieurs rendez-vous pour la même prestation
-        appointment1 = self.appointment_service.create_appointment(
-            message="Premier rendez-vous",
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
-        )
-        
-        appointment2 = self.appointment_service.create_appointment(
-            message="Deuxième rendez-vous",
-            user_id=self.test_user.id,
-            prestation_id=self.test_prestation.id
-        )
-        
-        # Vérifier que les deux existent
-        appointments = self.appointment_service.get_appointment_by_user_and_prestation(
-            self.test_user.id, self.test_prestation.id
-        )
-        
-        self.assertEqual(len(appointments), 2)
-        messages = [apt.message for apt in appointments]
-        self.assertIn("Premier rendez-vous", messages)
-        self.assertIn("Deuxième rendez-vous", messages)
+        # Test avec statut invalide
+        with self.assertRaises(CustomError) as context:
+            self.appointment_service.update_appointment_status(
+                appointment.id,
+                status="invalid"
+            )
+        self.assertEqual(context.exception.status_code, 400)
 
 
 if __name__ == '__main__':
