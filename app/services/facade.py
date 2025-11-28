@@ -106,6 +106,9 @@ class Facade:
     
     def update_appointment_status(self, appointment_id, **kwargs):
         return self.appointment_service.update_appointment_status(appointment_id, **kwargs)
+    
+    def delete_appointment(self, appointment_id):
+        return self.appointment_service.delete_appointment(appointment_id)
 
     # Prestation CRUD operations
     def create_prestation(self, **kwargs):

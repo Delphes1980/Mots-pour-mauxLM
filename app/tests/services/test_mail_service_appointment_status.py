@@ -36,7 +36,7 @@ class TestMailServiceAppointmentStatus(BaseTest):
         
         self.assertIsInstance(sent_message, Message)
         self.assertIn('john@example.com', sent_message.recipients)
-        self.assertIn('confirmé', sent_message.subject)
+        self.assertIn('Confirmation', sent_message.subject)
         self.assertIn('John Doe', sent_message.body)
         self.assertIn('Massage Relaxant', sent_message.body)
         self.assertIn('Je souhaite un rendez-vous', sent_message.body)
@@ -158,7 +158,7 @@ class TestMailServiceAppointmentStatus(BaseTest):
         
         # Vérifier le sujet
         self.assertIn('Hypnose Thérapeutique', sent_message.subject)
-        self.assertIn('confirmé', sent_message.subject)
+        self.assertIn('Confirmation', sent_message.subject)
         
         # Vérifier le contenu du corps
         body = sent_message.body

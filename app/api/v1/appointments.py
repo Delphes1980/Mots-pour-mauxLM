@@ -316,3 +316,37 @@ class Appointment(Resource):
             api.abort(400, str(e))
         except Exception as e:
             api.abort(500, error=str(e))
+
+
+    @api.doc('Delete an appointment')
+    @api.marshal_with(msg_model, code=_http.HTTPStatus.OK, description='Appointment deleted successfully')
+    @jwt_required()
+    @api.response(200, 'Rendez-vous supprimé avec succès', msg_model)
+    @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
+    @api.response(404, 'Le rendez-vous n\'a pas été trouvé', error_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def delete(self, appointment_id):
+        """Supprimer un rendez-vous"""
+        current_user = get_jwt()
+
+        # Vérifier que l'utilisateur a les droits admin
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        try:
+            validate_entity_id(appointment_id, 'appointment_id')
+
+            appointment = facade.get_appointment_by_id(appointment_id)
+            if not appointment:
+                api.abort(404, error='Le rendez-vous n\'a pas été trouvé')
+
+            facade.delete_appointment(appointment_id)
+            return {'message': 'Rendez-vous supprimé avec succès'}, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except ValueError as e:
+            api.abort(400, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))

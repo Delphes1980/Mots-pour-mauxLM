@@ -319,3 +319,26 @@ class AppointmentService:
 
 		except Exception as e:
 			raise CustomError(f"Erreur lors de la mise à jour du status du rendez-vous: {e}", 500)
+
+	def delete_appointment(self, appointment_id):
+		"""Delete an appointment by its ID
+
+		Args:
+			appointment_id (str): The ID of the appointment to delete
+
+		Returns:
+			bool: True if the appointment was deleted, False otherwise
+
+		Raises:
+			CustomError: if the ID is invalid(400) or if the appointment is not found(404)
+		"""
+		try:
+			appointment_id = validate_entity_id(appointment_id, 'appointment_id')
+		except (ValueError, TypeError) as e:
+			raise CustomError(str(e), 400)
+
+		appointment = self.appointment_repository.get_by_id(appointment_id)
+		if not appointment:
+			raise CustomError("Rendez-vous non trouvé", 404)
+
+		return self.appointment_repository.delete(appointment_id)
