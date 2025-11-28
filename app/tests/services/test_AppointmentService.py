@@ -438,7 +438,7 @@ class TestAppointmentServiceSimple(BaseTest):
             
             # Deuxième appel (email utilisateur)
             user_message = calls[1][0][0]
-            self.assertIn("Confirmation", user_message.subject)
+            self.assertIn("Accusé de réception", user_message.subject)
             self.assertIn("John", user_message.body)
             self.assertIn("Mélanie Laborda", user_message.body)
             self.assertEqual(user_message.recipients, ["john@example.com"])
