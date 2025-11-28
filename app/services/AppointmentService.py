@@ -188,6 +188,31 @@ class AppointmentService:
 			raise CustomError("Rendez-vous non trouvés pour cet utilisateur et cette prestation", 404)
 
 		return appointment
+	
+	def get_appointments_by_status(self, status):
+		"""Get appointments by status
+
+		Args:
+			status (str): The status of the appointment
+
+		Returns:
+			list: List of appointments for the given status
+
+		Raises:
+			CustomError: if the status is invalid(400) or if the appointment is not found(404)
+		"""
+		if not status:
+			raise CustomError("Le status du rendez-vous est requis", 400)
+
+		allowed = [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED, AppointmentStatus.CANCELLED, AppointmentStatus.COMPLETED]
+		if status not in allowed:
+			raise CustomError("Statut de rendez-vous invalide", 400)
+
+		appointments = self.appointment_repository.get_appointments_by_status(status)
+		if not appointments:
+			raise CustomError("Aucun rendez-vous trouvé", 404)
+
+		return appointments
 
 	def reassign_appointments_from_user(self, old_user_id, new_user_id):
 		"""Reassign appointments from an old user to a new user

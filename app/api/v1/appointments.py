@@ -4,7 +4,7 @@ from app.utils import (compare_data_and_model, CustomError, text_field_validatio
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services.mail_service import send_appointment_notifications
 from app.models.appointment import AppointmentStatus
-from flask import current_app
+from flask import request
 
 
 # Créer une instance de façade
@@ -129,6 +129,41 @@ class AppointmentList(Resource):
             api.abort(e.status_code, error=str(e))
         except Exception as e:
             api.abort(500, error=str(e))
+
+
+@api.route('/search')
+class AppointmentSearch(Resource):
+    @api.doc('Get appointment by status', params={'status': 'Le statut du rendez-vous à rechercher'})
+    @api.marshal_list_with(admin_appointment_response_model, code=_http.HTTPStatus.OK, description='Appointments retrieved successfully')
+    @jwt_required()
+    @api.response(200, 'Rendez-vous récupérés avec succès', admin_appointment_response_model)
+    @api.response(404, 'Rendez-vous non trouvés', error_model)
+    @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def get(self):
+        """Récupérer des rendez-vous par statut"""
+        status = request.args.get('status')
+        if not status:
+            api.abort(400, error='Le statut du rendez-vous est requis')
+
+        if status not in allowed_statuses:
+            api.abort(400, error="Le statut doit être l'un des suivants : " + ", ".join(allowed_statuses))
+
+        current_user = get_jwt()
+
+        # Vérifier que l'utilisateur a les droits admin
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        try:
+            appointments = facade.get_appointments_by_status(status)
+            return appointments, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(400, error=str(e))
 
 
 @api.route('/prestation/<prestation_id>')
