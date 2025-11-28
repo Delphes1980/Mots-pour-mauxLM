@@ -69,6 +69,10 @@ class AppointmentRepository(BaseRepository):
             _user_id=user_id
         ).all()
 
+    def get_appointments_by_status(self, status):
+        """Récupérer les rendez-vous par statut"""
+        return self.db.session.query(self.model_class).filter_by(_status=status).all()
+
     def reassign_appointments_from_user(self, old_user_id, new_user_id):
         """Réassigner les rendez-vous d'un utilisateur supprimé à un utilisateur fantôme, pour pouvoir supprimer l'utilisateur"""
         # Vérifier la validité des identifiants
