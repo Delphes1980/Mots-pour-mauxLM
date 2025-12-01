@@ -167,7 +167,8 @@
 .cancel-edit-button,
 .reset-pass-button,
 .user-save-edit-button,
-.user-cancel-edit-button {
+.user-cancel-edit-button,
+.status-edit-button {
 	padding: 5px 10px;
 	font-size: 0.8em;
 	border: none;
@@ -178,7 +179,7 @@
 }
 
 /* Style pour le bouton 'Modifier' */
-.modify-button {
+.modify-button, .status-edit-button {
 	background-color: var(--button-hover);
 	color: var(--background-card);
 }
