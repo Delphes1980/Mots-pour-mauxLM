@@ -39,13 +39,28 @@ appointment_response_model = api.model('AppointmentReponse', {
     'prestation_id': fields.String(attribute=lambda appointment: f"{appointment.prestation_id}", required=True, description='L\'ID de la prestation associée au rendez-vous')
 })
 
+# Définir le modèle de données pour le nom de la prestation liée à l'avis
+prestation_details_model = api.model('PrestationDetails', {
+	'id': fields.String(required=True, description='ID de la prestation'),
+	'name': fields.String(required=True, description='Le nom de la prestation')
+})
+
+# Définir le modèle de données pour l'utilisateur pour l'admin
+user_admin_details_model = api.model('UserAdminDetails', {
+	'id': fields.String(required=True, description='ID de l\'utilisateur'),
+	'first_name': fields.String(required=True, description='Le prénom de l\'utilisateur'),
+	'last_name': fields.String(required=True, description='Le nom de l\'utilisateur'),
+	'email': fields.String(required=True, description='L\'email de l\'utilisateur')
+})
+
 # Définir le modèle de données pour la réponse pour l'admin
 admin_appointment_response_model = api.model('AdminAppointmentResponse', {
     'id': fields.String(required=True, description='ID du rendez-vous'),
     'message': fields.String(required=True, description='Le message du rendez-vous'),
     'status': fields.String(required=True, description='Le statut du rendez-vous'),
-    'prestation_id': fields.String(attribute=lambda appointment: f"{appointment.prestation_id}", required=True, description='L\'ID de la prestation associée au rendez-vous'),
-    'user_id': fields.String(attribute=lambda appointment: f"{appointment.user_id}", required=True, description='L\'ID de l\'utilisateur associé au rendez-vous')
+    'created_at': fields.DateTime(description='Date de création'),
+    'prestation': fields.Nested(prestation_details_model, description='Les détails de la prestation associée au rendez-vous'),
+    'user': fields.Nested(user_admin_details_model, description='Les détatils de l\'utilisateur associé au rendez-vous')
 })
 
 # Définir le modèle de données pour l'erreur

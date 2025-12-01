@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_users.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_create_user.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_reviews.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/admin_appointments.css') }}">
 	<!-- Liens pour le favicon -->
 	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
 	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
@@ -284,7 +285,83 @@
 
 					<!-- ### Section Rendez-vous ### -->
 					<section id="section-appointments" class="admin-section" style="display:none;">
-						<!-- A compléter -->
+						<!-- Champ de recherche avec menu déroulant inclus -->
+						<section class="search-container" aria-label="Gestion des rendez-vous">
+							<div class="search-bar">
+								<!-- Menu déroulant -->
+								<div class="select-wrapper">
+									<div class="select-selected" id="appointment-select-selected" tabindex="0" role="combobox" aria-label="Filtrer les rendez-vous">
+										Tous les rendez-vous
+									</div>
+									<div class="select-items select-hide" id="appointment-select-items" role="listbox">
+										<div data-value="all">Tous les rendez-vous</div>
+										<div data-value="by-prestation">Rendez-vous par prestation</div>
+										<div data-value="by-user">Rendez-vous par utilisateur</div>
+										<div data-value="by-user-and-prestation">Rendez-vous par utilisateur et par prestation</div>
+										<div data-value="by-status">Rendez-vous par statut</div>
+									</div>
+									<input type="hidden" id="appointment-search-type-select" value="all">
+								</div>
+
+								<!-- Champ de recherche si 'par prestation' est sélectionné -->
+								<div class="search-field" id="appointment-search-by-prestation-container" style="display: none;">
+									<input type="text" id="appointment-search-prestation-input" placeholder="Entrez la prestation à rechercher" aria-label="Prestation à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="appointment-search-prestation-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par utilisateur' est sélectionné -->
+								<div class="search-field" id="appointment-search-by-user-container" style="display: none;">
+									<input type="text" id="appointment-search-user-input" placeholder="Entrez l'email à rechercher" aria-label="Email de l'utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="appointment-search-user-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Champ de recherche si 'par utilisateur et prestation' est sélectionné -->
+								<div class="search-field" id="appointment-search-by-user-and-prestation-container" style="display: none;">
+									<input type="text" id="appointment-search-user-and-prestation-input" placeholder="Entrez l'email de l'utilisateur, le nom de la prestation à rechercher" aria-label="Prestation et utilisateur à rechercher">
+									<i class="bx bx-x clear-input-button"></i>
+									<button id="appointment-search-user-prestation-button" class="search-button">Rechercher</button>
+								</div>
+
+								<!-- Menu déroulant pour le statut -->
+								<div class="search-field" id="appointment-search-by-status-container" style="display: none;">
+									<div class="select-wrapper">
+										<div class="select-selected" id="appointment-status-select-selected">Choisir un statut</div>
+										<div class="select-items select-hide" id="appointment-status-select-items">
+											<div class data-value="PENDING">En attente</div>
+											<div class data-value="CONFIRMED">Confirmé</div>
+											<div class data-value="CANCELLED">Annulé</div>
+											<div class data-value="COMPLETED">Terminé</div>
+										</div>
+										<input type="hidden" id="appointment-search-status-input" value="">
+									</div>
+									<button id="appointment-search-status-button" class="search-button">Rechercher</button>
+								</div>
+							</div>
+						</section>
+
+						<!-- Tableau de résultat -->
+						<section class="result" aria-label="Résultats de la recherche">
+							<table class="result-table">
+								<thead>
+									<tr>
+										<th>Statut</th>
+										<th>Email</th>
+										<th>Prénom</th>
+										<th>Nom</th>
+										<th>Prestation</th>
+										<th>Message</th>
+										<th>Date de création</th>
+										<th class="actions-header-cell"></th> <!-- En-tête pour les boutons -->
+									</tr>
+								</thead>
+								<tbody id="appointment-result">
+									<!-- Rendez-vous rentrés dynamiquement -->
+								</tbody>
+							</table>
+							<div id="appointment-loading-spinner" style="display: none; text-align: center; padding: 20px;">Chargement...</div>
+						</section>
 					</section>
 				</section>
 			</div>
@@ -299,6 +376,36 @@
 				<div class="modal-buttons">
 					<button id="modal-cancel-button" class="modal-button cancel-button">Annuler</button>
 					<button id="modal-confirm-button" class="modal-button confirm-button">Confirmer</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modale pour le changement de statut des RDV -->
+		<div id="status-modal-overlay" class="modal-overlay" style="display: none;">
+			<div class="modal-box" role="dialog" aria-modal="true">
+				<h4> Modifier le statut</h4>
+				<p id="status-modal-message">Sélectionnez le nouveau statut pour ce rendez-vous: </p>
+				<div class="status-options-container">
+					<label class="status-option">
+						<input type="radio" name="appointment-status" value="PENDING">
+						<span>En attente</span>
+					</label>
+					<label class="status-option">
+						<input type="radio" name="appointment-status" value="CONFIRMED">
+						<span>Confirmé</span>
+					</label>
+					<label class="status-option">
+						<input type="radio" name="appointment-status" value="CANCELLED">
+						<span>Annulé</span>
+					</label>
+					<label class="status-option">
+						<input type="radio" name="appointment-status" value="COMPLETED">
+						<span>Terminé</span>
+					</label>
+				</div>
+				<div class="modal-buttons">
+				<button id="status-modal-cancel-button" class="modal-button cancel-button">Annuler</button>
+				<button id="status-modal-confirm-button" class="modal-button save-edit-button">Confirmer</button>
 				</div>
 			</div>
 		</div>
