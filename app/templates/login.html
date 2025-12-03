@@ -67,11 +67,30 @@
 					<!-- Message d'erreur -->
 					<p id="errorMessage" class="error-message" style="color: red; margin-top: 10px; text-align: center; display: none"></p>
 
+					<a href="#" id="forgotPasswordLink" class="forgot-password-link" aria-label="Réinitialiser de votre mot de passe">Mot de passe oublié ?</a>
 					<a href="{{ url_for('static_pages.inscription') }}" aria-label="Créer un nouveau compte utilisateur">Créer un compte</a>
 					<button type="submit" aria-label="Se connecter à votre espace">Se connecter</button>
 				</form>
 			</section>
     	</main>
+
+		<!-- Modale pour la réinitialisation du mot de passe -->
+		<div id="forgot-password-modal" class="modal-overlay" style="display: none;">
+			<div class="modal-box" role="dialog" aria-modal="true">
+				<h4>Réinitialisation</h4>
+				<p>Entrez votre email pour recevoir un nouveau mot de passe temporaire</p>
+				<form id="forgot-password-form">
+					<div class="modal-form-field">
+						<input type="email" id="reset-email" name="email" placeholder="Votre Email" required aria-label="Email pour réinitialisation">
+						<i class="bx bx-x clear-input-button"></i>
+					</div>
+					<div class="modal-buttons">
+						<button type="button" id="closeModal" class="modal-button cancel-button">Annuler</button>
+						<button type="submit" class="modal-button save-edit-button">Envoyer</button>
+					</div>
+				</form>
+			</div>
+		</div>
 
 		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 

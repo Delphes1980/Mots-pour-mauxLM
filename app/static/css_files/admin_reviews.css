@@ -91,67 +91,37 @@ main#main-content {
 @media screen and (max-width: 1024px) {
 	main#main-content {
 		max-width: 100%;
-		padding: 0 20px;
+		padding: 0 10px;
 	}
 	#section-reviews .search-container,
 	#section-reviews .result {
-		padding: 0 10px;
+		padding: 15px;
 	}
-	.pagination-select-wrapper {
-		width: 100%;
-	}
-	.pagination-select-wrapper .select-selected {
-		width: 100%;
-		box-sizing: border-box;
-	}
-	#section-reviews .pagination-controls {
+	.pagination-controls {
 		flex-direction: column;
-		gap: 10px;
+		gap: 15px;
 	}
 }
 
 /* Style pour les écrans jusqu'à 768px */
 @media screen and (max-width) {
-	#section-reviews table {
-		width: 100%;
-		display: block;
-		overflow-x: auto;
-	}
 	#section-reviews td[data-label],
 	#section-reviews th {
-		font-size: 0.85em;
-		padding: 6px;
+		font-size: 0.9em;
+	}
+	.rating-stars {
+		gap: 5px;
 	}
 	.rating-stars .star {
-		font-size: 1em;
+		font-size: 1.1em;
 	}
 	.pagination-button {
 		width: 100%;
-		padding: 10px;
-		font-size: 0.9em;
+		padding: 12px;
 	}
-	.pagination-info,
-	.pagination-total {
-		text-align: center;
-		font-size: 0.85em;
-	}
-}
-
-/* Style pour les écrans jusqu'à 480px */
-@media screen and (max-width: 480px) {
 	#section-reviews td[data-label="Email"],
 	#section-reviews td[data-label="Date de création"] {
 		white-space: normal;
-		word-break: break-word;
-	}
-	.pagination-button {
-		font-size: 0.8em;
-		padding: 8px;
-	}
-	.rating-stars {
-		gap: 2px;
-	}
-	.rating-stars .star {
-		font-size: 0.9em;
+		word-break: break-all;
 	}
 }

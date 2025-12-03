@@ -56,12 +56,12 @@ main#main-content {
 	accent-color: #a1187f;
 }
 
-.save-edit-button {
+#status-modal-overlay .save-edit-button {
 	background-color: var(--icon-color);
 	color: var(--background-card);
 }
 
-.save-edit-button:hover {
+#status-modal-overlay .save-edit-button:hover {
 	background-color: var(--delete-color);
 }
 
@@ -120,4 +120,47 @@ main#main-content {
 	cursor: not-allowed;
 	box-shadow: none;
 	transform: none;
+}
+
+
+/* ##### Code responsive ##### */
+/* Pour les écrans jusqu'à 768px */
+@media (max-width: 768px) {
+	#section-appointments .search-container,
+	#section-appointments .result {
+		padding: 15px;
+		margin: 10px auto;
+	}
+	#section-appointments .result {
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	#section-appointments td[data-label="Message"] {
+		min-width: 150px;
+		font-size: 0.9em;
+	}
+	.status-options-container {
+		gap: 20px;
+	}
+	.status-option {
+		padding: 10px 0;
+	}
+	.status-option input[type="radio"] {
+		transform: scale(1.5);
+		margin-right: 10px;
+	}
+	#section-appointments .pagination-controls {
+		flex-direction: column;
+		gap: 15px;
+	}
+	.pagination-button {
+		width: 100%;
+		padding: 12px;
+	}
+	.pagination-select-wrapper {
+		width: 100%;
+	}
+	.pagination-select-wrapper .select-selected {
+		font-size: 16px !important;
+	}
 }

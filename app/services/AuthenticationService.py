@@ -112,3 +112,35 @@ class AuthenticationService:
         # Mettre à jour le mot de passe
         updated_user = self.user_repository.update(user_id, password=new_password)
         return updated_user
+
+    def reset_password_by_email(self, email, new_temp_password):
+        """Reset password for a user using their email
+        
+        Args:
+            email (str): The user's email
+            new_temp_password (str): The generated temporary password
+            
+        Returns:
+            The updated User object
+            
+        Raises:
+            CustomError: if the email is invalid(400), if the user is not found(404)
+        """
+        try:
+            email_validation(email)
+        except ValueError as e:
+            raise CustomError(str(e), 400)
+
+        # Récupérer l'utilisateur par email
+        user = self.user_repository.get_by_attribute("email", email)
+        if not user:
+            raise CustomError("User not found", 404)
+
+        try:
+            validate_password(new_temp_password)
+        except ValueError as e:
+            raise CustomError(str(e), 400)
+
+        # Mettre à jour le mot de passe
+        updated_user = self.user_repository.update(user.id, password=new_temp_password)
+        return updated_user

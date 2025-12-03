@@ -200,26 +200,29 @@
 
 
 /* ##### Code responsive ##### */
-/* Style pour les écrans plus petits que 768px */
+/* Style pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.appointment-container {
 		padding: 20px;
 		margin: 30px auto;
 		max-width: 95%;
-		min-height: 400px;
+		min-height: auto;
 	}
 	.appointment-form {
 		margin-top: 20px;
-		width: 90%;
-		gap: 10px;
+		width: 100%;
+		gap: 15px;
 	}
-	.form-field {
+	.form-field, .select-wrapper {
 		width: 100%;
 		max-width: none;
 	}
-	.select-wrapper {
-		width: 100%;
-		max-width: none;
+	.appointment-form input,
+	.appointment-form select,
+	.appointment-form textarea,
+	.select-selected,
+	.appointment-form button {
+		font-size: 16px !important;
 	}
 	.appointment-form textarea {
 		height: 150px;
@@ -227,12 +230,10 @@
 	.clear-input-button {
 		top: 10px;
 	}
-	.message-field .clear-input-button {
-		top: 5px;
-	}
 	.appointment-form button {
 		width: 100%;
-		margin-top: 40px;
+		margin-top: 30px;
+		padding: 15px;
 		margin-bottom: 20px;
 	}
 }

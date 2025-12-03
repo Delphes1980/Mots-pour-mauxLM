@@ -2,6 +2,7 @@ const API_BASE_URL = '/api/v1/authentication';
 const API_LOGIN_URL = `${API_BASE_URL}/login`;
 const API_LOGOUT_URL = `${API_BASE_URL}/logout`;
 
+
 // Fonction pour les messages d'alerte
 function showFeedbackMessage(message, isError = false) {
   const banner = document.getElementById('feedback-message');
@@ -230,6 +231,114 @@ async function redirectToContactPage() {
 }
 
 
+// Fonction qui gère la demande de réinitialisation du mot de passe
+async function sendForgotPasswordRequest() {
+  // Récupération de l'input
+  const emailInput = document.getElementById('reset-email');
+  const email = emailInput ? emailInput.value : '';
+
+  if (!email) {
+    showFeedbackMessage('Veuillez entrer une adresse email', true);
+    return;
+  }
+
+  // Gestion du bouton 'Envoyer'
+  const modal = document.getElementById('forgot-password-modal');
+  const submitButton = modal.querySelector('.save-edit-button');
+
+  if (submitButton) {
+    submitButton.textContent = 'Envoi...';
+    submitButton.disabled = true;
+  }
+
+  try {
+    const response = await fetch(`${API_USERS_URL}/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email: email })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Erreur lors de la demande");
+    }
+
+    showFeedbackMessage('Un nouveau mot de passe a été envoyé');
+    closeForgotPasswordModal();
+
+  } catch (error) {
+    console.error('Erreur lors de la demande de mot de passe: ', error);
+    showFeedbackMessage(error.message || "Erreur technique, veuillez réessayer", true);
+
+    if (submitButton) {
+      submitButton.textContent = 'Envoyer';
+      submitButton.disabled = false;
+    }
+  }
+}
+
+
+// Fonction qui gère l'ouverture de la modale
+function openForgotPasswordModal() {
+  const modal = document.getElementById('forgot-password-modal');
+  if (!modal) return;
+
+  // Réinitialisation du champ 'Email'
+  const emailInput = document.getElementById('reset-email');
+  if (emailInput) {
+    emailInput.value = '';
+
+    const clearButton = emailInput.nextElementSibling;
+    if (clearButton && clearButton.classList.contains('clear-input-button')) {
+      clearButton.style.display = 'none';
+    }
+  }
+
+  // Gestion du bouton 'Envoyer'
+  const submitButton = modal.querySelector('.save-edit-button');
+  if (submitButton) {
+    const newSubmitButton = submitButton.cloneNode(true);
+    submitButton.parentNode.replaceChild(newSubmitButton, submitButton);
+
+    newSubmitButton.textContent = 'Envoyer';
+    newSubmitButton.disabled = false;
+
+    newSubmitButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      sendForgotPasswordRequest();
+    });
+  }
+
+  // Gestion du bouton 'Annuler'
+  const cancelButton = document.getElementById('closeModal');
+  if (cancelButton) {
+    const newCancelButton = cancelButton.cloneNode(true);
+    cancelButton.parentNode.replaceChild(newCancelButton, cancelButton);
+
+    newCancelButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeForgotPasswordModal();
+    });
+  }
+
+  // Affichage de la modale
+  modal.style.display = 'flex';
+}
+
+
+// Fonction pour fermer la modale
+function closeForgotPasswordModal() {
+  const modal = document.getElementById('forgot-password-modal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const currentPage = window.location.pathname;
 
@@ -247,6 +356,14 @@ document.addEventListener('DOMContentLoaded', () => {
     contactButton.addEventListener('click', (e) => {
       e.preventDefault();
       redirectToContactPage();
+    });
+  }
+
+  const forgotLink = document.getElementById('forgotPasswordLink');
+  if (forgotLink) {
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openForgotPasswordModal();
     });
   }
 });

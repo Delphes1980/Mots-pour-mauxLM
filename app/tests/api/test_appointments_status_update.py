@@ -246,9 +246,15 @@ class TestAppointmentsStatusUpdateAPI(BaseTest):
         response_data = json.loads(response.data)
         
         # Vérifier les champs requis
-        required_fields = ['id', 'message', 'status', 'prestation_id', 'user_id']
+        required_fields = ['id', 'message', 'status', 'prestation', 'user']
         for field in required_fields:
             self.assertIn(field, response_data)
+        
+        # Vérifier la structure des objets nested
+        self.assertIn('id', response_data['prestation'])
+        self.assertIn('name', response_data['prestation'])
+        self.assertIn('id', response_data['user'])
+        self.assertIn('first_name', response_data['user'])
         
         self.assertEqual(response_data['status'], AppointmentStatus.COMPLETED)
 

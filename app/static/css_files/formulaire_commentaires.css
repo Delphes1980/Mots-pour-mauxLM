@@ -272,31 +272,43 @@
 
 
 /* ##### Code responsive ##### */
-/* Style pour les écrans plus petits que 768px */
+/* Style pour les écrans jusqu'à 768px */
 @media (maw-width: 768px) {
 	.review-container {
-		margin: 40px 20px;
+		margin: 30px auto;
 		padding: 20px;
+		max-width: 95%;
 		min-height: auto;
 	}
+	.review-form {
+		gap: 15px;
+		width: 100%;
+		margin-top: 20px;
+	}
 	.form-field {
-		width: 90%;
-		max-width: 100%;
+		width: 100%;
+		max-width: none;
+	}
+	.review-form input,
+	.review-form textarea,
+	.review-form button {
+		font-size: 16px !important;
 	}
 	.review-form button {
-		margin-top: 40px;
-		margin-bottom: 20px;
-		padding: 10px 20px;
-		font-size: 0.9rem;
+		width: 100%;
+		margin-top: 30px;
+		padding: 15px;
 	}
 	.stars-wrapper {
-		font-size: 2rem;
-		gap: 0.3rem;
+		font-size: 2.2rem;
+		gap: 10px;
+		margin: 15px 0;
 	}
 	.review-form textarea {
-		height: 150px;
+		height: 140px;
 	}
 }
+
 
 /* Style pour les écrans plus petits que 400px */
 @media (max-width: 400px) {
@@ -324,7 +336,6 @@
 	}
 	.stars-wrapper {
 		font-size: 1.8rem;
-		margin: 0.5rem 0;
 	}
 	.review-form textarea {
 		height: 120px;

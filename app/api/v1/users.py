@@ -3,7 +3,7 @@ from app.services import facade
 from app.utils import (compare_data_and_model, CustomError, generate_temp_password, validate_entity_id)
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from flask import request
-from app.services.mail_service import (send_password_reset_notification, send_user_created_by_admin_password)
+from app.services.mail_service import (send_password_reset_notification, send_user_created_by_admin_password, send_forgot_password_notification)
 from werkzeug.exceptions import HTTPException
 
 
@@ -71,6 +71,11 @@ user_me_reviews_response_model = api.model ('UserMeReviewsResponse', {
 	'id': fields.String(required=True, description='ID de l\'utilisateur'),
 	'rating': fields.Integer(required=True, description='La note du commentaire'),
 	'text': fields.String(required=True, description='Le texte du commentaire'),
+})
+
+# Définir le modèle de données pour la demande de reset du mot de passe
+forgot_password_model = api.model('ForgotPassword', {
+	'email': fields.String(required=True, description='Email de l\'utilisateur')
 })
 
 # Définir le modèle de données pour l'erreur
@@ -299,6 +304,39 @@ class CurrentUserReviews(Resource):
 
             return reviews, 200
 
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
+@api.route('/forgot-password')
+class ForgotPassword(Resource):
+    @api.doc('Forgot password')
+    @api.expect(forgot_password_model)
+    @api.response(200, 'Email de réinitialisation envoyé avec succès', msg_model)
+    @api.response(400, 'Données invalides', error_model)
+    @api.response(404, 'Utilisateur non trouvé', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def post(self):
+        """Demande de réinitialisation pour mot de passe oublié"""
+        data = api.payload
+        email = data.get('email')
+
+        if not email:
+            api.abort(400, error='L\'email est requis')
+
+        temp_password = generate_temp_password()
+
+        try:
+            updated_user = facade.reset_password_by_email(email, temp_password)
+
+            try:
+                send_forgot_password_notification(updated_user.email, temp_password)
+            except Exception as e:
+                print(f"Echec de l'envoi du mail de notification à {updated_user.email}: {str(e)}")
+            return {'message': 'Email de réinitialisation envoyé avec succès'}, 200
+        
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:

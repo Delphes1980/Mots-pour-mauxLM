@@ -88,7 +88,7 @@ def send_password_reset_notification(user_email, temp_password):
     Votre mot de passe a été réinitialisé par l'administrateur.
     Vous pouvez vous connecter avec votre nouveau mot de passe temporaire: {temp_password}.
 
-    N'oubliez pas de changer votre mot de passe lors de votre prochaine connexion dans votre espas personnel.
+    N'oubliez pas de changer votre mot de passe lors de votre prochaine connexion dans votre espace personnel.
 
     Mélanie Laborda
     """
@@ -186,6 +186,35 @@ def send_appointment_status_notification(user_email, **context):
         # Si le statut est COMPLETED, on envoie rien
         return
     
+    message = Message(
+        subject=subject,
+        body=body,
+        sender=sender_email,
+        recipients=[user_email]
+    )
+
+    send_mail_async(message)
+
+def send_forgot_password_notification(user_email, temp_password):
+    """Envoie un email à l'utilisateur avec un mot de passe temporaire suite à un oubli"""
+    sender_email = current_app.config.get('MAIL_DEFAULT_SENDER')
+    subject = 'Réinitialisation de votre mot de passe'
+
+    body = f"""
+    Bonjour,
+
+    Une demande de réinitialisation de mot de passe a été effectuée pour votre compte.
+
+    Votre nouveau mot de passe temporaire est : {temp_password}
+
+    Connectez vous dès que possible et modifiez ce mot de passe dans votre espace personnel.
+
+    Si vous n'êtes pas à l'origine de cette demande, veuillez nous contacter immédiatement.
+
+    Cordialement,
+    Mélanie Laborda
+    """
+
     message = Message(
         subject=subject,
         body=body,
