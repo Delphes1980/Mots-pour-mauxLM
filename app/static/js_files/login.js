@@ -233,6 +233,7 @@ async function redirectToContactPage() {
 
 // Fonction qui gère la demande de réinitialisation du mot de passe
 async function sendForgotPasswordRequest() {
+  const API_USERS_URL = '/api/v1/users';
   // Récupération de l'input
   const emailInput = document.getElementById('reset-email');
   const email = emailInput ? emailInput.value : '';
