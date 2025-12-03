@@ -397,28 +397,60 @@ input.editable {
 
 
 /* ##### Code responsive ##### */
-/* Pour les écrans plus petits que 768px */
+/* Pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.main-content {
 		grid-template-columns: 1fr;
 		gap: 30px;
-		padding: 10px;
+		padding: 15px;
 	}
 	.client-info, .review-info-container {
-		padding: 20px;
+		padding: 20px 15px;
+		width: 100%;
 	}
 	.client-info h2, .review-info-container h2 {
-		font-size: 1.3em;
-	}
-	.button-container {
-		flex-direction: column;
-		gap: 10px;
-		margin-top: 20px;
+		font-size: 1.4em;
 	}
 	.form-field {
 		width: 100%;
 	}
-	.modify-info-button, .modify-review-button, .modify-password-button {
+	.form-field input,
+	.modal-field {
+		font-size: 16px !important;
+	}
+	.modify-info-button,
+	.modify-review-button,
+	.modify-password-button,
+	.save-info-button,
+	.cancel-info-button {
 		width: 100%;
+		padding: 12px;
+	}
+	.button-wrapper {
+		flex-direction: column;
+		gap: 10px;
+	}
+	.button-container {
+		flex-direction: column;
+		gap: 15px;
+		margin-top: 30px;
+	}
+	.contact-button {
+		margin-top: 0;
+		width: 100%;
+	}
+	.modal-box {
+		width: 95%;
+		padding: 20px;
+		max-height: 90vh;
+		overflow-y: auto;
+	}
+	.modal-buttons {
+		flex-direction: column-reverse;
+		gap: 10px;
+	}
+	.modal-button {
+		width: 100%;
+		padding: 12px;
 	}
 }

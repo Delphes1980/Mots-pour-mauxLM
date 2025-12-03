@@ -19,13 +19,20 @@
 
 
 /* ##### Code responsive ##### */
+/* Pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.prestation-actions {
 		flex-direction: column !important;
 		align-items: stretch;
+		gap: 10px;
 	}
 	.prestation-actions button {
 		width: 100%;
-		margin-bottom: 5px;
+		margin-bottom: 0;
+		padding: 12px;
+		font-size: 14px;
+	}
+	.creation-container h4 {
+		font-size: 1.3em;
 	}
 }

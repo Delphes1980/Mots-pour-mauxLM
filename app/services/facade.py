@@ -48,6 +48,9 @@ class Facade:
     def admin_reset_password(self, user_id, new_password):
         return self.authentication_service.admin_reset_password(user_id, new_password)
 
+    def reset_password_by_email(self, email, temp_password):
+        return self.authentication_service.reset_password_by_email(email, temp_password)
+
     # Review CRUD operations
     def create_review(self, **kwargs):
         return self.review_service.create_review(**kwargs)

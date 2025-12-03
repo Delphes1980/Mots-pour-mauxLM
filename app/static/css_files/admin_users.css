@@ -104,14 +104,23 @@ main#main-content {
 
 
 /* ##### Code responsive ##### */
+/* Pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	/* Pagination */
 	.pagination-controls {
 		flex-direction: column;
-		gap: 10px;
+		gap: 15px;
+	}
+	.pagination-select-wrapper {
+		width: 100%;
+	}
+	.pagination-select-wrapper .select-selected {
+		width: 100%;
+		font-size: 16px !important;
 	}
 	.pagination-button {
 		width: 100%;
+		padding: 12px;
 	}
 	/* Boutons d'action */
 	.actions-cell .action-top {
@@ -119,11 +128,24 @@ main#main-content {
 		width: 100%;
 	}
 	.actions-cell .action-bottom {
+		flex-direction: column;
 		width: 100%;
-		margin-top: 10px;
+		gap: 8px;
 	}
-	.actions-cell button {
+	.actions-cell .action-bottom {
 		width: 100%;
-		margin-bottom: 5px;
+		margin-top: 8px;
+	}
+	.modify-button,
+	.delete-button,
+	.reset-pass-button {
+		width: 100%;
+		padding: 10px;
+		font-size: 14px;
+		margin-bottom: 0;
+	}
+	.creation-form input[type="text"],
+	.creation-form input[type="email"] {
+		font-size: 16px !important;
 	}
 }

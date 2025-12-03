@@ -78,20 +78,30 @@
 
 
 /* ##### Code responsive ##### */
+/* Pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	#section-create_user .create-user-container {
-		width: 100%;
-		padding: 15px;
-		margin: 15px auto;
+		width: 95%;
+		padding: 20px;
+		margin: 20px auto;
+	}
+	#section-create_user .creation-form {
+		gap: 15px;
 	}
 	#section-create_user .creation-form input[type="text"],
 	#section-create_user .creation-form input[type="email"] {
 		width: 100%;
+		font-size: 16px !important;
+		height: 45px;
 	}
 	#create-user-button {
 		width: 100%;
+		margin-top: 10px;
+		height: 45px;
+		font-size: 16px;
 	}
 	#section-create_user .creation-field .clear-input-button {
 		right: 10px;
+		padding: 10px;
 	}
 }
