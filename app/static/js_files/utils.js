@@ -1,3 +1,99 @@
+// Fonction pour les messages d'alerte
+function showFeedbackMessage(message, isError = false) {
+    const banner = document.getElementById('feedback-message');
+    if (!banner) return;
+
+    banner.textContent = message;
+    banner.classList.remove('error', 'show');
+    if (isError) banner.classList.add('error');
+
+    banner.style.display = 'block';
+    setTimeout(() => banner.classList.add('show'), 10);
+
+    setTimeout(() => {
+        banner.classList.remove('show');
+        setTimeout(() => {
+        banner.style.display = 'none';
+        banner.classList.remove('error');
+        }, 100);
+    }, 3000);
+}
+
+
+// Bouton pour effacer le champ
+function setupClearButton(selector) {
+    const inputFields = document.querySelectorAll(selector);
+
+    inputFields.forEach(input => {
+        const clearButton = input.nextElementSibling;
+
+        if (clearButton) {
+            clearButton.style.display = 'none';
+
+            input.addEventListener('input', () => {
+                if (clearButton) {
+                    if (input.value.length > 0) {
+                        clearButton.style.display = 'block';
+                    } else {
+                        clearButton.style.display = 'none';
+                    }
+                }
+            });
+
+            if (clearButton) {
+                clearButton.addEventListener('click', () => {
+                    input.value = '';
+                    clearButton.style.display = 'none';
+                    input.focus();
+                });
+            }
+        }
+    });
+}
+
+
+// Fonction qui gère le spinner
+function toggleLoadingSpinner(spinnerId, show) {
+	const loadingSpinner = document.getElementById(spinnerId);
+	if (loadingSpinner) {
+		loadingSpinner.style.display = show ? 'block' : 'none';
+	}
+}
+
+
+// Fonction qui gère le format date de la colonne 'Date de création'
+function formatDate(dateString) {
+	if (!dateString) {
+		return 'N/A';
+	}
+
+	const date = new Date(dateString);
+	return date.toLocaleDateString('fr-FR', {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric'
+	});
+}
+
+
+// Fonction qui valide les entrées
+function isValidInput(input) {
+	if (!input) {
+		return false;
+	}
+	if (typeof input !== 'string') {
+		return false;
+	}
+	if (input.trim().length === 0) {
+		return false;
+	}
+	const dangerousChar = /[<>{}]/;
+	if (dangerousChar.test(input.trim())) {
+		return false;
+	}
+	return true;
+}
+
 // Fonction qui récupère la valeur du cookie CSRF
 function getCookie(name) {
 	// Validation de l'entrée

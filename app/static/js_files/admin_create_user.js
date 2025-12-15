@@ -1,25 +1,3 @@
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-    const banner = document.getElementById('feedback-message');
-    if (!banner) return;
-
-    banner.textContent = message;
-    banner.classList.remove('error', 'show');
-    if (isError) banner.classList.add('error');
-
-    banner.style.display = 'block';
-    setTimeout(() => banner.classList.add('show'), 10);
-
-    setTimeout(() => {
-        banner.classList.remove('show');
-        setTimeout(() => {
-        banner.style.display = 'none';
-        banner.classList.remove('error');
-        }, 100);
-    }, 3000);
-}
-
-
 // Fonction qui récupère les données du formulaire
 function getCreateUserFormData() {
 	const firstNameInput = document.getElementById('new-user-firstname');
@@ -51,6 +29,12 @@ async function validateCreateUserData(data) {
 	// Vérifie que tous les champs sont remplis
 	if (!data.first_name || !data.last_name || !data.email) {
 		showFeedbackMessage('Tous les champs doivent être remplis', true);
+		return false;
+	}
+
+	// Vérification des inputs
+	if (!isValidInput(data.first_name) || !isValidInput(data.last_name) || !isValidInput(data.email)) {
+		showFeedbackMessage('Caractères invalides détectés', true);
 		return false;
 	}
 
@@ -157,6 +141,8 @@ function init_create_user() {
 	if (window.createUserInitialized) {
 		return;
 	}
+
+	setupClearButton('.creation-field input');
 
 	const form = document.getElementById('create-user-form');
 

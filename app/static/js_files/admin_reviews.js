@@ -6,94 +6,6 @@ let reviewsPerPage = 10;
 let isReviewDateAscending = false;
 
 
-// Bouton pour effacer le champ
-function setupReviewClearButton() {
-    const inputFields = document.querySelectorAll('#section-reviews .search-field input');
-
-    inputFields.forEach(input => {
-        const clearButton = input.nextElementSibling;
-
-        if (clearButton) {
-            clearButton.style.display = 'none';
-
-            input.addEventListener('input', () => {
-                if (clearButton) {
-                    if (input.value.length > 0) {
-                        clearButton.style.display = 'block';
-                    } else {
-                        clearButton.style.display = 'none';
-                    }
-                }
-            });
-
-            if (clearButton) {
-                clearButton.addEventListener('click', () => {
-                    input.value = '';
-                    clearButton.style.display = 'none';
-                    input.focus();
-                });
-            }
-        }
-    });
-}
-
-
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-    const banner = document.getElementById('feedback-message');
-    if (!banner) return;
-
-    banner.textContent = message;
-    banner.classList.remove('error', 'show');
-    if (isError) banner.classList.add('error');
-
-    banner.style.display = 'block';
-    setTimeout(() => banner.classList.add('show'), 10);
-
-    setTimeout(() => {
-        banner.classList.remove('show');
-        setTimeout(() => {
-        banner.style.display = 'none';
-        banner.classList.remove('error');
-        }, 100);
-    }, 3000);
-}
-
-
-// Fonction qui gère le format date de la colonne 'Date d'inscription'
-function formatDate(dateString) {
-	if (!dateString) {
-		return 'N/A';
-	}
-
-	const date = new Date(dateString);
-	return date.toLocaleDateString('fr-FR', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric'
-	});
-}
-
-
-// Fonction qui valide les entrées
-function isValidInput(input) {
-	if (!input) {
-		return false;
-	}
-	if (typeof input !== 'string') {
-		return false;
-	}
-	if (input.trim().length === 0) {
-		return false;
-	}
-	const dangerousChar = /[<>{}]/;
-	if (dangerousChar.test(input.trim())) {
-		return false;
-	}
-	return true;
-}
-
-
 // Fonction qui génère les étoiles dans un avis
 function generateStarsForReviews(rating) {
 	let stars = '';
@@ -254,18 +166,11 @@ function setupReviewPaginationControls(totalPages, totalReviews) {
 }
 
 
-// Fonction qui gère le spinner
-function toggleLoadingSpinner(show) {
-	const loadingSpinner = document.getElementById('review-loading-spinner');
-	if (loadingSpinner) {
-		loadingSpinner.style.display = show ? 'block' : 'none';
-	}
-}
 
 
 // Fonction qui récupère tous les avis
 async function fetchAllReviews() {
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('review-loading-spinner', true);
 
 	try {
 		const response = await fetch(API_REVIEWS_URL, {
@@ -296,7 +201,7 @@ async function fetchAllReviews() {
 			tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Erreur de chargement des données</td></tr>';
 		}
 	} finally {
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('review-loading-spinner', false);
 	}
 }
 
@@ -437,7 +342,7 @@ async function fetchReviewsByUser() {
 		return;
 	}
 	
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('review-loading-spinner', true);
 
 	try {
 
@@ -476,7 +381,7 @@ async function fetchReviewsByUser() {
 	} finally {
 		currentReviewPage = 1;
 		displayPaginatedReviews();
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('review-loading-spinner', false);
 	}
 }
 
@@ -492,7 +397,7 @@ async function fetchReviewsByPrestation() {
 		return;
 	}
 
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('review-loading-spinner', true);
 
 	try {
 		const prestationId = await resolvePrestationId(term);
@@ -530,7 +435,7 @@ async function fetchReviewsByPrestation() {
 	} finally {
 		currentReviewPage = 1;
 		displayPaginatedReviews();
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('review-loading-spinner', false);
 	}
 }
 
@@ -556,7 +461,7 @@ async function fetchReviewsByUserAndPrestation() {
 	const userTerm = parts[0].trim();
 	const prestationTerm = parts[1].trim();
 
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('review-loading-spinner', true);
 
 	try {
 		const [userId, prestationId] = await Promise.all([
@@ -566,13 +471,13 @@ async function fetchReviewsByUserAndPrestation() {
 
 		if (!userId) {
 			showFeedbackMessage('Utilisateur non trouvé', true);
-			toggleLoadingSpinner(false);
+			toggleLoadingSpinner('review-loading-spinner', false);
 			return;
 		}
 	
 		if (!prestationId) {
 			showFeedbackMessage('Prestation non trouvée', true);
-			toggleLoadingSpinner(false);
+			toggleLoadingSpinner('review-loading-spinner', false);
 			return;
 		}
 
@@ -605,7 +510,7 @@ async function fetchReviewsByUserAndPrestation() {
 	} finally {
 		currentReviewPage = 1;
 		displayPaginatedReviews();
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('review-loading-spinner', false);
 	}
 }
 
@@ -899,7 +804,7 @@ function init_reviews() {
 		return;
 	}
 
-	setupReviewClearButton();
+	setupClearButton('#section-reviews .search-field input');
 	setupReviewCustomSelect();
 	setupReviewPaginationFilter();
 	toggleReviewSearchVisibility();
