@@ -30,43 +30,43 @@ class UserService:
         try:
             name_validation(first_name, 'first_name')
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         last_name = kwargs.get('last_name')
         try:
             name_validation(last_name, 'last_name')
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         email = kwargs.get('email')
         try:
             email_validation(email)
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         password = kwargs.get('password')
         try:
             validate_password(password)
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         address = kwargs.get('address')
         try:
             address_validation(address)
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         phone_number = kwargs.get('phone_number')
         try:
             validate_phone_number(phone_number)
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         is_admin_value = kwargs.get('is_admin')
         try:
             kwargs['is_admin'] = admin_validation(is_admin_value)
         except TypeError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         existing_user = self.user_repository.get_by_attribute("email", email)
         if existing_user:
@@ -96,37 +96,37 @@ class UserService:
         try:
             name_validation(first_name, 'first_name')
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         last_name = kwargs.get('last_name')
         try:
             name_validation(last_name, 'last_name')
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         email = kwargs.get('email')
         try:
             email_validation(email)
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         address = kwargs.get('address')
         try:
             address_validation(address)
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         phone_number = kwargs.get('phone_number')
         try:
             validate_phone_number(phone_number)
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         is_admin_value = kwargs.get('is_admin')
         try:
             kwargs['is_admin'] = admin_validation(is_admin_value)
         except TypeError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         existing_user = self.user_repository.get_by_attribute("email", email)
         if existing_user:
@@ -149,7 +149,7 @@ class UserService:
         try:
             user_id = validate_entity_id(user_id, 'user_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         user = self.user_repository.get_by_id(user_id)
         if not user:
@@ -172,7 +172,7 @@ class UserService:
         try:
             email_validation(email)
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         if not email:
             raise CustomError("Email is required", 400)
@@ -182,7 +182,7 @@ class UserService:
             raise CustomError("User not found", 404)
 
         return user
-    
+
     def search_users_by_email_fragment(self, fragment):
         """Search users by email fragment
 
@@ -197,7 +197,7 @@ class UserService:
         """
         if not fragment or not isinstance(fragment, str):
             raise CustomError("Invalid email fragment", 400)
-        
+
         users = self.user_repository.search_by_email_fragment(fragment)
         if not users:
             raise CustomError('No user found', 404)
@@ -228,7 +228,7 @@ class UserService:
         try:
             user_id = validate_entity_id(user_id, 'user_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         user = self.user_repository.get_by_id(user_id)
         if not user:
@@ -242,21 +242,21 @@ class UserService:
             try:
                 name_validation(first_name, 'first_name')
             except ValueError as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
         if 'last_name' in kwargs:
             last_name = kwargs.get('last_name')
             try:
                 name_validation(last_name, 'last_name')
             except ValueError as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
         if 'email' in kwargs:
             email = kwargs.get('email')
             try:
                 email_validation(email)
             except ValueError as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
             existing_user = self.user_repository.get_by_attribute("email", email)
             if existing_user and existing_user.id != user_id:
@@ -267,28 +267,28 @@ class UserService:
             try:
                 address_validation(address)
             except (ValueError, TypeError) as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
         if 'phone_number' in kwargs:
             phone_number = kwargs.get('phone_number')
             try:
                 validate_phone_number(phone_number)
             except (ValueError, TypeError) as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
         if 'password' in kwargs:
             password = kwargs.get('password')
             try:
                 validate_password(password)
             except ValueError as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
         if 'is_admin' in kwargs:
             is_admin_value = kwargs.get('is_admin')
             try:
                 kwargs['is_admin'] = admin_validation(is_admin_value)
             except TypeError as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
         return self.user_repository.update(user_id, **kwargs)
 
@@ -308,19 +308,19 @@ class UserService:
         try:
             user_id = validate_entity_id(user_id, 'user_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         user = self.user_repository.get_by_id(user_id)
         if not user:
             raise CustomError("User not found", 404)
-        
+
         if user.email == 'deleted@system.local':
             raise CustomError('You can not delete ghost user', 403)
-    
+
         ghost_user = self.user_repository.get_by_attribute('email', 'deleted@system.local')
         if not ghost_user:
             raise CustomError("Ghost user not found", 404)
-        
+
         # Vérifier si des avis existent pour cet utilisateur
         reviews = self.review_repository.get_by_user_id(user_id)
         if reviews:

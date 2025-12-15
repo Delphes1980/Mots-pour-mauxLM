@@ -1,8 +1,9 @@
 from flask_restx import Namespace, Resource, fields, _http
-from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, name_validation, validate_entity_id)
 from flask_jwt_extended import (jwt_required, get_jwt, get_jwt_identity)
 from flask import request
+from app.services import facade
+from app.utils import (compare_data_and_model, CustomError, name_validation, validate_entity_id)
+
 
 # Créer une instance de façade
 facade = facade.Facade()
@@ -196,7 +197,7 @@ class Prestation(Resource):
             try:
                 name_validation(name, 'name')
             except ValueError as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
             updated_prestation = facade.update_prestation(prestation_id, **prestation_data)
             return updated_prestation, 200

@@ -1,11 +1,10 @@
 from flask_restx import Namespace, Resource, fields, _http
-from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, generate_temp_password, validate_entity_id)
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from flask import request
-from app.services.mail_service import (send_password_reset_notification, send_user_created_by_admin_password, send_forgot_password_notification)
 from werkzeug.exceptions import HTTPException
-
+from app.services import facade
+from app.utils import (compare_data_and_model, CustomError, generate_temp_password, validate_entity_id)
+from app.services.mail_service import (send_password_reset_notification, send_user_created_by_admin_password, send_forgot_password_notification)
 
 
 # Créer une instance de façade
@@ -157,7 +156,7 @@ class AdminUserCreate(Resource):
         current_user = get_jwt()
         # Vérifier que l'utilisateur a les droits admin
         if not current_user.get('is_admin'):
-                api.abort(403, error='Vous n\'avez pas les droits administrateur')
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
 
         user_data = api.payload
 
@@ -168,7 +167,7 @@ class AdminUserCreate(Resource):
             compare_data_and_model(user_data, admin_user_model)
 
             created_user = facade.admin_create_user(temp_password, **user_data)
-            
+
             if not created_user:
                 api.abort(500, error='Erreur interne du serveur')
 
@@ -178,7 +177,7 @@ class AdminUserCreate(Resource):
             except Exception as e:
                 print(f"Echec de l'envoi du mail de notification à {created_user.email}: {str(e)}")
             return created_user, 201
-        
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:

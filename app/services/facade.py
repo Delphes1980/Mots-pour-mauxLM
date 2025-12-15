@@ -25,7 +25,7 @@ class Facade:
 
     def get_user_by_email(self, email):
         return self.user_service.get_user_by_email(email)
-    
+
     def search_users_by_email_fragment(self, fragment):
         return self.user_service.search_users_by_email_fragment(fragment)
 

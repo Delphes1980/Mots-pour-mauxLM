@@ -1,6 +1,6 @@
-from app import create_app
-from dotenv import load_dotenv
 import socket
+from dotenv import load_dotenv
+from app import create_app
 
 
 socket.getfqdn = lambda host=None: "localhost.localdomain"
