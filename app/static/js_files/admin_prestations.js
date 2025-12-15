@@ -2,60 +2,6 @@ const API_PRESTATIONS_URL = '/api/v1/prestations';
 let editingPrestationId = null;
 
 
-// Bouton pour effacer le champ
-function setupPrestationClearButton() {
-    const inputFields = document.querySelectorAll('.search-field input, .creation-field input');
-
-    inputFields.forEach(input => {
-        const clearButton = input.nextElementSibling;
-
-        if (clearButton) {
-            clearButton.style.display = 'none';
-
-            input.addEventListener('input', () => {
-                if (clearButton) {
-                    if (input.value.length > 0) {
-                        clearButton.style.display = 'block';
-                    } else {
-                        clearButton.style.display = 'none';
-                    }
-                }
-            });
-
-            if (clearButton) {
-                clearButton.addEventListener('click', () => {
-                    input.value = '';
-                    clearButton.style.display = 'none';
-                    input.focus();
-                });
-            }
-        }
-    });
-}
-
-
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-    const banner = document.getElementById('feedback-message');
-    if (!banner) return;
-
-    banner.textContent = message;
-    banner.classList.remove('error', 'show');
-    if (isError) banner.classList.add('error');
-
-    banner.style.display = 'block';
-    setTimeout(() => banner.classList.add('show'), 10);
-
-    setTimeout(() => {
-        banner.classList.remove('show');
-        setTimeout(() => {
-        banner.style.display = 'none';
-        banner.classList.remove('error');
-        }, 100);
-    }, 3000);
-}
-
-
 // Fonction qui remplit les lignes du tableau avec les 2 boutons (Modifier et Supprimer) en bout de ligne
 function renderPrestations(prestations) {
     const tableBody = document.getElementById('prestation-name-result');
@@ -88,12 +34,10 @@ function renderPrestations(prestations) {
 
 // Fonction qui récupère toutes les prestations
 async function fetchAllPrestations() {
-    const loadingSpinner = document.getElementById('loading-spinner');
+    toggleLoadingSpinner('prestation-loading-spinner', true);
+
     const tableBody = document.getElementById('prestation-name-result');
 
-    if (loadingSpinner) {
-        loadingSpinner.style.display = 'block';
-    }
     if (tableBody) {
         tableBody.innerHTML = '';
     }
@@ -130,9 +74,7 @@ async function fetchAllPrestations() {
             tableBody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: red;">Erreur de chargement des données</td></tr>';
         }
     } finally {
-        if (loadingSpinner) {
-            loadingSpinner.style.display = 'none';
-        }
+        toggleLoadingSpinner('prestation-loading-spinner', false);
     }
 }
 
@@ -142,15 +84,12 @@ async function fetchPrestationByName() {
     const searchNameInput = document.getElementById('search-name-input');
     const name = searchNameInput ? searchNameInput.value.trim() : '';
 
-    if (!name) {
+    if (!isValidInput(name)) {
         showFeedbackMessage('Veuillez entrer un nom de prestation à rechercher', true);
         return;
     }
 
-    const loadingSpinner = document.getElementById('loading-spinner');
-    if (loadingSpinner) {
-        loadingSpinner.style.display = 'block';
-    }
+    toggleLoadingSpinner('prestation-loading-spinner', true);
 
     try {
         const filteredResults = allPrestationsCache.filter(prestation =>
@@ -166,9 +105,7 @@ async function fetchPrestationByName() {
         showFeedbackMessage('Erreur lors de la recherche', true);
         renderPrestations([]);
     } finally {
-        if (loadingSpinner) {
-            loadingSpinner.style.display = 'none';
-        }
+        toggleLoadingSpinner('prestation-loading-spinner', false);
     }
 }
 
@@ -183,7 +120,7 @@ async function createPrestation(event) {
 
     const name = createNameInput ? createNameInput.value.trim() : '';
 
-    if (!name) {
+    if (!isValidInput(name)) {
         showFeedbackMessage('Veuillez entrer le nom d\'une prestation', true);
         return;
     }
@@ -278,6 +215,11 @@ function handleModifyClick(id, currentName) {
 // Fonction pour la modification de la prestation
 async function modifyPrestation(id, newName) {
     if (!id || !newName) return;
+
+    if (!isValidInput(newName)) {
+        showFeedbackMessage('Veuillez entrer le nom d\'une prestation', true);
+        return;
+    }
 
     // Empêche de renommer en "Ghost prestation"
     if (newName.trim().toLowerCase() === "ghost prestation") {
@@ -433,6 +375,11 @@ function attachPrestationSaveAndCancelListeners(id, originalName) {
         saveButton.addEventListener('click', () => {
             const inputField = document.getElementById(`edit-input-${id}`);
             if (inputField) {
+                const newValue = inputField.value.trim();
+                if (!isValidInput(newValue)) {
+                    showFeedbackMessage('Veuillez entrer le nom d\'une prestation', true);
+                    return;
+                }
                 modifyPrestation(id, inputField.value);
             } else {
                 showFeedbackMessage('Erreur: Champ de saisie introuvable', true);
@@ -545,7 +492,7 @@ function init_prestations() {
         return;
     }
 
-    setupPrestationClearButton();
+    setupClearButton('.search-field input, .creation-field input');
     setupCustomSelect();
 
     // Gestion unique du toggle initial

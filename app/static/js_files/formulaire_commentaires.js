@@ -2,6 +2,7 @@ const API_USERS_BASE_URL = '/api/v1/users';
 const API_REVIEWS_BASE_URL = '/api/v1/reviews/';
 const API_PRESTATIONS_BASE_URL = '/api/v1/prestations/';
 
+
 // Fonction utilitaire: fait correspondre les noms des inputs HTML aux clés API
 function mapInputToUserField(name) {
 	const mapping = {
@@ -56,42 +57,6 @@ function ratingSubmit() {
         }
     });
 });
-}
-
-
-// Bouton pour effacer le champ
-function setupClearButton() {
-  // Pour faire apparaitre / disparaître la croix pour effacer le contenu
-	const inputFields = document.querySelectorAll('.form-field input, .form-field textarea');
-
-	inputFields.forEach(input => {
-		// Ignore l'input de notation caché pour éviter de masquer la première étoile
-		if (input.id === 'rating-input') return;
-
-		const clearButton = input.nextElementSibling;
-
-		if (clearButton) {
-			clearButton.style.display = 'none';
-		}
-
-		input.addEventListener('input', () => {
-			if (clearButton) {
-				if (input.value.length > 0) {
-					clearButton.style.display = 'block';
-				} else {
-					clearButton.style.display = 'none';
-				}
-			}
-		});
-
-		if (clearButton) {
-			clearButton.addEventListener('click', () => {
-				input.value = '';
-				clearButton.style.display = 'none';
-				input.focus();
-			});
-		}
-	});
 }
 
 
@@ -243,6 +208,11 @@ function setupReviewForm() {
 
     const rating = parseInt(document.getElementById('rating-input').value);
     const message = document.getElementById('message').value.trim();
+    if (!isValidInput(message) || message.length < 2) {
+      showFeedbackMessage('Veuillez saisir un commentaire valide', true);
+      return;
+    }
+
     const prestationId = document.getElementById('prestation-id').value;
 
     if (!rating || rating < 1 || rating > 5) {
@@ -300,31 +270,9 @@ function setupReviewForm() {
 }
 
 
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-  const banner = document.getElementById('feedback-message');
-  if (!banner) return;
-
-  banner.textContent = message;
-  banner.classList.remove('error', 'show');
-  if (isError) banner.classList.add('error');
-
-  banner.style.display = 'block';
-  setTimeout(() => banner.classList.add('show'), 10);
-
-  setTimeout(() => {
-    banner.classList.remove('show');
-    setTimeout(() => {
-      banner.style.display = 'none';
-      banner.classList.remove('error');
-    }, 100);
-  }, 3000);
-}
-
-
 document.addEventListener('DOMContentLoaded', function() {
   ratingSubmit();
-  setupClearButton();
+  setupClearButton('.form-field input, .form-field textarea');
   setupCustomSelects();
   loadUserData();
   loadPrestationsForDropdown();

@@ -6,75 +6,6 @@ let usersPerPage = 10;
 let isUserDateAscending = false;
 
 
-// Bouton pour effacer le champ
-function setupUserClearButton() {
-    const inputFields = document.querySelectorAll('#section-users .search-field input');
-
-    inputFields.forEach(input => {
-        const clearButton = input.nextElementSibling;
-
-        if (clearButton) {
-            clearButton.style.display = 'none';
-
-            input.addEventListener('input', () => {
-                if (clearButton) {
-                    if (input.value.length > 0) {
-                        clearButton.style.display = 'block';
-                    } else {
-                        clearButton.style.display = 'none';
-                    }
-                }
-            });
-
-            if (clearButton) {
-                clearButton.addEventListener('click', () => {
-                    input.value = '';
-                    clearButton.style.display = 'none';
-                    input.focus();
-                });
-            }
-        }
-    });
-}
-
-
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-    const banner = document.getElementById('feedback-message');
-    if (!banner) return;
-
-    banner.textContent = message;
-    banner.classList.remove('error', 'show');
-    if (isError) banner.classList.add('error');
-
-    banner.style.display = 'block';
-    setTimeout(() => banner.classList.add('show'), 10);
-
-    setTimeout(() => {
-        banner.classList.remove('show');
-        setTimeout(() => {
-        banner.style.display = 'none';
-        banner.classList.remove('error');
-        }, 100);
-    }, 3000);
-}
-
-
-// Fonction qui gère le format date de la colonne 'Date d'inscription'
-function formatDate(dateString) {
-	if (!dateString) {
-		return 'N/A';
-	}
-
-	const date = new Date(dateString);
-	return date.toLocaleDateString('fr-FR', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric'
-	});
-}
-
-
 // Fonction qui affiche les lignes du tableau
 function renderUsers(users) {
 	const tableBody = document.getElementById('user-name-result');
@@ -122,6 +53,7 @@ function displayPaginatedUsers() {
 	// On trie sur la clé 'created-at'
 	sortDataByDate(filteredUsers, 'created_at', isUserDateAscending);
 	updateSortIcon('sort-user-icon', isUserDateAscending);
+
 	// Filtre le Ghost user
 	const usersToDisplay = filteredUsers.filter(user => user.email.toLowerCase() !== "deleted@system.local" && !user.is_admin);
 	const totalUsers = usersToDisplay.length;
@@ -223,10 +155,7 @@ function setupPaginationControls(totalPages, totalUsers) {
 
 // Fonction qui récupère tous les utilisateurs
 async function fetchAllUsers() {
-	const loadingSpinner = document.getElementById('user-loading-spinner');
-	if (loadingSpinner) {
-		loadingSpinner.style.display = 'block';
-	}
+	toggleLoadingSpinner('user-loading-spinner', true);
 
 	try {
 		const response = await fetch(API_USERS_URL, {
@@ -258,9 +187,7 @@ async function fetchAllUsers() {
 			tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Erreur de chargement des données</td></tr>';
 		}
 	} finally {
-		if (loadingSpinner) {
-			loadingSpinner.style.display = 'none';
-		}
+		toggleLoadingSpinner('user-loading-spinner', false);
 	}
 }
 
@@ -270,15 +197,12 @@ async function fetchUserByEmail() {
 	const searchEmailInput = document.getElementById('search-email-input');
 	const email = searchEmailInput ? searchEmailInput.value.trim() : '';
 
-	if (!email) {
+	if (!isValidInput(email)) {
 		showFeedbackMessage('Veuillez entrer un email à rechercher', true);
 		return;
 	}
 
-	const loadingSpinner = document.getElementById('user-loading-spinner');
-	if (loadingSpinner) {
-		loadingSpinner.style.display = 'block';
-	}
+	toggleLoadingSpinner('user-loading-spinner', true);
 
 	try {
 		// Vérifie si l'input est un mail complet
@@ -360,9 +284,7 @@ async function fetchUserByEmail() {
 		renderUsers([]);
 		setupPaginationControls(1, 0);
 	} finally {
-		if (loadingSpinner) {
-			loadingSpinner.style.display = 'none';
-		}
+		toggleLoadingSpinner('user-loading-spinner', false);
 	}
 }
 
@@ -617,12 +539,24 @@ function attachUserSaveAndCancelListeners(originalUser) {
 	const saveButton = document.querySelector(`.user-save-edit-button[data-id="${id}"]`);
 	if (saveButton) {
 		saveButton.addEventListener('click', () => {
-			const data = {
-				last_name: document.getElementById(`edit-lastname-${id}`).value,
-				first_name: document.getElementById(`edit-firstname-${id}`).value,
-				email: document.getElementById(`edit-email-${id}`).value,
-				address: document.getElementById(`edit-address-${id}`).value,
-				phone_number: document.getElementById(`edit-phone-${id}`).value
+				const lastName = document.getElementById(`edit-lastname-${id}`).value;
+				const firstName = document.getElementById(`edit-firstname-${id}`).value;
+				const email = document.getElementById(`edit-email-${id}`).value;
+				const address = document.getElementById(`edit-address-${id}`).value;
+				const phone = document.getElementById(`edit-phone-${id}`).value;
+
+				if (!isValidInput(lastName) || !isValidInput(firstName) ||
+					!isValidInput(email) || !isValidInput(address) || !isValidInput(phone)) {
+					showFeedbackMessage('Veuillez remplir tous les champs correctement', true);
+					return;
+				}
+
+				const data = {
+				last_name: lastName,
+				first_name: firstName,
+				email: email,
+				address: address,
+				phone_number: phone
 			};
 			modifyUser(id, data);
 		});
@@ -725,6 +659,19 @@ function filterUsersFromCache() {
 	}
 
 	let searchTerm = '';
+
+	// Vérification de sécurité
+	if (searchType === 'by-name' || searchType === 'by-firstname' || searchType === 'by-phone') {
+		const inputId = searchType === 'by-name' ? 'search-user-name-input' :
+			(searchType === 'by-firstname' ? 'search-user-firstname-input' : 'search-user-phone-input');
+
+		searchTerm = document.getElementById(inputId).value.trim();
+
+		if (searchTerm.length > 0 && !isValidInput(searchTerm)) {
+			return [];
+		}
+	}
+
 	let results = allUsersCache;
 
 	if (searchType === 'by-name') {
@@ -886,7 +833,7 @@ function init_users() {
 		return;
 	}
 
-	setupUserClearButton();
+	setupClearButton('#section-users .search-field input');
 	setupUserCustomSelect();
 	setupUserPaginationFilter();
 	toggleUserSearchVisibility();

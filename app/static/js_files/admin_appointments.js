@@ -5,94 +5,6 @@ let appointmentsPerPage = 10;
 let isAppointmentDateAscending = false;
 
 
-// Bouton pour effacer le champ
-function setupAppointmentClearButton() {
-	const inputFields = document.querySelectorAll('#section-appointments .search-field input');
-
-    inputFields.forEach(input => {
-        const clearButton = input.nextElementSibling;
-
-        if (clearButton) {
-            clearButton.style.display = 'none';
-
-            input.addEventListener('input', () => {
-                if (clearButton) {
-                    if (input.value.length > 0) {
-                        clearButton.style.display = 'block';
-                    } else {
-                        clearButton.style.display = 'none';
-                    }
-                }
-            });
-
-            if (clearButton) {
-                clearButton.addEventListener('click', () => {
-                    input.value = '';
-                    clearButton.style.display = 'none';
-                    input.focus();
-                });
-            }
-        }
-    });
-}
-
-
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-    const banner = document.getElementById('feedback-message');
-    if (!banner) return;
-
-    banner.textContent = message;
-    banner.classList.remove('error', 'show');
-    if (isError) banner.classList.add('error');
-
-    banner.style.display = 'block';
-    setTimeout(() => banner.classList.add('show'), 10);
-
-    setTimeout(() => {
-        banner.classList.remove('show');
-        setTimeout(() => {
-        banner.style.display = 'none';
-        banner.classList.remove('error');
-        }, 100);
-    }, 3000);
-}
-
-
-// Fonction qui gère le format date de la colonne 'Date de création'
-function formatDate(dateString) {
-	if (!dateString) {
-		return 'N/A';
-	}
-
-	const date = new Date(dateString);
-	return date.toLocaleDateString('fr-FR', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric'
-	});
-}
-
-
-// Fonction qui valide les entrées
-function isValidInput(input) {
-	if (!input) {
-		return false;
-	}
-	if (typeof input !== 'string') {
-		return false;
-	}
-	if (input.trim().length === 0) {
-		return false;
-	}
-	const dangerousChar = /[<>{}]/;
-	if (dangerousChar.test(input.trim())) {
-		return false;
-	}
-	return true;
-}
-
-
 // Fonction qui traduit le statut des rdv
 function translateStatus(status) {
 	const translations = {
@@ -264,18 +176,9 @@ function setupAppointmentPaginationControls(totalPages, totalAppointments) {
 }
 
 
-// Fonction qui gère le spinner
-function toggleLoadingSpinner(show) {
-	const loadingSpinner = document.getElementById('appointment-loading-spinner');
-	if (loadingSpinner) {
-		loadingSpinner.style.display = show ? 'block' : 'none';
-	}
-}
-
-
 // Fonction qui récupère tous les rendez-vous
 async function fetchAllAppointments() {
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('appointment-loading-spinner', true);
 
 	try {
 		const response = await fetch(API_APPOINTMENTS_URL, {
@@ -306,7 +209,7 @@ async function fetchAllAppointments() {
 			tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: red;">Erreur de chargement des données</td></tr>';
 		}
 	} finally {
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('appointment-loading-spinner', false);
 	}
 }
 
@@ -447,7 +350,7 @@ async function fetchAppointmentsByUser() {
 		return;
 	}
 	
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('appointment-loading-spinner', true);
 
 	try {
 
@@ -486,7 +389,7 @@ async function fetchAppointmentsByUser() {
 	} finally {
 		currentAppointmentPage = 1;
 		displayPaginatedAppointments();
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('appointment-loading-spinner', false);
 	}
 }
 
@@ -502,7 +405,7 @@ async function fetchAppointmentsByPrestation() {
 		return;
 	}
 
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('appointment-loading-spinner', true);
 
 	try {
 		const prestationId = await resolvePrestationIdForAppointment(term);
@@ -540,7 +443,7 @@ async function fetchAppointmentsByPrestation() {
 	} finally {
 		currentAppointmentPage = 1;
 		displayPaginatedAppointments();
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('appointment-loading-spinner', false);
 	}
 }
 
@@ -566,7 +469,7 @@ async function fetchAppointmentsByUserAndPrestation() {
 	const userTerm = parts[0].trim();
 	const prestationTerm = parts[1].trim();
 
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('appointment-loading-spinner', true);
 
 	try {
 		const [userId, prestationId] = await Promise.all([
@@ -617,7 +520,7 @@ async function fetchAppointmentsByUserAndPrestation() {
 	} finally {
 		currentAppointmentPage = 1;
 		displayPaginatedAppointments();
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('appointment-loading-spinner', false);
 	}
 }
 
@@ -632,7 +535,7 @@ async function fetchAppointmentsByStatus() {
 		return;
 	}
 
-	toggleLoadingSpinner(true);
+	toggleLoadingSpinner('appointment-loading-spinner', true);
 
 	try {
 		const response = await fetch(`${API_APPOINTMENTS_URL}/search?status=${encodeURIComponent(status)}`, {
@@ -661,7 +564,7 @@ async function fetchAppointmentsByStatus() {
 	} finally {
 		currentAppointmentPage = 1;
 		displayPaginatedAppointments();
-		toggleLoadingSpinner(false);
+		toggleLoadingSpinner('appointment-loading-spinner', false);
 	}
 }
 
@@ -1070,7 +973,7 @@ function init_appointments() {
 		return;
 	}
 
-	setupAppointmentClearButton();
+	setupClearButton('#section-appointments .search-field input');
 	setupAppointmentCustomSelect();
 	setupStatusCustomSelect();
 	setupAppointmentPaginationFilter();

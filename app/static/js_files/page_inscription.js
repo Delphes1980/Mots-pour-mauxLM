@@ -27,57 +27,6 @@ function isPasswordSecure(password) {
 }
 
 
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-	const banner = document.getElementById('feedback-message');
-	if (!banner) return;
-
-	banner.textContent = message;
-	banner.classList.remove('error', 'show');
-	if (isError) banner.classList.add('error');
-
-	banner.style.display = 'block';
-	setTimeout(() => banner.classList.add('show'), 10);
-
-	setTimeout(() => {
-		banner.classList.remove('show');
-		setTimeout(() => {
-		banner.style.display = 'none';
-		banner.classList.remove('error');
-		}, 100);
-	}, 3000);
-}
-
-
-// Bouton pour supprimer les champs
-function setupClearButton() {
-	const inputFields = document.querySelectorAll('.form-field input');
-
-	inputFields.forEach(input => {
-		const clearButton = input.nextElementSibling;
-		if (!clearButton || !clearButton.classList.contains('clear-input-button')) return;
-
-		clearButton.style.display = 'none';
-
-		input.addEventListener('input', () => {
-			if (input.value.length > 0) {
-				clearButton.style.display = 'block';
-			} else {
-				clearButton.style.display = 'none';
-			}
-		});
-
-		clearButton.addEventListener('click', () => {
-			input.value = '';
-			clearButton.style.display = 'none';
-			input.focus();
-
-			input.dispatchEvent(new Event('input'));
-		});
-	});
-}
-
-
 // Soumission du formulaire d'inscription
 async function setupRegistrationForm() {
 	const form = document.querySelector('.registration-form');
@@ -155,6 +104,6 @@ async function setupRegistrationForm() {
 
 
 document.addEventListener('DOMContentLoaded', async () => {
-	setupClearButton();
+	setupClearButton('.form-field input');
 	await setupRegistrationForm();
 });

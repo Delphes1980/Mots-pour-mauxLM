@@ -2,7 +2,6 @@ const API_USERS_BASE_URL = '/api/v1/users';
 const API_REVIEWS_BASE_URL = '/api/v1/reviews';
 
 
-// Fonctions utilitaires: 
 // Fonction qui fait correspondre les noms des inputs HTML aux clés API
 function mapInputToUserField(name) {
 	const mapping = {
@@ -23,60 +22,6 @@ function mapInputToUserField(name) {
 	}
 
 	return mapping[name];
-}
-
-
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-	const banner = document.getElementById('feedback-message');
-	if (!banner) return;
-
-	banner.textContent = message;
-	banner.classList.remove('error', 'show');
-	if (isError) banner.classList.add('error');
-
-	banner.style.display = 'block';
-	setTimeout(() => banner.classList.add('show'), 10);
-
-	setTimeout(() => {
-		banner.classList.remove('show');
-		setTimeout(() => {
-			banner.style.display = 'none';
-			banner.classList.remove('error');
-		}, 300);
-	}, 4000);
-}
-
-
-// Bouton pour effacer le champ
-function setupPersonalClearButton() {
-    const inputFields = document.querySelectorAll('#personal-info-form .form-field input');
-
-    inputFields.forEach(input => {
-        const clearButton = input.nextElementSibling;
-
-        if (clearButton) {
-            clearButton.style.display = 'none';
-
-            input.addEventListener('input', () => {
-                if (clearButton) {
-                    if (input.value.length > 0) {
-                        clearButton.style.display = 'block';
-                    } else {
-                        clearButton.style.display = 'none';
-                    }
-                }
-            });
-
-            if (clearButton) {
-                clearButton.addEventListener('click', () => {
-                    input.value = '';
-                    clearButton.style.display = 'none';
-                    input.focus();
-                });
-            }
-        }
-    });
 }
 
 
@@ -211,6 +156,7 @@ function toggleEditMode(modifierButton, inputFields) {
 // Envoie les données modifiées à l'API des informations modifiées
 function saveUserData(inputFields) {
 	const updateData = {};
+	let dataIsValid = true;
 
 	inputFields.forEach(input => {
 		if (!input || !input.name || input.id == 'email') return;
@@ -218,8 +164,17 @@ function saveUserData(inputFields) {
 		const key = mapInputToUserField(input.name);
 		if (!key || typeof input.value !== 'string') return;
 
+		if (!isValidInput(input.value)) {
+			dataIsValid = false;
+		}
+
 		updateData[key] = input.value.trim();
 	});
+
+	if (!dataIsValid) {
+		showFeedbackMessage("L'input n'est pas valide", true);
+		return;
+	}
 
 	try {
 		validateUserData(updateData);
@@ -597,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	loadUserData(inputFields);
 	setupModifierButton(modifierButton, inputFields);
-	setupPersonalClearButton();
+	setupClearButton('#personal-info-form .form-field input');
 	setupPasswordModal();
 
 	// Commentaires
