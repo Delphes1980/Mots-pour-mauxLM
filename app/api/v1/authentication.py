@@ -115,7 +115,7 @@ class AuthenticationStatus(Resource):
         current_user = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
-            
+
         return ({
             'message': 'Connecté',
             'user_id': current_user,

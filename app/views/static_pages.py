@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for
 from flask_jwt_extended import jwt_required, get_jwt
 
 

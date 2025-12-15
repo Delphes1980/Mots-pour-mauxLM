@@ -366,6 +366,13 @@ async function fetchUserByEmail() {
 async function modifyUser(id, userData) {
 	if (!id || !userData) return;
 
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
 	const saveButton = document.querySelector(`.user-save-edit-button[data-id="${id}"]`);
 	if (saveButton) {
 		saveButton.textContent = 'Enregistrement...';
@@ -376,7 +383,8 @@ async function modifyUser(id, userData) {
 			method: 'PATCH',
 			credentials: 'include',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
 			},
 			body: JSON.stringify(userData)
 		});
@@ -445,12 +453,20 @@ function closeUserModal() {
 
 // Fonction qui gère la suppression d'un utilisateur
 async function deleteUser(id) {
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
 	try {
 		const response = await fetch(`${API_USERS_URL}/${id}`, {
 			method: 'DELETE',
 			credentials: 'include',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
 			}
 		});
 
@@ -492,12 +508,20 @@ function resetPasswordConfirmation(id, name) {
 
 // Fonction qui exécute la réinitialisation du mot de passe
 async function resetPassword(id) {
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
 	try {
 		const response = await fetch(`${API_USERS_URL}/${id}/reset-password`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
 			}
 		});
 

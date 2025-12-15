@@ -29,7 +29,7 @@ class PrestationService:
         try:
             name_validation(name, 'name')
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         existing_prestation = self.prestation_repository.get_by_attribute("name", name)
         if existing_prestation:
@@ -52,7 +52,7 @@ class PrestationService:
         try:
             prestation_id = validate_entity_id(prestation_id, 'prestation_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         prestation = self.prestation_repository.get_by_id(prestation_id)
         if not prestation:
@@ -79,7 +79,7 @@ class PrestationService:
             return prestations
 
         except Exception as e:
-            raise CustomError(str(e), 500)
+            raise CustomError(str(e), 500) from e
 
     def get_prestation_by_name(self, name):
         """Get a prestation by its name
@@ -99,7 +99,7 @@ class PrestationService:
         try:
             name_validation(name, 'name')
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         prestation = self.prestation_repository.get_by_attribute("name", name)
         if not prestation:
@@ -123,7 +123,7 @@ class PrestationService:
         try:
             prestation_id = validate_entity_id(prestation_id, 'prestation_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         prestation = self.prestation_repository.get_by_id(prestation_id)
         if not prestation:
@@ -137,7 +137,7 @@ class PrestationService:
             try:
                 name_validation(name, 'name')
             except ValueError as e:
-                raise CustomError(str(e), 400)
+                raise CustomError(str(e), 400) from e
 
             existing_prestation = self.prestation_repository.get_by_attribute("name", name)
             if existing_prestation and existing_prestation.id != prestation_id:
@@ -160,7 +160,7 @@ class PrestationService:
         try:
             prestation_id = validate_entity_id(prestation_id, 'prestation_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         prestation = self.prestation_repository.get_by_id(prestation_id)
         if not prestation:

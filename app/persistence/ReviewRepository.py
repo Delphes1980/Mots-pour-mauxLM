@@ -1,10 +1,10 @@
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 from app.models.review import Review
 from app.persistence.BaseRepository import BaseRepository
 from app.utils import (CustomError, rating_validation, type_validation, text_field_validation, is_valid_uuid4)
 from app.models.user import User
 from app.models.prestation import Prestation
-from sqlalchemy.orm import joinedload
 
 
 class ReviewRepository(BaseRepository):
@@ -19,7 +19,7 @@ class ReviewRepository(BaseRepository):
             kwargs.get('user'),
             kwargs.get('prestation')
         )
-        
+
     def create_review(self, text, rating, user, prestation):
         try:
             # Valider la notation
@@ -57,9 +57,9 @@ class ReviewRepository(BaseRepository):
             self.db.session.add(new_review)
             self.db.session.commit()
             return new_review
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             self.db.session.rollback()
-            raise ValueError("Erreur lors de la création du commentaire")
+            raise ValueError("Erreur lors de la création du commentaire") from e
 
     def get_by_user_and_prestation(self, user_id, prestation_id):
         """Récupérer l'avis par utilisateur et prestation (un seul par type de prestation)"""
@@ -96,7 +96,7 @@ class ReviewRepository(BaseRepository):
             raise ValueError("L'utilisateur à supprimer n'a pas été trouvé")
         if not new_user:
             raise ValueError("Le nouvel utilisateur n'a pas été trouvé")
-        
+
         # Vérifier s'il y a des avis à réassigner
         reviews = self.get_by_user_id(old_user_id)
         if not reviews:
@@ -125,7 +125,7 @@ class ReviewRepository(BaseRepository):
             raise ValueError("La prestation à supprimer n'a pas été trouvée")
         if not new_prestation:
             raise ValueError("La nouvelle prestation n'a pas été trouvée")
-        
+
         # Vérifier s'il y a des avis à réassigner
         reviews = self.get_by_prestation_id(old_prestation_id)
         if not reviews:
@@ -137,12 +137,12 @@ class ReviewRepository(BaseRepository):
         self.db.session.commit()
 
         return len(reviews)
-    
+
     def get_all_public_reviews(self):
         """Récupérer tous les commentaires publics"""
         try:
             reviews = self.db.session.query(Review).options(joinedload(Review._user), joinedload(Review._prestation)).all()
             return reviews
-        
+
         except Exception as e:
-            raise CustomError(f"Erreur lors de la récupération des commentaires publics : {str(e)}")
+            raise CustomError(f"Erreur lors de la récupération des commentaires publics : {str(e)}", 500) from e

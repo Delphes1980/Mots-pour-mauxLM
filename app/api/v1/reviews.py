@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields, _http
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 from app.utils import (compare_data_and_model, CustomError, validate_entity_id, rating_validation, text_field_validation)
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 
 # Créer une instance de façade
@@ -230,7 +230,7 @@ class ReviewsByUser(Resource):
 
             reviews = facade.get_review_by_user(user_id)
             return reviews, 200
-        
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -395,14 +395,14 @@ class Review(Resource):
                 try:
                     rating_validation(rating)
                 except ValueError as e:
-                    raise CustomError(str(e), 400)
+                    raise CustomError(str(e), 400) from e
 
             if 'text' in review_data:
                 text = review_data.get('text')
                 try:
                     text_field_validation(text, 'text', 2, 500)
                 except ValueError as e:
-                    raise CustomError(str(e), 400)
+                    raise CustomError(str(e), 400) from e
 
             updated_data = {}
 

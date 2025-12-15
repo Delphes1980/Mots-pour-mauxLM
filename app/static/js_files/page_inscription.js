@@ -111,13 +111,21 @@ async function setupRegistrationForm() {
 			return;
 		}
 
+		const csrfToken = getCookie('csrf_access_token');
+
+		const headers = {
+			'Content-Type': 'application/json'
+		};
+
+		if (csrfToken) {
+			headers['X-CSRF-TOKEN'] = csrfToken;
+		}
+
 		try {
 			const response = await fetch(API_USERS_BASE_URL, {
 				method: 'POST',
 				credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: headers,
 				body: JSON.stringify({
 					last_name: lastName,
 					first_name: firstName,

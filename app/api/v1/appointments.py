@@ -1,10 +1,9 @@
 from flask_restx import Namespace, Resource, fields, _http
+from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 from app.utils import (compare_data_and_model, CustomError, text_field_validation, validate_entity_id)
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from app.services.mail_service import send_appointment_notifications
 from app.models.appointment import AppointmentStatus
-from flask import request
 
 
 # Créer une instance de façade
@@ -359,7 +358,7 @@ class Appointment(Resource):
 
             updated_appointment = facade.update_appointment_status(appointment_id, **appointment_data)
             return updated_appointment, 200
-        
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except (ValueError, TypeError) as e:

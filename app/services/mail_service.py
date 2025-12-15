@@ -1,7 +1,6 @@
 from flask_mail import Message
 from flask import current_app
 from app import mail
-import os
 
 
 def send_mail_async(message):
@@ -53,7 +52,7 @@ def send_appointment_notifications(user_email, practitioner_email, **context):
     send_mail_async(msg_practitioner)
 
     # Mail de confirmation pour l'utilisateur
-    user_notification = f"Accusé de réception de votre demande de rendez-vous"
+    user_notification = "Accusé de réception de votre demande de rendez-vous"
 
     user_body = f"""
     Bonjour {user_full_name},
@@ -78,7 +77,7 @@ def send_appointment_notifications(user_email, practitioner_email, **context):
 
 def send_password_reset_notification(user_email, temp_password):
     """Envoie un email à l'utilisateur après réinitialisation de son mot de passe par l'admin"""
-    
+
     sender_email = current_app.config.get('MAIL_DEFAULT_SENDER')
 
     subject = 'Votre mot de passe a été réinitialisé'
@@ -140,7 +139,7 @@ def send_appointment_status_notification(user_email, **context):
 
     if missing_keys:
         raise ValueError(f"Les clés suivantes sont manquantes dans le contexte: {', '.join(missing_keys)}")
-    
+
     user_full_name = context['user_full_name']
     prestation_name = context['prestation_name']
     message = context['message']
@@ -166,7 +165,7 @@ def send_appointment_status_notification(user_email, **context):
         A bientôt, 
         Mélanie Laborda
         """
-        
+
     elif status == "CANCELLED":
         subject = f"Votre rendez-vous pour {prestation_name} a été annulé"
         body = f"""
@@ -185,7 +184,7 @@ def send_appointment_status_notification(user_email, **context):
     else:
         # Si le statut est COMPLETED, on envoie rien
         return
-    
+
     message = Message(
         subject=subject,
         body=body,

@@ -57,4 +57,3 @@ class BaseRepository:
         except SQLAlchemyError as e:
             self.db.session.rollback()
             raise e
-

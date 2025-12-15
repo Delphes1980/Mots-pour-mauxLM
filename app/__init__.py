@@ -1,3 +1,4 @@
+import smtplib
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_restx import Api
@@ -5,7 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
-import smtplib
 
 
 class PatchedSMTP(smtplib.SMTP):
@@ -13,7 +13,7 @@ class PatchedSMTP(smtplib.SMTP):
         # Force le nom d'hôte utilisé dans le EHLO
         kwargs['local_hostname'] = "localhost.localdomain"
         super().__init__(*args, **kwargs)
-        
+
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -67,9 +67,6 @@ def create_app():
         security='Bearer',
         prefix='/api'
         )
-
-    # Import models (to create the tables)
-    from app.models import user, review, appointment, prestation
 
     # Import API namespaces
     from app.api.v1.users import api as users_ns

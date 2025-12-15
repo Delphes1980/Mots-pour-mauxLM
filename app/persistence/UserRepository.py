@@ -48,9 +48,9 @@ class UserRepository(BaseRepository):
             self.db.session.add(new_user)
             self.db.session.commit()
             return new_user
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             self.db.session.rollback()
-            raise ValueError("Erreur lors de la création de l'utilisateur.")
+            raise ValueError("Erreur lors de la création de l'utilisateur.") from e
 
     def admin_create_user(self, first_name, last_name, email, address=None, phone_number=None, is_admin=False, password=None):
         try:
@@ -84,14 +84,14 @@ class UserRepository(BaseRepository):
             self.db.session.add(new_user)
             self.db.session.commit()
             return new_user
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             self.db.session.rollback()
-            raise ValueError("Erreur lors de la création de l'utilisateur.")
+            raise ValueError("Erreur lors de la création de l'utilisateur.") from e
 
     def search_by_email_fragment(self, fragment):
         """Recherche des utilisateurs dont l'email contient le fragment"""
         try:
             return self.db.session.query(User).filter(User.email.ilike(f'%{fragment}%')).all()
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             self.db.session.rollback()
-            raise ValueError("Erreur lors de la recherche d'utilisateur par email.")
+            raise ValueError("Erreur lors de la recherche d'utilisateur par email.") from e

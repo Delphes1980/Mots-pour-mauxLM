@@ -109,12 +109,20 @@ async function validateCreateUserData(data) {
 
 // Fonction qui crée l'utilisateur
 async function createUser(data) {
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
 	try {
 		const response = await fetch(`${API_USERS_URL}/admin-create`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
 			},
 			body: JSON.stringify(data)
 		});
