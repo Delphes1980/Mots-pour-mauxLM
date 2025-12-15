@@ -122,6 +122,10 @@ main#main-content {
 	transform: none;
 }
 
+#sort-appointment-date-header {
+	white-space: nowrap;
+}
+
 
 /* ##### Code responsive ##### */
 /* Pour les écrans jusqu'à 768px */

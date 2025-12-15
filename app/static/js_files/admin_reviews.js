@@ -3,6 +3,7 @@ const PRESTATION_API_URL = '/api/v1/prestations';
 let allReviewsCache = [];
 let currentReviewPage = 1;
 let reviewsPerPage = 10;
+let isReviewDateAscending = false;
 
 
 // Bouton pour effacer le champ
@@ -156,6 +157,9 @@ function renderReviews(reviews) {
 
 // Fonction qui gère la pagination et affiche la bonne page
 function displayPaginatedReviews() {
+	sortDataByDate(allReviewsCache, 'created_at', isReviewDateAscending);
+	updateSortIcon('sort-review-icon', isReviewDateAscending);
+
 	const results = allReviewsCache;
 	const totalReviews = results.length;
 
@@ -782,6 +786,13 @@ function resetReviewsSection() {
 	currentReviewPage = 1;
 	reviewsPerPage = 10;
 
+	// Reset du tri par date
+	isReviewDateAscending = false;
+	const icon = document.getElementById('sort-review-icon');
+	if (icon) {
+		icon.className = 'bx bxs-sort-alt';
+	}
+
 	// Reset du menu déroulant
 	const searchSelectInput = document.getElementById('review-search-type-select');
 	const searchSelectText =  document.getElementById('review-select-selected');
@@ -892,6 +903,14 @@ function init_reviews() {
 	setupReviewCustomSelect();
 	setupReviewPaginationFilter();
 	toggleReviewSearchVisibility();
+
+	const sortHeader = document.getElementById('sort-review-date-header');
+	if (sortHeader) {
+		sortHeader.addEventListener('click', () => {
+			isReviewDateAscending = !isReviewDateAscending;
+			displayPaginatedReviews();
+		});
+	}
 
 	const searchUserButton = document.getElementById('review-search-user-button');
 	if (searchUserButton) {

@@ -2,6 +2,7 @@ const API_APPOINTMENTS_URL = '/api/v1/appointments';
 let allAppointmentsCache = [];
 let currentAppointmentPage = 1;
 let appointmentsPerPage = 10;
+let isAppointmentDateAscending = false;
 
 
 // Bouton pour effacer le champ
@@ -167,6 +168,9 @@ function renderAppointments(appointments) {
 
 // Fonction qui gère la pagination et affiche la bonne page
 function displayPaginatedAppointments() {
+	sortDataByDate(allAppointmentsCache, 'created_at', isAppointmentDateAscending);
+	updateSortIcon('sort-appointment-icon', isAppointmentDateAscending);
+
 	const results = allAppointmentsCache;
 	const totalAppointments = results.length;
 
@@ -815,6 +819,10 @@ function resetAppointmentsSection() {
 	currentAppointmentPage = 1;
 	appointmentsPerPage = 10;
 
+	// Réinitialisation du tri par date
+	isAppointmentDateAscending = false;
+	updateSortIcon('sort-appointment-icon', isAppointmentDateAscending);
+
 	// Reset du menu déroulant
 	const searchSelectInput = document.getElementById('appointment-search-type-select');
 	const searchSelectText =  document.getElementById('appointment-select-selected');
@@ -1067,6 +1075,14 @@ function init_appointments() {
 	setupStatusCustomSelect();
 	setupAppointmentPaginationFilter();
 	toggleAppointmentSearchVisibility();
+
+	const sortHeader = document.getElementById('sort-appointment-date-header');
+	if (sortHeader) {
+		sortHeader.addEventListener('click', () => {
+			isAppointmentDateAscending = !isAppointmentDateAscending;
+			displayPaginatedAppointments();
+		});
+	}
 
 	const searchUserButton = document.getElementById('appointment-search-user-button');
 	if (searchUserButton) {

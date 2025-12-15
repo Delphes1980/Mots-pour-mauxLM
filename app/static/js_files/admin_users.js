@@ -3,6 +3,7 @@ let editingUserId = null;
 let allUsersCache = [];
 let currentUserPage = 1;
 let usersPerPage = 10;
+let isUserDateAscending = false;
 
 
 // Bouton pour effacer le champ
@@ -117,6 +118,10 @@ function renderUsers(users) {
 // Fonction qui gère la pagination et affiche la bonne page
 function displayPaginatedUsers() {
 	const filteredUsers = filterUsersFromCache();
+
+	// On trie sur la clé 'created-at'
+	sortDataByDate(filteredUsers, 'created_at', isUserDateAscending);
+	updateSortIcon('sort-user-icon', isUserDateAscending);
 	// Filtre le Ghost user
 	const usersToDisplay = filteredUsers.filter(user => user.email.toLowerCase() !== "deleted@system.local" && !user.is_admin);
 	const totalUsers = usersToDisplay.length;
@@ -831,6 +836,13 @@ function resetUsersSection() {
 	currentUserPage = 1;
 	usersPerPage = 10;
 
+	// Reset du tri par date
+	isUserDateAscending = false;
+	const icon = document.getElementById('sort-user-icon');
+	if (icon) {
+		icon.className = 'bx bxs-sort-alt';
+	}
+
 	// Reset du menu déroulant
 	const searchSelectInput = document.getElementById('user-search-type-select');
 	const searchSelectText =  document.getElementById('user-select-selected');
@@ -878,6 +890,14 @@ function init_users() {
 	setupUserCustomSelect();
 	setupUserPaginationFilter();
 	toggleUserSearchVisibility();
+
+	const sortHeader = document.getElementById('sort-user-date-header');
+	if (sortHeader) {
+		sortHeader.addEventListener('click', () => {
+			isUserDateAscending = !isUserDateAscending;
+			displayPaginatedUsers();
+		});
+	}
 
 	document.getElementById('search-email-button').addEventListener('click', (e) => {
 		e.preventDefault();
