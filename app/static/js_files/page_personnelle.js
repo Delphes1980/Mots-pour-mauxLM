@@ -228,6 +228,13 @@ function saveUserData(inputFields) {
 		return;
 	}
 
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+    console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
 	// Vérifie que l'ID est disponible
 	if (!window.currentUserId) {
 		showFeedbackMessage("Impossible d'identifier l'utilisateur", true);
@@ -238,7 +245,8 @@ function saveUserData(inputFields) {
 		method: 'PATCH',
 		credentials: 'include',
 		headers: {
-			'Content-type': 'application/json'
+			'Content-type': 'application/json',
+			'X-CSRF-TOKEN': csrfToken
 		},
 		body: JSON.stringify(updateData)
 	})
@@ -441,6 +449,13 @@ async function saveAllReviewData() {
 	const reviewBoxes = document.querySelectorAll('.review-box');
 	let hasError = false;
 
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+    console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
 	for (const box of reviewBoxes) {
 		const ratingInput = box.querySelector('.review-rating');
 		const textInput = box.querySelector('.review-textarea');
@@ -462,7 +477,8 @@ async function saveAllReviewData() {
 				method: 'PATCH', 
 				credentials: 'include',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken
 				},
 				body: JSON.stringify({ rating, text })
 			});
@@ -530,12 +546,20 @@ function setupPasswordModal() {
 			new_password: newPassword
 		};
 
+		const csrfToken = getCookie('csrf_access_token');
+    	if (!csrfToken) {
+    		console.error('Token CSRF manquant');
+        	showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        	return;
+    	}
+
 		try {
 			const response = await fetch(`${API_USERS_BASE_URL}/${window.currentUserId}`, {
 				method: 'PATCH',
 				credentials: 'include',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken
 				},
 				body: JSON.stringify(data)
 			});

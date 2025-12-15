@@ -933,6 +933,13 @@ function setupAppointmentPaginationFilter() {
 async function updateAppointmentStatus(id) {
 	if (!id) return;
 
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
 	// On récupère le statut sélectionné dans la modale
 	const modal = document.getElementById('status-modal-overlay');
 	const selectedRadio = modal.querySelector('input[name="appointment-status"]:checked');
@@ -955,7 +962,8 @@ async function updateAppointmentStatus(id) {
 			method: 'PUT',
 			credentials: 'include', 
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken
 			},
 			body: JSON.stringify({ status: newStatus })
 		});

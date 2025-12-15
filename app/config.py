@@ -31,7 +31,7 @@ class Config:
     JWT_TOKEN_LOCATION = ['cookies']  # Définir le type de stockage des tokens
     JWT_COOKIE_HTTPONLY = True  # Rendre les cookies HTTP seulement, rend le cookie inacessible au JS (protection XSS)
     JWT_COOKIE_SAMESITE = 'Lax'  # Le cookie est renvoyé seulement pour le même site
-    JWT_COOKIE_CSRF_PROTECT = False  # Active la protection CSRF pour les cookies
+    JWT_COOKIE_CSRF_PROTECT = True  # Active la protection CSRF pour les cookies
     JWT_ACCESS_CSRF_COOKIE_NAME = 'csrf_access_token'  # Nom du cookie CSRF pour les tokens d'accès (utile pour la détection du token par le front)
     JWT_AUTH_OPTIONS_ENABLED = False  # Désactive les options d'authentification personnalisées
 

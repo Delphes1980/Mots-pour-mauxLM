@@ -195,6 +195,13 @@ async function createPrestation(event) {
 
     const data = { name: name };
 
+    const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
     createButton.disabled = true;
     createButton.textContent = 'Enregistrement...';
 
@@ -203,7 +210,8 @@ async function createPrestation(event) {
             method: 'POST', 
             credentials: 'include', 
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify(data)
         });
@@ -277,6 +285,13 @@ async function modifyPrestation(id, newName) {
         return;
     }
 
+    const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
     const data = { name: newName };
     const saveButton = document.querySelector(`.save-edit-button[data-id="${id}"]`);
 
@@ -287,7 +302,8 @@ async function modifyPrestation(id, newName) {
             method: 'PUT',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify(data)
         });
@@ -354,12 +370,20 @@ function closePrestationModal() {
 
 // Fonction qui gère la suppression d'une prestation
 async function deletePrestation(id) {
+    const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
+
     try {
         const response = await fetch(`${API_PRESTATIONS_URL}/${id}`, {
             method: 'DELETE',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             }
         });
 

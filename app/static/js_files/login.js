@@ -128,12 +128,18 @@ function setupLogout() {
     logoutButton.disabled = true;
     logoutButton.textContent = 'Déconnexion...';
 
+    const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant pour la déconnexion');
+    }
+
     try {
       // Appel à l'API
       const response = await fetch(API_LOGOUT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
         },
         credentials: 'include',
         body: JSON.stringify({})
@@ -252,12 +258,21 @@ async function sendForgotPasswordRequest() {
     submitButton.disabled = true;
   }
 
+  const csrfToken = getCookie('csrf_access_token');
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
+  // On ajoute le token seulement s'il existe
+  if (csrfToken) {
+    headers['X-CSRF-TOKEN'] = csrfToken;
+  }
+
   try {
     const response = await fetch(`${API_USERS_URL}/forgot-password`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: headers,
       credentials: 'include',
       body: JSON.stringify({ email: email })
     });
