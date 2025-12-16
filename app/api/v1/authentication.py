@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_restx import Namespace, Resource, fields
 from flask_jwt_extended import (create_access_token, jwt_required, set_access_cookies, unset_jwt_cookies, get_jwt, get_jwt_identity)
 from app.services import facade
-from app.utils import (compare_data_and_model, CustomError)
+from app.utils import (compare_data_and_model, CustomError, sanitize_input, email_validation)
 
 
 # Créer une instance de façade
@@ -63,6 +63,12 @@ class Login(Resource):
 
         try:
             compare_data_and_model(credentials, login_model)
+
+            if 'email' in credentials:
+                clean_email = sanitize_input(credentials['email'], 'email')
+                email_validation(clean_email)
+                credentials['email'] = clean_email
+
             user = facade.get_user_by_email(credentials['email'])
 
             if (not user or not user.verify_password(credentials['password'])):

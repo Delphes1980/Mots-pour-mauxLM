@@ -59,6 +59,8 @@ class PrestationList(Resource):
         prestation_data = api.payload
         try:
             compare_data_and_model(prestation_data, prestation_model)
+            prestation_data['name'] = name_validation(prestation_data['name'], 'name')
+
             new_prestation = facade.create_prestation(**prestation_data)
 
         except CustomError as e:
@@ -87,8 +89,6 @@ class PrestationList(Resource):
 
         if not current_user:
             api.abort(401, error='Vous devez vous connecter')
-
-        print("→ Accès utilisateur standard à /prestations/")
 
         try:
             if is_admin.get('is_admin'):
@@ -127,6 +127,8 @@ class PrestationSearch(Resource):
             api.abort(403, error='Vous n\'avez pas les droits administrateur')
 
         try:
+            name = name_validation(name, 'name')
+
             prestation = facade.get_prestation_by_name(name)
             return prestation, 200
 
@@ -192,10 +194,12 @@ class Prestation(Resource):
             compare_data_and_model(prestation_data, prestation_update_model)
             validate_entity_id(prestation_id, 'prestation_id')
 
-            if 'name' in prestation_data:
-                name = prestation_data.get('name')
+            # if 'name' in prestation_data:
+                # name = prestation_data.get('name')
             try:
-                name_validation(name, 'name')
+                if 'name' in prestation_data:
+                    prestation_data['name'] = name_validation(prestation_data['name'], 'name')
+
             except ValueError as e:
                 raise CustomError(str(e), 400) from e
 
