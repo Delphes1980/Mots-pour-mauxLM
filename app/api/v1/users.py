@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from flask import request
 from werkzeug.exceptions import HTTPException
 from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, generate_temp_password, validate_entity_id)
+from app.utils import (compare_data_and_model, CustomError, generate_temp_password, validate_entity_id, name_validation, sanitize_input, email_validation, validate_phone_number, validate_password)
 from app.services.mail_service import (send_password_reset_notification, send_user_created_by_admin_password, send_forgot_password_notification)
 
 
@@ -102,6 +102,20 @@ class UserList(Resource):
 
         try:
             compare_data_and_model(user_data, user_model)
+
+            if 'first_name' in user_data:
+                user_data['first_name'] = name_validation(user_data['first_name'], 'first_name')
+            if 'last_name' in user_data:
+                user_data['last_name'] = name_validation(user_data['last_name'], 'last_name')
+            if 'email' in user_data:
+                user_data['email'] = email_validation(user_data['email'])
+            if 'password' in user_data:
+                user_data['password'] = validate_password(user_data['password'])
+            if 'address' in user_data and user_data['address']:
+                user_data['address'] = sanitize_input(user_data['address'], 'address')
+            if 'phone_number' in user_data and user_data['phone_number']:
+                user_data['phone_number'] = validate_phone_number(user_data['phone_number'])
+
             new_user = facade.create_user(**user_data)
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
@@ -166,6 +180,17 @@ class AdminUserCreate(Resource):
         try:
             compare_data_and_model(user_data, admin_user_model)
 
+            if 'first_name' in user_data:
+                user_data['first_name'] = name_validation(user_data['first_name'], 'first_name')
+            if 'last_name' in user_data:
+                user_data['last_name'] = name_validation(user_data['last_name'], 'last_name')
+            if 'email' in user_data:
+                user_data['email'] = email_validation(user_data['email'])
+            if 'address' in user_data and user_data['address']:
+                user_data['address'] = sanitize_input(user_data['address'], 'address')
+            if 'phone_number' in user_data and user_data['phone_number']:
+                user_data['phone_number'] = validate_phone_number(user_data['phone_number'])
+
             created_user = facade.admin_create_user(temp_password, **user_data)
 
             if not created_user:
@@ -178,6 +203,8 @@ class AdminUserCreate(Resource):
                 print(f"Echec de l'envoi du mail de notification à {created_user.email}: {str(e)}")
             return created_user, 201
 
+        except ValueError as e:
+            api.abort(400, error=str(e))
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -325,17 +352,23 @@ class ForgotPassword(Resource):
         if not email:
             api.abort(400, error='L\'email est requis')
 
-        temp_password = generate_temp_password()
-
         try:
-            updated_user = facade.reset_password_by_email(email, temp_password)
+            clean_email = sanitize_input(email, 'email')
+            email_validation(clean_email)
+
+            temp_password = generate_temp_password()
+
+            updated_user = facade.reset_password_by_email(clean_email, temp_password)
 
             try:
                 send_forgot_password_notification(updated_user.email, temp_password)
             except Exception as e:
                 print(f"Echec de l'envoi du mail de notification à {updated_user.email}: {str(e)}")
+
             return {'message': 'Email de réinitialisation envoyé avec succès'}, 200
-        
+
+        except ValueError as e:
+            api.abort(400, error=str(e))
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -397,10 +430,24 @@ class User(Resource):
             if not is_admin and current_user != user_id:
                 raise CustomError('Vous ne pouvez pas modifier le compte de quelqu\'un d\'autre', 403)
 
+            if 'first_name' in user_data:
+                user_data['first_name'] = name_validation(user_data['first_name'], 'first_name')
+            if 'last_name' in user_data:
+                user_data['last_name'] = name_validation(user_data['last_name'], 'last_name')
+            if 'email' in user_data:
+                user_data['email'] = email_validation(user_data['email'])
+            if 'password' in user_data:
+                user_data['password'] = validate_password(user_data['password'])
+            if 'address' in user_data and user_data['address']:
+                user_data['address'] = sanitize_input(user_data['address'], 'address')
+            if 'phone_number' in user_data and user_data['phone_number']:
+                user_data['phone_number'] = validate_phone_number(user_data['phone_number'])
+
             # Si l'utilisateur veut changer son mot de passe
             if 'old_password' in user_data and 'new_password' in user_data:
                 if not user_data['old_password'] or not user_data['new_password']:
                     raise CustomError('L\'ancien et le nouveau mot de passe sont requis', 400)
+                validate_password(user_data['new_password'])
                 if is_admin:
                     raise CustomError('Vous ne pouvez pas changer directement le mot de passe de l\'utilisateur', 403)
                 if current_user != user_id:
@@ -493,6 +540,8 @@ class AdminResetPassword(Resource):
         temp_password = generate_temp_password()
 
         try:
+            validate_entity_id(user_id, 'user_id')
+
             updated_user = facade.admin_reset_password(user_id, temp_password)
 
             # Envoi du mail de notification à l'utilisateur

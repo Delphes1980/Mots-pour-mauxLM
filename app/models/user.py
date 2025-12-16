@@ -107,6 +107,6 @@ class User(BaseEntity):
         else:
             type_validation(value, 'phone_number', str)
             strlen_validation(value, 'phone_number', 0, 20)
-            if not re.fullmatch(r'^\+?[0-9\s\-()]*$', value):
+            if not re.fullmatch(r'^\+?[0-9\s\-\.()]*$', value):
                 raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
             self._phone_number = value

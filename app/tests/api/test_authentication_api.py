@@ -121,7 +121,8 @@ class TestAuthenticationAPI(BaseTest):
         # Peut être 400 (email invalide) ou 401 (authentification échouée)
         self.assertIn(response.status_code, [400, 401])
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        # Flask-RESTX peut retourner 'error' ou 'errors'
+        self.assertTrue('error' in response_data or 'errors' in response_data)
     
     def test_login_invalid_password(self):
         """Test connexion avec mot de passe incorrect"""
@@ -154,7 +155,7 @@ class TestAuthenticationAPI(BaseTest):
         
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        self.assertTrue('error' in response_data or 'errors' in response_data)
     
     def test_login_missing_password(self):
         """Test connexion sans mot de passe"""
@@ -170,7 +171,7 @@ class TestAuthenticationAPI(BaseTest):
         
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        self.assertTrue('error' in response_data or 'errors' in response_data)
     
     def test_login_empty_credentials(self):
         """Test connexion avec données vides"""
@@ -184,7 +185,7 @@ class TestAuthenticationAPI(BaseTest):
         
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        self.assertTrue('error' in response_data or 'errors' in response_data)
     
     def test_login_invalid_email_format(self):
         """Test connexion avec format email invalide"""

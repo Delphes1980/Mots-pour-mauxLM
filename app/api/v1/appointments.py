@@ -2,7 +2,7 @@ from flask_restx import Namespace, Resource, fields, _http
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, text_field_validation, validate_entity_id)
+from app.utils import (compare_data_and_model, CustomError, text_field_validation, validate_entity_id, sanitize_input)
 from app.models.appointment import AppointmentStatus
 
 
@@ -96,6 +96,7 @@ class AppointmentList(Resource):
             current_user = facade.get_user_by_id(current_user_id)
 
             # Vérification des champs
+            appointment_data['message'] = sanitize_input(appointment_data['message'], 'message')
             text_field_validation(appointment_data['message'], 'message', 1, 500)
 
             prestation_id = appointment_data.get('prestation_id')
@@ -139,6 +140,7 @@ class AppointmentList(Resource):
         try:
             appointments = facade.get_all_appointments()
             return appointments, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:

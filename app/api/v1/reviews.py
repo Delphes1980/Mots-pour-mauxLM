@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields, _http
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, validate_entity_id, rating_validation, text_field_validation)
+from app.utils import (compare_data_and_model, CustomError, validate_entity_id, rating_validation, text_field_validation, sanitize_input)
 
 
 # Créer une instance de façade
@@ -107,6 +107,7 @@ class ReviewList(Resource):
 
             # Vérification des champs
             rating_validation(review_data['rating'])
+            review_data['text'] = sanitize_input(review_data['text'], 'text')
             text_field_validation(review_data['text'], 'text', 2, 500)
 
             prestation_id = review_data.get('prestation_id')
@@ -155,6 +156,7 @@ class ReviewList(Resource):
         try:
             reviews = facade.get_all_reviews()
             return reviews, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -172,6 +174,7 @@ class PublicReviews(Resource):
         try:
             reviews = facade.get_all_public_reviews()
             return reviews, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -191,6 +194,11 @@ class UserReviewList(Resource):
         user_id = get_jwt_identity()
 
         try:
+            try:
+                validate_entity_id(user_id, 'user_id')
+            except ValueError as e:
+                api.abort(400, error=str(e))
+
             existing_user = facade.get_user_by_id(user_id)
             if not existing_user:
                 raise CustomError('L\'utilisateur n\'existe pas', 404)
@@ -399,6 +407,8 @@ class Review(Resource):
 
             if 'text' in review_data:
                 text = review_data.get('text')
+                text = sanitize_input(text, 'text')
+                review_data['text'] = text
                 try:
                     text_field_validation(text, 'text', 2, 500)
                 except ValueError as e:

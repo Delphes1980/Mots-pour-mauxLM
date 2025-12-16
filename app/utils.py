@@ -3,6 +3,7 @@ import inspect
 import string
 import secrets
 import re
+import bleach
 from validate_email_address import validate_email
 from app import bcrypt
 from app import db, create_app
@@ -53,6 +54,8 @@ Functions:
         Validates the entity ID format
     generate_temp_password(length=12, max_attempts=20):
         Generates a temporary password
+    sanitize_input(text, text_name):
+        Sanitizes a text field to prevent XSS attacks
 """
 
 
@@ -169,7 +172,7 @@ def type_validation(arg, arg_name: str, *arg_type):
         else:
             type_string = types_to_check.__name__
         raise TypeError(f"Invalid {arg_name}: {arg_name} must be of type {type_string}")
-        
+
 def strlen_validation(string: str, string_name: str, min_len, max_len):
     """ Validate the length of a specific range
     Args:
@@ -188,6 +191,9 @@ def name_validation(names: str, names_name: str):
     if names is None:
         raise ValueError(f'Expected {names_name} but received None')
     type_validation(names, names_name, str)
+    # Evite le XSS
+    if '\0' in names or '\n' in names or '\r' in names:
+        raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
     names = names.strip()
     strlen_validation(names, names_name, 1, 50)
     names_list = names.split()
@@ -201,6 +207,11 @@ def email_validation(email: str):
     if email is None:
         raise ValueError('Email attendu mais aucun reçu')
     type_validation(email, 'email', str)
+    if ' ' in email:
+        raise ValueError("Adresse e-mail invalide : l'adresse e-mail ne doit pas contenir d'espaces")
+    strict_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$'
+    if not re.match(strict_pattern, email):
+        raise ValueError("Adresse e-mail invalide : l'adresse e-mail doit être au format exemple@exemple.com")
     if not validate_email(email):
         raise ValueError("Adresse e-mail invalide : l'adresse e-mail doit être au format exemple@exemple.com")
     return email
@@ -241,8 +252,14 @@ def validate_phone_number(phone_number: str):
         return None
     type_validation(phone_number, 'phone_number', str)
     strlen_validation(phone_number, 'phone_number', 0, 20)
-    if not re.fullmatch(r'^\+?[0-9\s\-()]*$', phone_number):
-        raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
+    if not re.fullmatch(r'^\+?[0-9\s\-\.()]*$', phone_number):
+        raise ValueError("Invalid phone number: phone number must contain only digits, dots, spaces, dashes, parentheses and can start with +")
+    digits_only = re.sub(r'\D', '', phone_number)
+    if len(digits_only) < 8:
+        raise ValueError("Invalid phone number: phone number must contain at least 8 digits")
+    if len(digits_only) > 15:
+        raise ValueError("Invalid phone number: phone number must contain at most 15 digits")
+    # strlen_validation(phone_number, 'phone_number', 8, 20)
     return phone_number
 
 def address_validation(address: str):
@@ -316,6 +333,32 @@ def generate_temp_password(length=12, max_attempts=20):
             continue
 
     raise RuntimeError("Impossible de générer un mot de passe sécurisé après plusieurs tentatives")
+
+def sanitize_input(text: str, text_name: str):
+    """Sanitizes a text field to prevent XSS attacks
+    Args:
+        text (str): The text to sanitize
+        text_name (str): The name of the text field
+        
+    Returns:
+        str: The sanitized text
+        
+    Raises:
+        ValueError: 
+    """
+    if text is None:
+        raise ValueError(f'Expected {text_name} but received None')
+    type_validation(text, text_name, str)
+
+    if '\0' in text:
+        raise ValueError(f"Invalid {text_name}: {text_name} contains invalid format")
+    try:
+        clean_text = bleach.clean(text, tags=[], attributes={}, strip=True)
+        clean_text = re.sub(r'javascript:', '', clean_text, flags=re.IGNORECASE)
+        return clean_text
+
+    except Exception as e:
+        raise ValueError(f'Invalid {text_name}: processing error') from e
 
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP
