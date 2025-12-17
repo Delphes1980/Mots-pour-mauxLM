@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields, _http
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from flask import request
+from sqlalchemy.exc import OperationalError
 from werkzeug.exceptions import HTTPException
 from app.services import facade
 from app.utils import (compare_data_and_model, CustomError, generate_temp_password, validate_entity_id, name_validation, sanitize_input, email_validation, validate_phone_number, validate_password)
@@ -117,15 +118,22 @@ class UserList(Resource):
                 user_data['phone_number'] = validate_phone_number(user_data['phone_number'])
 
             new_user = facade.create_user(**user_data)
+
+            if not new_user:
+                api.abort(500, error='Erreur interne du serveur')
+
+            return new_user, 201
+
+        except ValueError as e:
+            api.abort(400, error=str(e))
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
+        except MemoryError:
+            api.abort(500, error="Ressources serveur épuisées")
+        except OperationalError:
+            api.abort(503, error="Service de base de données indisponibles")
         except Exception as e:
-            api.abort(400, error=str(e))
-
-        if not new_user:
-            api.abort(500, error='Erreur interne du serveur')
-
-        return new_user, 201
+            api.abort(500, error=str(e))
 
 
     @api.doc('Get all users')
