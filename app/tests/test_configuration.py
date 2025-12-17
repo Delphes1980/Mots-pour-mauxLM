@@ -34,7 +34,7 @@ class TestConfiguration(BaseTest):
         # Vérifier que les variables d'environnement mail sont définies
         mail_username = os.getenv('MAIL_USERNAME')
         mail_password = os.getenv('MAIL_PASSWORD')
-        
+
         # Ces variables peuvent être None en test, mais on vérifie leur existence
         self.assertIsNotNone(os.environ.get('MAIL_USERNAME', 'default'))
         self.assertIsNotNone(os.environ.get('MAIL_PASSWORD', 'default'))
@@ -45,7 +45,7 @@ class TestConfiguration(BaseTest):
             'DB_USER', 'DB_PASSWORD', 'DB_HOST', 'DB_PORT', 'DB_NAME',
             'MAIL_USERNAME', 'MAIL_PASSWORD'
         ]
-        
+
         for var in required_vars:
             # Vérifier que la variable existe (même si vide en test)
             value = os.environ.get(var, 'test_default')
