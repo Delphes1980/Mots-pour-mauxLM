@@ -65,7 +65,7 @@ class UserRepository(BaseRepository):
             existing_user = self.get_by_attribute("email", email)
             if existing_user:
                 raise ValueError("Un utilisateur avec cet email existe déjà.")
-            
+
             # Utiliser un mot de passe temporaire généré
             if not password:
                 raise ValueError("Mot de passe temporaire manquant pour la création admin")
