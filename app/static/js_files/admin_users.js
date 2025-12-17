@@ -545,9 +545,18 @@ function attachUserSaveAndCancelListeners(originalUser) {
 				const address = document.getElementById(`edit-address-${id}`).value;
 				const phone = document.getElementById(`edit-phone-${id}`).value;
 
-				if (!isValidInput(lastName) || !isValidInput(firstName) ||
-					!isValidInput(email) || !isValidInput(address) || !isValidInput(phone)) {
-					showFeedbackMessage('Veuillez remplir tous les champs correctement', true);
+				if (!isValidInput(lastName) || !isValidInput(firstName) || !isValidInput(email)) {
+					showFeedbackMessage('Veuillez remplir les champs obligatoires (Nom, Prénom, Email)', true);
+					return;
+				}
+
+				if (address.trim() !== '' && !isValidInput(address)) {
+					showFeedbackMessage('Adresse invalide', true);
+					return;
+				}
+
+				if (phone.trim() !== '' && !isValidInput(phone)) {
+					showFeedbackMessage('Numéro de téléphone invalide', true);
 					return;
 				}
 
@@ -555,8 +564,8 @@ function attachUserSaveAndCancelListeners(originalUser) {
 				last_name: lastName,
 				first_name: firstName,
 				email: email,
-				address: address,
-				phone_number: phone
+				address: address.trim() === '' ? null : address,
+				phone_number: phone.trim() === '' ? null : phone
 			};
 			modifyUser(id, data);
 		});
