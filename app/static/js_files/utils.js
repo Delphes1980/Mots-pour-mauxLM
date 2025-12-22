@@ -25,6 +25,9 @@ function setupClearButton(selector) {
     const inputFields = document.querySelectorAll(selector);
 
     inputFields.forEach(input => {
+		if (input.id === 'rating-input') {
+			return;}
+
         const clearButton = input.nextElementSibling;
 
         if (clearButton) {
