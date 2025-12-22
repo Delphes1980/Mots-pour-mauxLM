@@ -197,7 +197,6 @@ async function loadPrestationsForDropdown() {
 }
 
 
-
 // Fonction pour soumettre le formulaire
 function setupReviewForm() {
   const form = document.querySelector('.review-form');
