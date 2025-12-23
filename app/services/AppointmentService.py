@@ -72,7 +72,7 @@ class AppointmentService:
                     **context
                 )
             except Exception as e:
-                raise CustomError(f"Echec de l'envoi de l'email de notification pour le RDV {new_appointment.id}. Erreur: {e}", 500) from e
+                raise CustomError(f"Echec de l'envoi de l'accusé de réception pour le RDV {new_appointment.id}. Erreur: {e}", 500) from e
 
         return new_appointment
 
