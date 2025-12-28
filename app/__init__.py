@@ -39,7 +39,7 @@ def create_app():
         app,
         origins=[frontend_url],
         supports_credentials=True,  # Autorise l'envoi/réception de cookies
-        allow_headers=['Content-Type'],  # Headers que le front est autorisé à envoyer
+        allow_headers=['Content-Type', 'X-CSRF-TOKEN'],  # Headers que le front est autorisé à envoyer
         methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
         )
 
