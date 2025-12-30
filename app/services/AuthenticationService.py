@@ -133,7 +133,7 @@ class AuthenticationService:
         # Récupérer l'utilisateur par email
         user = self.user_repository.get_by_attribute("email", email)
         if not user:
-            raise CustomError("User not found", 404)
+            raise CustomError("Vous n'avez pas créé de compte", 404)
 
         try:
             validate_password(new_temp_password)
