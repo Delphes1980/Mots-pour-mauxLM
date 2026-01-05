@@ -159,7 +159,7 @@ function saveUserData(inputFields) {
 	let dataIsValid = true;
 
 	inputFields.forEach(input => {
-		if (!input || !input.name || input.id == 'email') return;  // Impossible de changer l'email
+		if (!input || !input.name || input.id == 'email') return;  // Empêche de changer l'email
 
 		const key = mapInputToUserField(input.name);
 		if (!key || typeof input.value !== 'string') return;
