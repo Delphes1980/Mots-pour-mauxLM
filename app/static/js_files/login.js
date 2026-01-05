@@ -53,6 +53,16 @@ function setupLogin() {
         // Afficher le message d'erreur
         showFeedbackMessage("Email ou mot de passe invalide", true);
 
+        // Vider le champ 'mot de passe' et 'email'
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+
+        // Masquer la croix d'effacement
+        const clearButtons = loginForm.querySelectorAll('.clear-input-button');
+        clearButtons.forEach(button => {
+          button.style.display = 'none';
+        });
+        document.getElementById('email').focus();
       }
     } catch (error) {
       console.error("Erreur lors de la connexion; ", error);

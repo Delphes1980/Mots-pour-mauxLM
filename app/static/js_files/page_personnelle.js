@@ -133,9 +133,10 @@ function cleanup(wrapper, modifyButton, inputs) {
 		input.classList.remove('editable');
 		input.blur();
 
-		if (input.id !== 'email') {
-			input.readOnly = true;
-		}
+		// if (input.id !== 'email') {
+		// 	input.readOnly = true;
+		// }
+		input.readOnly = true;
 
 		const clearButton = input.nextElementSibling;
 		if (clearButton && clearButton.classList.contains('clear-input-button')) {
@@ -154,10 +155,6 @@ function toggleEditMode(modifierButton, inputFields) {
 
 		input.readOnly = !isEditing;
 
-		if (input.id !== 'email') {
-			input.readOnly = !isEditing;
-		}
-
 		if (isEditing) {
 			input.classList.add('editable');
 		} else {
@@ -172,9 +169,10 @@ function toggleEditMode(modifierButton, inputFields) {
 function saveUserData(inputFields) {
 	const updateData = {};
 	let dataIsValid = true;
+	let emailChanged = false;
 
 	inputFields.forEach(input => {
-		if (!input || !input.name || input.id == 'email') return;  // Empêche de changer l'email
+		if (!input || !input.name) return;
 
 		const key = mapInputToUserField(input.name);
 		if (!key || typeof input.value !== 'string') return;
@@ -186,6 +184,10 @@ function saveUserData(inputFields) {
 		}
 
 		updateData[key] = val;
+
+		if (input.id === 'email') {
+			emailChanged = true;
+		}
 	});
 
 	if (!dataIsValid) {
@@ -230,6 +232,13 @@ function saveUserData(inputFields) {
 	})
 	.then(() => {
 		showFeedbackMessage('Mise à jour réussie !');
+
+		// Si l'email est modifié, on redirige vers le login
+		if (emailChanged) {
+			setTimeout(() => {
+				window.location.href = '/login';
+			}, 2000);
+		}
 	})
 	.catch(error => {
 		console.error(error);
