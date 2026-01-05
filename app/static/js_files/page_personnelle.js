@@ -164,11 +164,13 @@ function saveUserData(inputFields) {
 		const key = mapInputToUserField(input.name);
 		if (!key || typeof input.value !== 'string') return;
 
-		if (!isValidInput(input.value)) {
+		const val = input.value.trim();
+
+		if (val !== "" && !isValidInput(val)) {
 			dataIsValid = false;
 		}
 
-		updateData[key] = input.value.trim();
+		updateData[key] = val;
 	});
 
 	if (!dataIsValid) {

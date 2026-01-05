@@ -264,17 +264,23 @@ class UserService:
 
         if 'address' in kwargs:
             address = kwargs.get('address')
-            try:
-                address_validation(address)
-            except (ValueError, TypeError) as e:
-                raise CustomError(str(e), 400) from e
+            if address and address.strip() != "":
+                try:
+                    address_validation(address)
+                except (ValueError, TypeError) as e:
+                    raise CustomError(str(e), 400) from e
+            else:
+                kwargs['address'] = None
 
         if 'phone_number' in kwargs:
             phone_number = kwargs.get('phone_number')
-            try:
-                validate_phone_number(phone_number)
-            except (ValueError, TypeError) as e:
-                raise CustomError(str(e), 400) from e
+            if phone_number and phone_number.strip() != "":
+                try:
+                    validate_phone_number(phone_number)
+                except (ValueError, TypeError) as e:
+                    raise CustomError(str(e), 400) from e
+            else:
+                kwargs['phone_number'] = None
 
         if 'password' in kwargs:
             password = kwargs.get('password')

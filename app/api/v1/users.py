@@ -446,10 +446,16 @@ class User(Resource):
                 user_data['email'] = email_validation(user_data['email'])
             if 'password' in user_data:
                 user_data['password'] = validate_password(user_data['password'])
-            if 'address' in user_data and user_data['address']:
-                user_data['address'] = sanitize_input(user_data['address'], 'address')
-            if 'phone_number' in user_data and user_data['phone_number']:
-                user_data['phone_number'] = validate_phone_number(user_data['phone_number'])
+            if 'address' in user_data:
+                if user_data['address'] and user_data['address'].strip() != "":
+                    user_data['address'] = sanitize_input(user_data['address'], 'address')
+                else:
+                    user_data['address'] = None
+            if 'phone_number' in user_data:
+                if user_data['phone_number'] and user_data['phone_number'].strip() != "":
+                    user_data['phone_number'] = validate_phone_number(user_data['phone_number'])
+                else:
+                    user_data['phone_number'] = None
 
             # Si l'utilisateur veut changer son mot de passe
             if 'old_password' in user_data and 'new_password' in user_data:
