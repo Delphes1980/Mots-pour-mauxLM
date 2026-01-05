@@ -1,5 +1,6 @@
 const API_USERS_BASE_URL = '/api/v1/users';
 const API_REVIEWS_BASE_URL = '/api/v1/reviews';
+let initialEmail = "";
 
 
 // Fonction qui fait correspondre les noms des inputs HTML aux clés API
@@ -44,6 +45,7 @@ async function loadUserData() {
 		}
 
 		const data = await response.json();
+		initialEmail = data['email'];
 		const inputFields = document.querySelectorAll('.form-field input');
 
 		if (data.id) {
@@ -185,7 +187,7 @@ function saveUserData(inputFields) {
 
 		updateData[key] = val;
 
-		if (input.id === 'email') {
+		if (input.id === 'email' && val !==initialEmail) {
 			emailChanged = true;
 		}
 	});
