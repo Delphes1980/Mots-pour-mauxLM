@@ -54,7 +54,14 @@ def seed_prestations_and_ghosts():
                 {'name': 'Séance de psychothérapie'},
                 {'name': 'Séance d\'hypnose classique'},
                 {'name': 'Programme Anneau gastrique virtuel'},
-                {'name': 'Séance d\'hypnose pour l\'arrêt du tabac'}
+                {'name': 'Séance d\'hypnose pour l\'arrêt du tabac'},
+                {'name': 'Nettoyage et purification de lieux'},
+                {'name': 'Séance pendule'},
+                {'name': 'Guidance cartomancie'},
+                {'name': 'Accès annales akashiques'},
+                {'name': 'Séance acupressure'},
+                {'name': 'Séance réflexologie palmaire/plantaire'},
+                {'name': 'Séance massage ayurvédique'}
             ]
 
             for data in prestations_data:

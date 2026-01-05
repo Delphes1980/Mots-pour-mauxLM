@@ -20,6 +20,10 @@ def techniques():
 def prestations():
     return render_template('prestations_tarifs.html')
 
+@static_bp.route('/holistiques')
+def holistiques():
+    return render_template('prestations_holistiques.html')
+
 @static_bp.route('/coordonnees')
 def coordonnees():
     return render_template('coordonnees_horaires.html')
