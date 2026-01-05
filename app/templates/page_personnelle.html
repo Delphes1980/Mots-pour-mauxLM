@@ -57,7 +57,7 @@
                 <div class="client-info">
 					<h2>Informations personnelles</h2>
                     <div class="info-container">
-						<form id="personal-info-form" role="form" aria-label="Formulaire de consultation des informations personnelles">
+						<form id="personal-info-form" method="POST" onsubmit="event.preventDefault();" role="form" aria-label="Formulaire de consultation des informations personnelles">
 							<!-- Champ pour le prénom -->
 							<div class="form-field">
 								<label for="firstName">Prénom</label>
