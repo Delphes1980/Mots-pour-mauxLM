@@ -27,6 +27,9 @@ function mapInputToUserField(name) {
 
 // Fonction pour charger les données de l'utilisateur
 async function loadUserData() {
+	// Nettoie l'URL des paramètres sans recharger la page
+	window.history.replaceState({}, document.title, window.location.pathname);
+
 	try {
 		const response = await fetch(`${API_USERS_BASE_URL}/me`, {
 			method: 'GET',
@@ -80,58 +83,65 @@ function setupModifierButton(modifierButton, inputFields) {
 		if (isEditing) {
 			// Crée 2 boutons 'Enregistrer' et 'Annuler'
 			const buttonContainer = modifierButton.parentNode;
-			const buttonWrapper = document.createElement('div');
-			buttonWrapper.className = 'button-wrapper';
+			let buttonWrapper = buttonContainer.querySelector('.button-wrapper');
+			if (!buttonWrapper) {
+				buttonWrapper = document.createElement('div');
+				buttonWrapper.className = 'button-wrapper';
 
-			const saveButton = document.createElement('button');
-			saveButton.textContent = 'Enregistrer';
-			saveButton.className = 'save-info-button';
+				const saveButton = document.createElement('button');
+				saveButton.textContent = 'Enregistrer';
+				saveButton.className = 'save-info-button';
 
-			const cancelButton = document.createElement('button');
-			cancelButton.textContent = 'Annuler';
-			cancelButton.className = 'cancel-info-button';
+				const cancelButton = document.createElement('button');
+				cancelButton.textContent = 'Annuler';
+				cancelButton.className = 'cancel-info-button';
 
-			buttonWrapper.appendChild(saveButton);
-			buttonWrapper.appendChild(cancelButton);
+				buttonWrapper.appendChild(saveButton);
+				buttonWrapper.appendChild(cancelButton);
 
-			// Supprime le bouton 'Modifier'
-			modifierButton.remove();
+				// Ajoute le conteneur avec les 2 boutons
+				buttonContainer.appendChild(buttonWrapper);
 
-			// Ajoute le conteneur avec les 2 boutons
-			buttonContainer.appendChild(buttonWrapper);
+				// Gère le bouton 'Enregistrer'
+				saveButton.addEventListener('click', (e) => {
+					e.preventDefault();
+					saveUserData(inputFields);
+					cleanup(buttonWrapper, modifierButton, inputFields);
+				});
 
-			// Gère le bouton 'Enregistrer'
-			saveButton.addEventListener('click', () => {
-				saveUserData(inputFields);
-				restoreModifierButton(buttonContainer);
-			});
-
-			// Gère le bouton 'Annuler'
-			cancelButton.addEventListener('click', () => {
-				loadUserData();
-				restoreModifierButton(buttonContainer);
-			});
+				// Gère le bouton 'Annuler'
+				cancelButton.addEventListener('click', (e) => {
+					e.preventDefault();
+					loadUserData();
+					cleanup(buttonWrapper, modifierButton, inputFields);
+				});
+			}
+			modifierButton.style.display = 'none';
 		}
 	});
 }
 
 
 // Fonction qui remet le bouton 'Modifier'
-function restoreModifierButton(container) {
-	// Supprime les boutons 'Enregistrer' et 'Annuler'
-	container.querySelectorAll('.modify-info-button').forEach(button => button.remove())
+function cleanup(wrapper, modifyButton, inputs) {
+	// Supprime le bloc Enregistrer / Annuler
+	wrapper.remove();
+	// Réaffiche le bouton 'Modifier'
+	modifyButton.style.display = 'inline-block';
+	// Repasse les champs en lecture seule
+	inputs.forEach(input => {
+		input.classList.remove('editable');
+		input.blur();
 
-	// Réinjecte le bouton 'Modifier'
-	const modifierButton = document.createElement('button');
-	modifierButton.textContent = 'Modifier';
-	modifierButton.className = 'modify-info-button';
-	modifierButton.id = 'modifier-button';
+		if (input.id !== 'email') {
+			input.readOnly = true;
+		}
 
-	container.appendChild(modifierButton);
-
-	// Réattache le comportement
-	const inputFields = document.querySelectorAll('#personal-info-form input');
-	setupModifierButton(modifierButton, inputFields);
+		const clearButton = input.nextElementSibling;
+		if (clearButton && clearButton.classList.contains('clear-input-button')) {
+			clearButton.style.display = 'none';
+		}
+	});
 }
 
 
@@ -144,10 +154,15 @@ function toggleEditMode(modifierButton, inputFields) {
 
 		input.readOnly = !isEditing;
 
+		if (input.id !== 'email') {
+			input.readOnly = !isEditing;
+		}
+
 		if (isEditing) {
 			input.classList.add('editable');
 		} else {
 			input.classList.remove('editable');
+			input.blur();
 		}
 	});
 }
