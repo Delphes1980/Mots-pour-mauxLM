@@ -184,7 +184,7 @@ python -m unittest app.tests.[the folder you want to test(services, repositories
 
 ### Installation
 #### Prerequisites
-You must have **Git** and **Docker Compose** installed on your system.
+You must have **Git**, **Docker Compose** and **Docker Buildx** installed on your system.
 This application does work with the 3.12.3 version of Python, I don't know if it works with other ulterior or more recent versions.
 
 #### 1. Clone the repository
@@ -202,18 +202,18 @@ For Mailjet, you just have to create a free account, they will give you a public
 #### 3. Launch the application (Containerization)
 This command builds the necessary image, sets up the PostgreSQL databases (therapie_dev, therapie_test), creates all the tables, inserts the initial data (Prestations, Ghost user and Ghost prestation), and starts the web server.
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
-(**Note:** Use `docker compose` instead of `docker-compose` if your system supports the new syntax).
+(**Note:** Use `docker-compose` instead of `docker-compose` if your system does not support the new syntax).
 
 ---
 
 ### Admin Setup
 To fully test all API endpoints (e.g., retrieving all users/ reviews) and simulate administration roles, you must create a dedicated administrator account after the database has been initialized.
-**1 - Ensure containers are running:** Verify that your `web` and `db` containers are active (`docker-compose ps` must show **Up**).
+**1 - Ensure containers are running:** Verify that your `web` and `db` containers are active (`docker compose ps` must show **Up**).
 **2 - Access the web container shell:** Open a new terminal session and execute a command to enter the running web container:
 ```	
-docker-compose exec web bash
+docker compose exec web bash
 ```
 **3 - Create the admin account:** Inside the container shell, launch the Python interpreter and execute the commands to create the admin user (replace the password placeholder):
 ```bash
@@ -260,21 +260,21 @@ Once the application is running, here are the essential commands:
 **1. Stop the Application (Preserving Data)**
 To stop the web server and the database container without deleting any data you have created (users, appointments, reviews):
 ```bash
-docker-compose stop
+docker compose stop
 ```
 **(Your data persists on your host machine)**
 
 **2. Restart the Application**
 To resume work from where you left off:
 ```bash
-docker-compose start
+docker compose start
 ```
 
 **3. Permanently Delete ALL Data (For a Clean Reset)**
 **_⚠ WARNING:_** This action deletes the PostgreSQL data volume and **all data** (users, reviews, initial seed data) permanently.
 Use this command if you need to perform a clean, fresh install:
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 (The `-v` flag deletes the data volume).
 

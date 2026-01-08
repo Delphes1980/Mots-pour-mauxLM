@@ -60,7 +60,7 @@ def seed_prestations_and_ghosts():
                 {'name': 'Guidance cartomancie'},
                 {'name': 'Accès annales akashiques'},
                 {'name': 'Séance acupressure'},
-                {'name': 'Séance réflexologie palmaire/plantaire'},
+                {'name': 'Séance réflexologie palmaire ou plantaire'},
                 {'name': 'Séance massage ayurvédique'}
             ]
 
