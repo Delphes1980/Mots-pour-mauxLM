@@ -245,7 +245,7 @@ class TestUsersAPI(BaseTest):
         
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        self.assertTrue('error' in response_data or 'errors' in response_data)
     
     def test_search_user_found(self):
         """Test recherche utilisateur existant"""
@@ -277,7 +277,7 @@ class TestUsersAPI(BaseTest):
         
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        self.assertTrue('error' in response_data or 'errors' in response_data)
     
     def test_get_user_by_id_found(self):
         """Test récupération par ID existant"""
@@ -391,7 +391,7 @@ class TestUsersAPI(BaseTest):
         
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        self.assertTrue('error' in response_data or 'errors' in response_data)
     
     def test_update_user_not_found(self):
         """Test mise à jour utilisateur inexistant"""
@@ -492,7 +492,7 @@ class TestUsersAPI(BaseTest):
         
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.data)
-        self.assertIn('error', response_data)
+        self.assertTrue('error' in response_data or 'errors' in response_data)
 
     def test_get_me_after_admin_login_returns_admin_data(self):
         """Test que /users/me retourne les infos de l'admin après login"""

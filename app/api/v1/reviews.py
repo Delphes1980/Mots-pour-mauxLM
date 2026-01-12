@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields, _http
-from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, validate_entity_id, rating_validation, text_field_validation)
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from app.services import facade
+from app.utils import (compare_data_and_model, CustomError, validate_entity_id, rating_validation, text_field_validation, sanitize_input)
 
 
 # Créer une instance de façade
@@ -24,13 +24,28 @@ review_response_model = api.model('ReviewResponse', {
     'prestation_id': fields.String(attribute=lambda review: f"{review.prestation_id}", required=True, description='L\'ID de la prestation associé au commentaire'),
 })
 
+# Définir le modèle de données pour le nom de la prestation liée à l'avis
+prestation_details_model = api.model('PrestationDetails', {
+	'id': fields.String(required=True, description='ID de la prestation'),
+	'name': fields.String(required=True, description='Le nom de la prestation')
+})
+
+# Définir le modèle de données pour l'utilisateur pour l'admin
+user_admin_details_model = api.model('UserAdminDetails', {
+	'id': fields.String(required=True, description='ID de l\'utilisateur'),
+	'first_name': fields.String(required=True, description='Le prénom de l\'utilisateur'),
+	'last_name': fields.String(required=True, description='Le nom de l\'utilisateur'),
+	'email': fields.String(required=True, description='L\'email de l\'utilisateur')
+})
+
 # Définir le modèle de données pour la réponse pour l'admin
 admin_review_response_model = api.model('AdminReviewResponse', {
     'id': fields.String(required=True, description='ID du commentaire'),
     'rating': fields.Integer(required=True, description='La note du commentaire'),
     'text': fields.String(required=True, description='Le texte du commentaire'),
-    'prestation_id': fields.String(attribute=lambda review: f"{review.prestation_id}", required=True, description='L\'ID de la prestation associée au commentaire'),
-    'user_id': fields.String(attribute=lambda review: f"{review.user_id}", required=True, description='L\'ID de l\'utilisateur associé au commentaire')
+    'created_at': fields.DateTime(description='Date de création'),
+    'prestation': fields.Nested(prestation_details_model, description='Les détails de la prestation associée au commentaire'),
+    'user': fields.Nested(user_admin_details_model, description='Les détails de l\'utilisateur associé au commentaire')
 })
 
 # Définir le modèle de données pour la mise à jour du commentaire
@@ -92,6 +107,7 @@ class ReviewList(Resource):
 
             # Vérification des champs
             rating_validation(review_data['rating'])
+            review_data['text'] = sanitize_input(review_data['text'], 'text')
             text_field_validation(review_data['text'], 'text', 2, 500)
 
             prestation_id = review_data.get('prestation_id')
@@ -140,6 +156,7 @@ class ReviewList(Resource):
         try:
             reviews = facade.get_all_reviews()
             return reviews, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -157,6 +174,7 @@ class PublicReviews(Resource):
         try:
             reviews = facade.get_all_public_reviews()
             return reviews, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -176,12 +194,51 @@ class UserReviewList(Resource):
         user_id = get_jwt_identity()
 
         try:
+            try:
+                validate_entity_id(user_id, 'user_id')
+            except ValueError as e:
+                api.abort(400, error=str(e))
+
             existing_user = facade.get_user_by_id(user_id)
             if not existing_user:
                 raise CustomError('L\'utilisateur n\'existe pas', 404)
 
             reviews = facade.get_review_by_user(user_id)
             return reviews, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
+@api.route('/by-user/<user_id>')
+class ReviewsByUser(Resource):
+    @api.doc('Get all reviews for a specific user')
+    @api.marshal_list_with(admin_review_response_model, code=_http.HTTPStatus.OK, description='List of reviews retrieved successfully')
+    @jwt_required()
+    @api.response(200, 'Liste des commentaires récupérée avec succès', admin_review_response_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(403, 'Vous n\avez pas les droits administrateur', error_model)
+    @api.response(404, 'Utilisateur non trouvé', error_model)
+    @api.response(500, 'Erreur intern du serveur', error_model)
+    def get(self, user_id):
+        """Récupérer tous les commentaires d'un utilisateur spécifique"""
+        current_user = get_jwt()
+
+        # Vérifier que l'utilisateur a les drois admin
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        try:
+            validate_entity_id(user_id, 'user_id')
+            existing_user = facade.get_user_by_id(user_id)
+            if not existing_user:
+                raise CustomError('L\'utilisateur n\'existe pas', 404)
+
+            reviews = facade.get_review_by_user(user_id)
+            return reviews, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
@@ -346,14 +403,16 @@ class Review(Resource):
                 try:
                     rating_validation(rating)
                 except ValueError as e:
-                    raise CustomError(str(e), 400)
+                    raise CustomError(str(e), 400) from e
 
             if 'text' in review_data:
                 text = review_data.get('text')
+                text = sanitize_input(text, 'text')
+                review_data['text'] = text
                 try:
                     text_field_validation(text, 'text', 2, 500)
                 except ValueError as e:
-                    raise CustomError(str(e), 400)
+                    raise CustomError(str(e), 400) from e
 
             updated_data = {}
 

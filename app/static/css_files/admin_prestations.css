@@ -1,0 +1,38 @@
+/* Style pour les boutons 'Modifier' et 'Supprimer' de admin_prestations */
+.prestation-actions,
+.prestation-actions .save-edit-button,
+.prestation-actions .cancel-edit-button {
+	flex-direction: row !important;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 10px;
+}
+
+/* Style pour le titre du conteneur pour la création de prestation */
+.creation-container h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.5em;
+	margin-bottom: 20px;
+	text-align: center;
+	color: var(--writing-dark);
+}
+
+
+/* ##### Code responsive ##### */
+/* Pour les écrans jusqu'à 768px */
+@media (max-width: 768px) {
+	.prestation-actions {
+		flex-direction: column !important;
+		align-items: stretch;
+		gap: 10px;
+	}
+	.prestation-actions button {
+		width: 100%;
+		margin-bottom: 0;
+		padding: 12px;
+		font-size: 14px;
+	}
+	.creation-container h4 {
+		font-size: 1.3em;
+	}
+}

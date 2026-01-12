@@ -1,6 +1,7 @@
 aniso8601==10.0.1
 attrs==25.3.0
 bcrypt==4.3.0
+bleach==6.3.0
 blinker==1.9.0
 certifi==2025.10.5
 charset-normalizer==3.4.4
@@ -33,4 +34,5 @@ SQLAlchemy==2.0.43
 typing_extensions==4.15.0
 urllib3==2.5.0
 validate-email-address==1
+webencodings==0.5.1
 Werkzeug==3.1.3

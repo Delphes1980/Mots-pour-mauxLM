@@ -39,21 +39,21 @@ class AppointmentRepository(BaseRepository):
 
             # Créer un nouveau rendez-vous
             new_appointment = Appointment(
-                message=message, 
                 user=user,
+                message=message,
                 prestation=prestation
             )
             self.db.session.add(new_appointment)
             self.db.session.commit()
             return new_appointment
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             self.db.session.rollback()
-            raise ValueError("Erreur lors de la création du rendez-vous")
+            raise ValueError("Erreur lors de la création du rendez-vous") from e
 
     def get_by_user_and_prestation(self, user_id, prestation_id):
         """Récupérer les rendez-vous par utilisateur et prestation"""
         return self.db.session.query(self.model_class).filter_by(
-            _user_id=user_id, 
+            _user_id=user_id,
             _prestation_id=prestation_id
         ).all()
 
@@ -68,6 +68,10 @@ class AppointmentRepository(BaseRepository):
         return self.db.session.query(self.model_class).filter_by(
             _user_id=user_id
         ).all()
+
+    def get_appointments_by_status(self, status):
+        """Récupérer les rendez-vous par statut"""
+        return self.db.session.query(self.model_class).filter_by(_status=status).all()
 
     def reassign_appointments_from_user(self, old_user_id, new_user_id):
         """Réassigner les rendez-vous d'un utilisateur supprimé à un utilisateur fantôme, pour pouvoir supprimer l'utilisateur"""

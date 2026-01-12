@@ -181,7 +181,7 @@ class TestAppointmentsIntegration(BaseTest):
         response_data = json.loads(response.data)
         self.assertEqual(len(response_data), 2)
         for appt in response_data:
-            self.assertEqual(appt['prestation_id'], str(self.prestation1.id))
+            self.assertEqual(appt['prestation']['id'], str(self.prestation1.id))
 
     def test_get_appointments_by_user_as_admin(self):
         """Test récupération des rendez-vous par utilisateur en tant qu'admin"""
@@ -207,7 +207,7 @@ class TestAppointmentsIntegration(BaseTest):
         response_data = json.loads(response.data)
         self.assertEqual(len(response_data), 2)
         for appt in response_data:
-            self.assertEqual(appt['user_id'], str(self.regular_user.id))
+            self.assertEqual(appt['user']['id'], str(self.regular_user.id))
 
     def test_get_appointments_by_user_and_prestation_as_admin(self):
         """Test récupération des rendez-vous par utilisateur et prestation"""

@@ -35,8 +35,10 @@
                     <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
                     <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
                     <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+                    <a href="{{ url_for('static_pages.holistiques') }}" id="holistiques_link" aria-label="Tarifs et prestations holistiques proposées">Prestations<br>Holistiques</a>
                     <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
                     <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.admin_dashboard') }}" id="admin_link" style="display: none;" aria-label="Accéder au panneau d'administration">Admin</a>
                     <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
                     <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
                     <a href="#" id="logout_link" style="display: none;">Déconnexion</a>
@@ -88,6 +90,7 @@
         </main>
 
         <!-- Liens pour les fichiers JS -->
+        <script src="{{ url_for('static', filename='js_files/utils.js') }}" defer></script>
         <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
 
 		<hr class="line">
@@ -96,6 +99,7 @@
             <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
 
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+            </div>
         </footer>
 
 </body>

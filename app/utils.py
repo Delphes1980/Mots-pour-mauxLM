@@ -1,10 +1,11 @@
 from uuid import UUID
 import inspect
-from validate_email_address import validate_email
-import re
-from app import bcrypt
 import string
 import secrets
+import re
+import bleach
+from validate_email_address import validate_email
+from app import bcrypt
 from app import db, create_app
 
 
@@ -53,6 +54,8 @@ Functions:
         Validates the entity ID format
     generate_temp_password(length=12, max_attempts=20):
         Generates a temporary password
+    sanitize_input(text, text_name):
+        Sanitizes a text field to prevent XSS attacks
 """
 
 
@@ -169,7 +172,7 @@ def type_validation(arg, arg_name: str, *arg_type):
         else:
             type_string = types_to_check.__name__
         raise TypeError(f"Invalid {arg_name}: {arg_name} must be of type {type_string}")
-        
+
 def strlen_validation(string: str, string_name: str, min_len, max_len):
     """ Validate the length of a specific range
     Args:
@@ -184,56 +187,64 @@ def strlen_validation(string: str, string_name: str, min_len, max_len):
         raise ValueError(f"Invalid {string_name}: {string_name} must be shorter than {max_len} characters and include at least {min_len} no-space characters")
 
 def name_validation(names: str, names_name: str):
-        """ Validates first_name and last_name to ensure they contain only valid characters """
-        if names is None:
-            raise ValueError(f'Expected {names_name} but received None')
-        type_validation(names, names_name, str)
-        names = names.strip()
-        strlen_validation(names, names_name, 1, 50)
-        names_list = names.split()
-        for name in names_list:
-            if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
-                raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
-        return " ".join(names_list)
+    """ Validates first_name and last_name to ensure they contain only valid characters """
+    if names is None:
+        raise ValueError(f'Expected {names_name} but received None')
+    type_validation(names, names_name, str)
+    # Evite le XSS
+    if '\0' in names or '\n' in names or '\r' in names:
+        raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
+    names = names.strip()
+    strlen_validation(names, names_name, 1, 50)
+    names_list = names.split()
+    for name in names_list:
+        if not re.fullmatch(r"^[^\W\d_]+([.'-][^\W\d_]+)*[.]?$", name, re.UNICODE):
+            raise ValueError(f"Invalid {names_name}: {names_name} must contain only letters, apostrophes, spaces, dots or dashes")
+    return " ".join(names_list)
 
 def email_validation(email: str):
-        """ Validates the email address """
-        if email is None:
-            raise ValueError('Expected email but received None')
-        type_validation(email, 'email', str)
-        if not validate_email(email):
-            raise ValueError("Invalid email: email must have format exemple@exemple.com")
-        return email
+    """ Validates the email address """
+    if email is None:
+        raise ValueError('Email attendu mais aucun reçu')
+    type_validation(email, 'email', str)
+    if ' ' in email:
+        raise ValueError("Adresse e-mail invalide : l'adresse e-mail ne doit pas contenir d'espaces")
+    strict_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$'
+    if not re.match(strict_pattern, email):
+        raise ValueError("Adresse e-mail invalide : l'adresse e-mail doit être au format exemple@exemple.com")
+    if not validate_email(email):
+        raise ValueError("Adresse e-mail invalide : l'adresse e-mail doit être au format exemple@exemple.com")
+    return email
 
 def validate_password(plain_password):
-        """ Validates the password to ensure it meets the requirements """
-        if plain_password is None:
-            raise ValueError("Expected password but received None")
-        if len(plain_password) < 8:
-            raise ValueError("Invalid password: password must be at least 8 characters")
-        if not re.search(r'\d', plain_password):
-            raise ValueError("Invalid password: password must contain at least one digit")
-        if not re.search(r'[A-Z]', plain_password):
-             raise ValueError("Invalid password: password must contain at least one uppercase lettre")
-        if not re.search(r'[a-z]', plain_password):
-            raise ValueError("Invalid password: password must contain at least one lowercase letter")
-        special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
-        if not re.search(special_chars, plain_password):
-            raise ValueError("Invalid password: password must contain at least one special character")
-        return plain_password
+    """ Validates the password to ensure it meets the requirements """
+    if plain_password is None:
+        raise ValueError("Mot de passe attendu mais aucun reçu")
+    if len(plain_password) < 8:
+        raise ValueError("Mot de passe invalide : le mot de passe doit comporter au moins 8 caractères")
+    if not re.search(r'\d', plain_password):
+        raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins un chiffre")
+    if not re.search(r'[A-Z]', plain_password):
+        raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins une lettre majuscule")
+    if not re.search(r'[a-z]', plain_password):
+        raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins une lettre minuscule")
+    special_chars = r'[!@#$%^&*()_+=\-{}[\]|\\:;"<,>/?`~]'
+    if not re.search(special_chars, plain_password):
+        raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins un caractère spécial")
+    return plain_password
 
 def hash_password(validated_password):
-		""" Hashes the password before storing it """
-		if validated_password is None:
-			raise ValueError('Expected password but received None')
-		type_validation(validated_password, 'password', str)
-		return bcrypt.generate_password_hash(validated_password).decode('utf-8')
+    """ Hashes the password before storing it """
+    if validated_password is None:
+        raise ValueError('Expected password but received None')
+    type_validation(validated_password, 'password', str)
+    return bcrypt.generate_password_hash(validated_password).decode('utf-8')
 
 def verify_password(hashed_password, plain_password):
-		""" Verifies if the provided password matches the hashed password """
-		if plain_password is None:
-			raise ValueError('Expected password but received None')
-		return bcrypt.check_password_hash(hashed_password, plain_password)
+    """ Verifies if the provided password matches the hashed password """
+    if plain_password is None:
+        raise ValueError('Expected password but received None')
+    return bcrypt.check_password_hash(hashed_password, plain_password)
 
 def validate_phone_number(phone_number: str):
     """Validate the phone number format"""
@@ -241,8 +252,14 @@ def validate_phone_number(phone_number: str):
         return None
     type_validation(phone_number, 'phone_number', str)
     strlen_validation(phone_number, 'phone_number', 0, 20)
-    if not re.fullmatch(r'^\+?[0-9\s\-()]*$', phone_number):
-        raise ValueError("Invalid phone number: phone number must contain only digits, spaces, dashes, parentheses and can start with +")
+    if not re.fullmatch(r'^\+?[0-9\s\-\.()]*$', phone_number):
+        raise ValueError("Invalid phone number: phone number must contain only digits, dots, spaces, dashes, parentheses and can start with +")
+    digits_only = re.sub(r'\D', '', phone_number)
+    if len(digits_only) < 8:
+        raise ValueError("Invalid phone number: phone number must contain at least 8 digits")
+    if len(digits_only) > 15:
+        raise ValueError("Invalid phone number: phone number must contain at most 15 digits")
+    # strlen_validation(phone_number, 'phone_number', 8, 20)
     return phone_number
 
 def address_validation(address: str):
@@ -316,6 +333,32 @@ def generate_temp_password(length=12, max_attempts=20):
             continue
 
     raise RuntimeError("Impossible de générer un mot de passe sécurisé après plusieurs tentatives")
+
+def sanitize_input(text: str, text_name: str):
+    """Sanitizes a text field to prevent XSS attacks
+    Args:
+        text (str): The text to sanitize
+        text_name (str): The name of the text field
+        
+    Returns:
+        str: The sanitized text
+        
+    Raises:
+        ValueError: 
+    """
+    if text is None:
+        raise ValueError(f'Expected {text_name} but received None')
+    type_validation(text, text_name, str)
+
+    if '\0' in text:
+        raise ValueError(f"Invalid {text_name}: {text_name} contains invalid format")
+    try:
+        clean_text = bleach.clean(text, tags=[], attributes={}, strip=True)
+        clean_text = re.sub(r'javascript:', '', clean_text, flags=re.IGNORECASE)
+        return clean_text
+
+    except Exception as e:
+        raise ValueError(f'Invalid {text_name}: processing error') from e
 
 class CustomError(Exception):
     """ Custom exception class to handle specific APIs errors with HTTP

@@ -10,6 +10,8 @@
 	--writing-dark: #48493D;
 	--button-hover: #705141;
 	--icon-color: #E2725B;
+	--delete-color: #c0392b;
+	--save-color: #2ecc71;
 }
 
 /* Style base de la page */
@@ -144,23 +146,24 @@ footer {
 
 
 /* ##### Code responsive ##### */
-
 /* Pour les tablettes (max-width: 768px) */
 @media (max-width: 768px) {
 	.header {
 		flex-direction: column;
 		padding: 20px;
-		margin-top: 15px;
+		margin-top: 0;
+		border-radius: 0 0 10px 10px;
 	}
 
 	.logo-container {
 		width: 100%;
-		max-width: 250px;
+		max-width: 220px;
+		margin-bottom: 15px;
 	}
 
 	.nav-container {
 		margin-left: 0;
-		margin-top: 20px;
+		margin-top: 10px;
 		width: 100%;
 	}
 
@@ -171,40 +174,36 @@ footer {
 	}
 
 	#nav-links a {
-		font-size: 14px;
-		padding: 8px 3px;
+		font-size: 15px;
+		padding: 8px 12px;
+		background-color: rgba(255, 255, 255, 0.4);
+		border-radius: 5px;
 		white-space: normal;
 	}
 
 	.footer {
-		flex-direction: column;
-		gap: 10px;
+		padding: 20px 15px;
+		font-size: 13px;
 	}
 }
 
 /* Pour les mobiles (max-width: 480px) */
 @media (max-width: 480px) {
-	.header {
-		padding: 15px;
-	}
-
-	.logo-container {
-		max-width: 200px;
-	}
-
 	#nav-links {
 		flex-direction: column;
-		align-items: center;
-		gap: 5px;
+		width: 100%;
+		gap: 8px;
 	}
 
 	#nav-links a {
-		font-size: 12px;
-		padding: 5px;
-		white-space: normal;
+		width: 100%;
+		text-align: center;
+		padding: 10px;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 	}
 
 	.hero-box {
-		font-size: 20px;
+		font-size: 22px;
+		padding: 0 10px;
 	}
 }

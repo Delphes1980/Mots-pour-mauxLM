@@ -46,6 +46,7 @@
 .form-field {
 	margin-bottom: 15px;
 	width: 80%;
+	position: relative;
 }
 
 /* Style pour les titres des champs (label)*/
@@ -69,7 +70,7 @@
 }
 
 /* Style du bouton 'modifier' pour les infos personnelles */
-.modify-info-button {
+.modify-info-button, .modify-password-button {
 	background-color: var(--background-button);
 	color: var(--background-card);
 	padding: 10px 20px;
@@ -84,19 +85,70 @@
 }
 
 /* Style pour le survol du bouton 'modifier' */
-.modify-info-button:hover {
+.modify-info-button:hover, .modify-password-button:hover {
 	background-color: var(--button-hover);
 	transform: translateY(-2px);
 	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Style pour le conteneur des 2 autres boutons */
+/* Style pour séparer les boutons 'Modifier' et 'Modifier mon mot de passe' */
+.modify-password-button {
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+/* Style pour le conteneur des boutons 'Enregistrer' et 'Modifier' */
+.button-wrapper {
+	display: flex;
+	justify-content: center;
+	gap: 15px;
+	width: 100%;
+}
+
+/* Style pour le bouton 'Enregistrer' */
+.save-info-button {
+	background-color: var(--save-color);
+	color: var(--background-card);
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+	width: 60%;
+}
+
+/* Style pour le bouton 'Annuler' */
+.cancel-info-button {
+	background-color: var(--icon-color);
+	color: var(--background-card);
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+	width: 60%;
+}
+
+/* Style pour les champs modifiables après avoir appuyé sur 'Modifier' */
+input.editable {
+	border: 2px solid var(--button-hover);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+	transition: border-color 0.3s ease, box-shadow 03s ease;
+}
+
+/* Style pour le conteneur des boutons 'Prendre rdv' et 'Laisser un commentaire' */
 .button-container {
 	display: flex;
 	flex-direction: row;
 	gap: 15px;
 	width: 100%;
-	margin-top: 30px;
+	margin-top: 20px;
 }
 
 /* Style des boutons 'Prendre rdv' et 'Laisser un commentaire' */
@@ -259,30 +311,146 @@
 	color: var(--background-form);
 }
 
+/* Style pour la modale de modification du mot de passe */
+.modal-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+/* Style pour le conteneur des champs */
+.modal-box {
+	background-color: var(--background-card);
+	color: var(--writing-dark);
+	padding: 30px;
+	border-radius: 10px;
+	width: 90%;
+	max-width: 450px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+	text-align: center;
+}
+
+/* Style pour le titre de la modale */
+.modal-box h4 {
+	font-family: 'DM Serif Display', serif;
+	font-size: 1.5em;
+	margin-bottom: 20px;
+	color: var(--writing-dark);
+}
+
+/* Style pour les champs de la modale */
+.modal-field {
+	width: 100% !important;
+	text-align: left;
+	color: var(--writing-medium);
+}
+
+.modal-buttons {
+	display: flex;
+	gap: 15px;
+	margin-top: 20px;
+	justify-content: space-between;
+}
+
+.modal-button {
+	flex: 1;
+	padding: 10px;
+	border: none;
+	border-radius: 8px;
+	font-family: 'Lexend', sans-serif;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background 0.3s;
+}
+
+/* Style pour le bouton 'Confirmer' de la modale */
+.confirm-button {
+	background-color: var(--background-button);
+	color: var(--background-card);
+}
+
+/* Style pour le bouton 'Annuler' de la modale */
+.cancel-button {
+	background-color: var(--delete-color);
+	color: var(--background-card);
+}
+
+/* Style pour la croix pour effacer l'input */
+.clear-input-button {
+	position: absolute;
+	top: 40px;
+	right: 8px;
+	transform: translateY(-50%);
+	color: var(--writing-medium);
+	cursor: pointer;
+	font-size: 1.2em;
+	display: none;
+	z-index: 10;
+}
+
 
 /* ##### Code responsive ##### */
-/* Pour les écrans plus petits que 768px */
+/* Pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.main-content {
 		grid-template-columns: 1fr;
 		gap: 30px;
-		padding: 10px;
+		padding: 15px;
 	}
 	.client-info, .review-info-container {
-		padding: 20px;
+		padding: 20px 15px;
+		width: 100%;
 	}
 	.client-info h2, .review-info-container h2 {
-		font-size: 1.3em;
-	}
-	.button-container {
-		flex-direction: column;
-		gap: 10px;
-		margin-top: 20px;
+		font-size: 1.4em;
 	}
 	.form-field {
 		width: 100%;
 	}
-	.modify-info-button, .modify-review-button {
+	.form-field input,
+	.modal-field {
+		font-size: 16px !important;
+	}
+	.modify-info-button,
+	.modify-review-button,
+	.modify-password-button,
+	.save-info-button,
+	.cancel-info-button {
 		width: 100%;
+		padding: 12px;
+	}
+	.button-wrapper {
+		flex-direction: column;
+		gap: 10px;
+	}
+	.button-container {
+		flex-direction: column;
+		gap: 15px;
+		margin-top: 30px;
+	}
+	.contact-button {
+		margin-top: 0;
+		width: 100%;
+	}
+	.modal-box {
+		width: 95%;
+		padding: 20px;
+		max-height: 90vh;
+		overflow-y: auto;
+	}
+	.modal-buttons {
+		flex-direction: column-reverse;
+		gap: 10px;
+	}
+	.modal-button {
+		width: 100%;
+		padding: 12px;
 	}
 }

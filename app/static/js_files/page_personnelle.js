@@ -1,8 +1,8 @@
 const API_USERS_BASE_URL = '/api/v1/users';
 const API_REVIEWS_BASE_URL = '/api/v1/reviews';
+let initialEmail = "";
 
 
-// Fonctions utilitaires: 
 // Fonction qui fait correspondre les noms des inputs HTML aux clés API
 function mapInputToUserField(name) {
 	const mapping = {
@@ -14,7 +14,7 @@ function mapInputToUserField(name) {
 	};
 
 	// Ignore le mot de passe pour le remplissage
-	if (name === 'password') {
+	if (name === 'password' || name === 'current_password' || name === 'new_password' || name === 'confirm_password') {
 		return null;
 	}
 
@@ -26,30 +26,11 @@ function mapInputToUserField(name) {
 }
 
 
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-  const banner = document.getElementById('feedback-message');
-  if (!banner) return;
-
-  banner.textContent = message;
-  banner.classList.remove('error', 'show');
-  if (isError) banner.classList.add('error');
-
-  banner.style.display = 'block';
-  setTimeout(() => banner.classList.add('show'), 10);
-
-  setTimeout(() => {
-    banner.classList.remove('show');
-    setTimeout(() => {
-      banner.style.display = 'none';
-      banner.classList.remove('error');
-    }, 300);
-  }, 4000);
-}
-
-
 // Fonction pour charger les données de l'utilisateur
 async function loadUserData() {
+	// Nettoie l'URL des paramètres sans recharger la page
+	window.history.replaceState({}, document.title, window.location.pathname);
+
 	try {
 		const response = await fetch(`${API_USERS_BASE_URL}/me`, {
 			method: 'GET',
@@ -64,6 +45,7 @@ async function loadUserData() {
 		}
 
 		const data = await response.json();
+		initialEmail = data['email'];
 		const inputFields = document.querySelectorAll('.form-field input');
 
 		if (data.id) {
@@ -72,19 +54,16 @@ async function loadUserData() {
 
 		const firstName = data['first_name'];
 		if (firstName) {
-			const fisrtNameSpan = document.getElementById('user_firstname');
-			if (fisrtNameSpan) {
-				fisrtNameSpan.textContent = firstName;
+			const firstNameSpan = document.getElementById('user_firstname');
+			if (firstNameSpan) {
+				firstNameSpan.textContent = firstName;
 			}
 		}
 
 		inputFields.forEach(input => {
 			const apiFieldKey = mapInputToUserField(input.name);
 
-			if (input.name === 'password') {
-				input.value = '********';
-			} else if (apiFieldKey && data[apiFieldKey] !== undefined) {
-				// Remplissage des autres champs
+			if (input.name !== 'password' && apiFieldKey && data[apiFieldKey] !== undefined) {
 				input.value = data[apiFieldKey];
 			}
 		});
@@ -103,8 +82,67 @@ function setupModifierButton(modifierButton, inputFields) {
 		const isEditing = modifierButton.textContent === 'Modifier';
 		toggleEditMode(modifierButton, inputFields);
 
-		if (!isEditing) {
-			saveUserData(inputFields);
+		if (isEditing) {
+			// Crée 2 boutons 'Enregistrer' et 'Annuler'
+			const buttonContainer = modifierButton.parentNode;
+			let buttonWrapper = buttonContainer.querySelector('.button-wrapper');
+			if (!buttonWrapper) {
+				buttonWrapper = document.createElement('div');
+				buttonWrapper.className = 'button-wrapper';
+
+				const saveButton = document.createElement('button');
+				saveButton.textContent = 'Enregistrer';
+				saveButton.className = 'save-info-button';
+
+				const cancelButton = document.createElement('button');
+				cancelButton.textContent = 'Annuler';
+				cancelButton.className = 'cancel-info-button';
+
+				buttonWrapper.appendChild(saveButton);
+				buttonWrapper.appendChild(cancelButton);
+
+				// Ajoute le conteneur avec les 2 boutons
+				buttonContainer.appendChild(buttonWrapper);
+
+				// Gère le bouton 'Enregistrer'
+				saveButton.addEventListener('click', (e) => {
+					e.preventDefault();
+					saveUserData(inputFields);
+					cleanup(buttonWrapper, modifierButton, inputFields);
+				});
+
+				// Gère le bouton 'Annuler'
+				cancelButton.addEventListener('click', (e) => {
+					e.preventDefault();
+					loadUserData();
+					cleanup(buttonWrapper, modifierButton, inputFields);
+				});
+			}
+			modifierButton.style.display = 'none';
+		}
+	});
+}
+
+
+// Fonction qui remet le bouton 'Modifier'
+function cleanup(wrapper, modifyButton, inputs) {
+	// Supprime le bloc Enregistrer / Annuler
+	wrapper.remove();
+	// Réaffiche le bouton 'Modifier'
+	modifyButton.style.display = 'inline-block';
+	// Repasse les champs en lecture seule
+	inputs.forEach(input => {
+		input.classList.remove('editable');
+		input.blur();
+
+		// if (input.id !== 'email') {
+		// 	input.readOnly = true;
+		// }
+		input.readOnly = true;
+
+		const clearButton = input.nextElementSibling;
+		if (clearButton && clearButton.classList.contains('clear-input-button')) {
+			clearButton.style.display = 'none';
 		}
 	});
 }
@@ -117,31 +155,47 @@ function toggleEditMode(modifierButton, inputFields) {
 	inputFields.forEach(input => {
 		if (!input || !input.id) return;
 
-		// On ne permet pas de modifier le mail et le mot de passe
-		if (input.id !== 'email' && input.id !== 'password') {
-			input.readOnly = !isEditing;
+		input.readOnly = !isEditing;
+
+		if (isEditing) {
+			input.classList.add('editable');
+		} else {
+			input.classList.remove('editable');
+			input.blur();
 		}
 	});
-
-	// Met à jour le style et le texte du bouton
-	modifierButton.textContent = isEditing ? 'Enregistrer' : 'Modifier';
-	modifierButton.style.backgroundColor = isEditing ? 'var(--writing-light)' : 'var(--background-button)';
-	modifierButton.style.color = isEditing ? 'var(--writing-dark)' : 'var(--background-card)';
 }
 
 
 // Envoie les données modifiées à l'API des informations modifiées
 function saveUserData(inputFields) {
 	const updateData = {};
+	let dataIsValid = true;
+	let emailChanged = false;
 
 	inputFields.forEach(input => {
-		if (!input || !input.name || input.id == 'email' || input.id === 'password') return;
+		if (!input || !input.name) return;
 
 		const key = mapInputToUserField(input.name);
 		if (!key || typeof input.value !== 'string') return;
 
-		updateData[key] = input.value.trim();
+		const val = input.value.trim();
+
+		if (val !== "" && !isValidInput(val)) {
+			dataIsValid = false;
+		}
+
+		updateData[key] = val;
+
+		if (input.id === 'email' && val !==initialEmail) {
+			emailChanged = true;
+		}
 	});
+
+	if (!dataIsValid) {
+		showFeedbackMessage("L'entrée n'est pas valide", true);
+		return;
+	}
 
 	try {
 		validateUserData(updateData);
@@ -149,6 +203,13 @@ function saveUserData(inputFields) {
 		showFeedbackMessage(error.message);
 		return;
 	}
+
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+    console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
 
 	// Vérifie que l'ID est disponible
 	if (!window.currentUserId) {
@@ -160,7 +221,8 @@ function saveUserData(inputFields) {
 		method: 'PATCH',
 		credentials: 'include',
 		headers: {
-			'Content-type': 'application/json'
+			'Content-type': 'application/json',
+			'X-CSRF-TOKEN': csrfToken
 		},
 		body: JSON.stringify(updateData)
 	})
@@ -172,6 +234,13 @@ function saveUserData(inputFields) {
 	})
 	.then(() => {
 		showFeedbackMessage('Mise à jour réussie !');
+
+		// Si l'email est modifié, on redirige vers le login
+		if (emailChanged) {
+			setTimeout(() => {
+				window.location.href = '/login';
+			}, 2000);
+		}
 	})
 	.catch(error => {
 		console.error(error);
@@ -347,7 +416,7 @@ function toggleReviewEditMode(modifierReviewButton) {
 			}
 
 			if (text && textarea) {
-				text.innerHTML = `<p>${textarea.value || "Commentaire vide)"}</p>`;
+				text.innerHTML = `<p>${textarea.value || "Commentaire vide"}</p>`;
 			}
 		}
 	});
@@ -362,6 +431,13 @@ function toggleReviewEditMode(modifierReviewButton) {
 async function saveAllReviewData() {
 	const reviewBoxes = document.querySelectorAll('.review-box');
 	let hasError = false;
+
+	const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+    console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+    }
 
 	for (const box of reviewBoxes) {
 		const ratingInput = box.querySelector('.review-rating');
@@ -384,7 +460,8 @@ async function saveAllReviewData() {
 				method: 'PATCH', 
 				credentials: 'include',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken
 				},
 				body: JSON.stringify({ rating, text })
 			});
@@ -409,6 +486,83 @@ async function saveAllReviewData() {
 }
 
 
+// Fonction pour la modale de modification de mot de passe
+function setupPasswordModal() {
+	const passwordModal = document.getElementById('password-modal');
+	const openButton = document.getElementById('open-password-modal');
+	const cancelButton = document.getElementById('cancel-password-change');
+	const passwordForm = document.getElementById('password-change-form');
+
+	if (!passwordModal || !openButton || !cancelButton || !passwordForm) return;
+
+	// Ouvre la modale
+	openButton.addEventListener('click', () => {
+		passwordModal.style.display = 'flex';
+	});
+
+	// Ferme la modale (Annuler)
+	cancelButton.addEventListener('click', () => {
+		passwordModal.style.display = 'none';
+		passwordForm.reset();
+	});
+
+	// Soumission du formulaire de mot de passe
+	passwordForm.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		const oldPassword = document.getElementById('current-password').value;
+		const newPassword = document.getElementById('new-password').value;
+		const confirmPassword = document.getElementById('confirm-password').value;
+
+		if (newPassword !== confirmPassword) {
+			showFeedbackMessage("Les nouveaux mots de passe ne correspondent pas", true);
+			return;
+		}
+
+		if (!window.currentUserId) {
+			showFeedbackMessage("Impossible d'identifier l'utilisateur", true);
+			return;
+		}
+
+		const data = {
+			old_password: oldPassword,
+			new_password: newPassword
+		};
+
+		const csrfToken = getCookie('csrf_access_token');
+    	if (!csrfToken) {
+    		console.error('Token CSRF manquant');
+        	showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        	return;
+    	}
+
+		try {
+			const response = await fetch(`${API_USERS_BASE_URL}/${window.currentUserId}`, {
+				method: 'PATCH',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': csrfToken
+				},
+				body: JSON.stringify(data)
+			});
+
+			if (response.ok) {
+				showFeedbackMessage('Mot de passe modifié avec succès !');
+				passwordModal.style.display = 'none';
+				passwordForm.reset();
+			} else {
+				const errorData = await response.json();
+				showFeedbackMessage(errorData.error || "Erreur lors de la modification du mot de passe", true);
+			}
+		} catch (error) {
+			console.error("Erreur lors de la modification du mot de passe: ", error);
+			showFeedbackMessage('Erreur lors de la modification du mot de passe. Veuillez réessayer plus tard', true);
+		}
+	});
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
 	// Infos personnelles
 	const modifierButton = document.getElementById('modifier-button');
@@ -426,6 +580,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	loadUserData(inputFields);
 	setupModifierButton(modifierButton, inputFields);
+	setupClearButton('#personal-info-form .form-field input');
+	setupPasswordModal();
 
 	// Commentaires
 	const modifierReviewButton = document.getElementById('modifier-review-button');

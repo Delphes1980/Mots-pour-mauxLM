@@ -83,32 +83,34 @@
 
 
 /* ##### Code responsive ##### */
-/* Style pour les écrans plus petits que 768px */
+/* Style pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.review-container {
 		grid-template-columns: 1fr;
-		padding: 0 20px;
-		gap: 20px;
+		padding: 0 10px;
+		gap: 25px;
+		margin-top: 20px;
 	}
 	.review-box {
-		padding: 15px;
+		padding: 20px 15px;
 	}
 	.review-name-box {
 		flex-direction: column;
 		align-items: flex-start;
+		gap: 8px;
 	}
 	.review-name-box h3 {
-		font-size: 1.1em;
-		margin-bottom: 5px;
+		font-size: 1.2em;
 	}
 	.rating-stars .bx {
-		font-size: 1em;
+		font-size: 1.1em;
 	}
 	.review-text-box {
-		max-height: 100px;
-		padding: 0;
+		max-height: none;
+		overflow-y: visible;
+		padding-top: 10px;
 	}
 	.review-text-box p {
-		font-size: 0.9em;
+		font-size: 0.95em;
 	}
 }

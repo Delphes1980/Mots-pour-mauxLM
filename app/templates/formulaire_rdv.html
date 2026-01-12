@@ -37,6 +37,7 @@
                     <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
                     <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
                     <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+					<a href="{{ url_for('static_pages.holistiques') }}" id="holistiques_link" aria-label="Tarifs et prestations holistiques proposées">Prestations<br>Holistiques</a>
                     <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
                     <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
                     <a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
@@ -77,7 +78,7 @@
 
 					<!-- Champ pour le message -->
 					<div class="form-field message-field">
-						<textarea id="message" name="message" placeholder="Message: Merci de préciser vos disponibilités et vos coordonnées téléphoniques si vous souhaitez être rappelé par la praticienne" aria-label="Message pour la praticienne"></textarea>
+						<textarea id="message" name="message" placeholder="Message: Ne mettez aucuns détails médicaux! Merci de préciser vos disponibilités et vos coordonnées téléphoniques si vous souhaitez être rappelé par la praticienne" aria-label="Message pour la praticienne"></textarea>
 						<i class="bx bx-x clear-input-button"></i>
 					</div>
 
@@ -89,6 +90,7 @@
 		<div id="feedback-message" class="feedback-message" role="alert" aria-live="assertive" style="display: none;"></div>
 
 		<!-- Liens pour les fichiers JS -->
+		<script src="{{ url_for('static', filename='js_files/utils.js') }}" defer></script>
         <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
 		<script src="{{ url_for('static', filename='js_files/formulaire_rdv.js') }}" defer></script>
 
@@ -98,6 +100,7 @@
             <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
 
             <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+			</div>
         </footer>
 
 </body>

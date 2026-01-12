@@ -65,13 +65,14 @@
 .price-container p {
 	font-size: 1.4em;
 	font-weight: 700;
+	color: var(--icon-color);
 }
 
 /* Style pour le conteneur des informations */
 .informations-container {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
 	gap: 15px;
 	margin-top: 30px;
 	background-color: var(--background-card);
@@ -84,6 +85,7 @@
 .informations-container h4 {
 	text-align: center;
 	margin-bottom: 0;
+	width: 100%;
 }
 
 /* Style pour la liste */
@@ -94,6 +96,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
+	width: 100%;
 }
 
 /* Style pour les éléments listés */
@@ -122,42 +125,42 @@
 	flex-shrink: 0;
 }
 
+
 /* ##### Code responsive ##### */
+/* Pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.prestations-container {
 		grid-template-columns: 1fr;
-		gap: 20px;
-	}
-	.informations-container {
-		grid-template-columns: 1fr;
-		padding: 20px;
-		gap: 15px;
+		gap: 25px;
+		margin-top: 20px;
 	}
 	.prestation-box {
-		padding: 15px;
+		padding: 20px 15px;
 	}
 	.prestation-box h3 {
-		font-size: 1.2em;
+		font-size: 1.3em;
 	}
-	.prestation-box p, .prestation-list li {
-		font-size: 0.9em;
-	}
-	.prestation-list {
-		padding-left: 0;
-		list-style-position: inside;
-	}
-	.price-container p {
-		font-size: 1.2em;
+	.informations-container {
+		padding: 20px;
+		margin-top: 20px;
 	}
 	.informations-list {
 		padding-left: 0;
-		gap: 8px;
+		gap: 12px;
 	}
 	.informations-list li {
-		font-size: 0.9em;
-		text-align: center;
+		font-size: 0.95em;
+		text-align: left;
+		align-items: flex-start;
 	}
 	.informations-list li::before {
 		flex-shrink: 0;
+		margin-top: 3px;
+	}
+	.price-container {
+		margin-top: 15px;
+	}
+	.price-container p {
+		font-size: 1.3em;
 	}
 }

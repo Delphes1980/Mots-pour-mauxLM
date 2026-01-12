@@ -84,6 +84,7 @@
 	.opening-container {
 		grid-template-columns: 1fr;
 		gap: 20px;
+		margin-top: 20px;
 	}
 	.opening-box {
 		padding: 15px;
@@ -91,29 +92,11 @@
 	.opening-box h3 {
 		font-size: 1.2em;
 	}
-	.opening-box p {
-		font-size: 0.9em;
-	}
-	.map-container {
-		padding: 15px;
-	}
-}
-
-/* Style pour les écrans plus petits que 480px */
-@media (max-width: 480px) {
-	.opening-container {
-		gap: 15px;
-	}
-	.opening-box {
-		padding: 10px;
-	}
-	.opening-box h3 {
-		font-size: 1.1em;
-	}
-	.opening-box p {
-		font-size: 0.85em;
-	}
 	.map-container {
 		padding: 10px;
+		margin-top: 20px;
+	}
+	#leaflet-map {
+		height: 250px;
 	}
 }

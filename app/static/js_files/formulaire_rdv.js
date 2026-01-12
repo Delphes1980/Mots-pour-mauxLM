@@ -3,7 +3,6 @@ const API_PRESTATIONS_BASE_URL = '/api/v1/prestations/';
 const API_APPOINTMENTS_BASE_URL = '/api/v1/appointments/';
 
 
-// Fonctions utilitaires: 
 // Fonction qui fait correspondre les noms des inputs HTML aux clés API
 function mapInputToUserField(name) {
 	const mapping = {
@@ -12,60 +11,6 @@ function mapInputToUserField(name) {
 	};
 
 	return mapping[name];
-}
-
-
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-  const banner = document.getElementById('feedback-message');
-  if (!banner) return;
-
-  banner.textContent = message;
-  banner.classList.remove('error', 'show');
-  if (isError) banner.classList.add('error');
-
-  banner.style.display = 'block';
-  setTimeout(() => banner.classList.add('show'), 10);
-
-  setTimeout(() => {
-    banner.classList.remove('show');
-    setTimeout(() => {
-      banner.style.display = 'none';
-      banner.classList.remove('error');
-    }, 100);
-  }, 3000);
-}
-
-
-// Fonction pour effacer le champ
-function setupClearButton() {
-    const inputFields = document.querySelectorAll('.form-field input, .form-field textarea');
-
-    inputFields.forEach(input => {
-        const clearButton = input.nextElementSibling;
-
-        if (clearButton) {
-            clearButton.style.display = 'none';
-
-            input.addEventListener('input', () => {
-                if (clearButton) {
-                    if (input.value.length > 0) {
-                        clearButton.style.display = 'block';
-                    } else {
-                        clearButton.style.display = 'none';
-                    }
-                }
-            });
-
-            if (clearButton) {
-                clearButton.addEventListener('click', () => {
-                    input.value = '';
-                    clearButton.style.display = 'none';
-                    input.focus();
-                });
-            }
-        }
-    });
 }
 
 
@@ -79,25 +24,25 @@ function setupCustomSelects() {
     const hiddenInput = customSelect.querySelector('input[type="hidden"]');
 
     selectedItem.addEventListener('click', function(e) {
-      e.stopPropagation();
-      itemsList.classList.toggle('select-hide');
+        e.stopPropagation();
+        itemsList.classList.toggle('select-hide');
     });
 
     itemsList.querySelectorAll('div').forEach(item => {
-      item.addEventListener('click', function(e) {
-        selectedItem.innerHTML = this.innerHTML;
-        hiddenInput.value = this.innerHTML;
-        itemsList.classList.add('select-hide');
-      });
+        item.addEventListener('click', function(e) {
+            selectedItem.innerHTML = this.innerHTML;
+            hiddenInput.value = this.innerHTML;
+            itemsList.classList.add('select-hide');
+        });
     });
 
     document.addEventListener('click', function(e) {
-      const isClickInside = customSelect.contains(e.target);
-      if (!isClickInside) {
-        itemsList.classList.add('select-hide');
-      }
+        const isClickInside = customSelect.contains(e.target);
+        if (!isClickInside) {
+            itemsList.classList.add('select-hide');
+        }
+        });
     });
-  });
 }
 
 
@@ -212,6 +157,11 @@ function setupAppointmentForm() {
         event.preventDefault();
 
         const message = document.getElementById('message').value.trim();
+        if (!isValidInput(message) || message.length < 10) {
+            showFeedbackMessage('Message invalide', true);
+            return;
+        }
+
         const prestationId = document.querySelector('input[name="prestation-type"]').value;
 
         if (!message || message.replace(/\s/g, '').length < 10) {
@@ -224,12 +174,20 @@ function setupAppointmentForm() {
             return;
         }
 
+        const csrfToken = getCookie('csrf_access_token');
+        if (!csrfToken) {
+            console.error('Token CSRF manquant');
+        showFeedbackMessage('Session invalide, veuillez rafraichir la page', true);
+        return;
+        }
+
         try {
             const response = await fetch(API_APPOINTMENTS_BASE_URL, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({
                     message: message,
@@ -258,7 +216,7 @@ function setupAppointmentForm() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    setupClearButton();
+    setupClearButton('.form-field input, .form-field textarea');
     setupCustomSelects();
     loadUserData();
     loadPrestationsForDropdown();

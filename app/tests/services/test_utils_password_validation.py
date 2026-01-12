@@ -43,7 +43,7 @@ class TestPasswordValidation(BaseTest):
         for password in short_passwords:
             with self.assertRaises(ValueError) as context:
                 validate_password(password)
-            self.assertIn("at least 8 characters", str(context.exception))
+            self.assertIn("au moins 8 caractères", str(context.exception))
 
     def test_validate_password_no_digit(self):
         """Test validation échoue sans chiffre"""
@@ -57,7 +57,7 @@ class TestPasswordValidation(BaseTest):
         for password in no_digit_passwords:
             with self.assertRaises(ValueError) as context:
                 validate_password(password)
-            self.assertIn("at least one digit", str(context.exception))
+            self.assertIn("au moins un chiffre", str(context.exception))
 
     def test_validate_password_no_uppercase(self):
         """Test validation échoue sans majuscule"""
@@ -71,7 +71,7 @@ class TestPasswordValidation(BaseTest):
         for password in no_uppercase_passwords:
             with self.assertRaises(ValueError) as context:
                 validate_password(password)
-            self.assertIn("uppercase", str(context.exception))
+            self.assertIn("lettre majuscule", str(context.exception))
 
     def test_validate_password_no_special_char(self):
         """Test validation échoue sans caractère spécial"""
@@ -85,7 +85,7 @@ class TestPasswordValidation(BaseTest):
         for password in no_special_passwords:
             with self.assertRaises(ValueError) as context:
                 validate_password(password)
-            self.assertIn("special character", str(context.exception))
+            self.assertIn("caractère spécial", str(context.exception))
 
     def test_validate_password_multiple_missing_requirements(self):
         """Test validation échoue avec plusieurs exigences manquantes"""
@@ -105,13 +105,13 @@ class TestPasswordValidation(BaseTest):
         """Test validation échoue avec None"""
         with self.assertRaises(ValueError) as context:
             validate_password(None)
-        self.assertIn("Expected password but received None", str(context.exception))
+        self.assertIn("Mot de passe attendu", str(context.exception))
 
     def test_validate_password_empty_string(self):
         """Test validation échoue avec chaîne vide"""
         with self.assertRaises(ValueError) as context:
             validate_password("")
-        self.assertIn("at least 8 characters", str(context.exception))
+        self.assertIn("au moins 8 caractères", str(context.exception))
 
     def test_validate_password_special_characters_variety(self):
         """Test validation avec différents caractères spéciaux"""

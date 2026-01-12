@@ -138,31 +138,36 @@
 
 
 /* ##### Code responsive ##### */
-/* Style pour les écrans plus petits que 768px */
+/* Style pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.registration-container {
 		padding: 20px;
 		margin: 20px auto;
-		max-width: 90%;
-		min-height: 400px;
+		max-width: 95%;
+		min-height: auto;
 	}
 	.registration-form {
 		margin-top: 30px;
-		width: 90%;
-		gap: 10px;
+		width: 100%;
+		gap: 15px;
 	}
 	.form-field {
 		width: 100%;
 		max-width: none;
+	}
+	.form-field input, .registration-form button  {
+		font-size: 16px !important;
 	}
 	.clear-input-button {
 		top: 25%;
 	}
 	.registration-form button {
 		width: 100%;
-		margin-top: 50px;
+		margin-top: 40px;
+		padding: 15px;
 	}
 	.password-requirements {
 		width: 100%;
+		font-size: 0.8em;
 	}
 }

@@ -108,33 +108,33 @@ class TestUser(BaseTest):
     def test_user_creation_bad_email(self):
         with self.assertRaises(ValueError) as cm:
             User("Jane", "Doe", "invalid-email", "Password123!")
-        self.assertIn("Invalid email", str(cm.exception))
+        self.assertIn("Adresse e-mail invalide", str(cm.exception))
 
     def test_invalid_email_no_at(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "johndoeexample.com", "Password123!")
-        self.assertIn("Invalid email", str(e.exception))
+        self.assertIn("Adresse e-mail invalide", str(e.exception))
 
     def test_invalid_email_empty(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "", "Password123!")
-        self.assertIn("Invalid email", str(e.exception))
+        self.assertIn("Adresse e-mail invalide", str(e.exception))
 
     def test_invalid_email_None(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", None, "Password123!")
-        self.assertIn("email", str(e.exception))
+        self.assertIn("Email attendu", str(e.exception))
 
     # Test de mots de passe
     def test_password_too_short(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "john@example.com", "Pass1!")  # < 8 chars
-        self.assertIn("at least 8 characters", str(e.exception))
+        self.assertIn("au moins 8 caractères", str(e.exception))
 
     def test_password_no_digit(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "john@example.com", "Password!")
-        self.assertIn("at least one digit", str(e.exception))
+        self.assertIn("au moins un chiffre", str(e.exception))
 
     def test_password_invalid_variations(self):
         """Test différentes variations de mots de passe invalides"""
@@ -155,17 +155,17 @@ class TestUser(BaseTest):
     def test_password_no_special_char(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "john@example.com", "Password123")
-        self.assertIn("special character", str(e.exception))
+        self.assertIn("caractère spécial", str(e.exception))
 
     def test_password_no_uppercase(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "john@example.com", "password123!")
-        self.assertIn("uppercase", str(e.exception))
+        self.assertIn("lettre majuscule", str(e.exception))
 
     def test_password_no_lowercase(self):
         with self.assertRaises(ValueError) as e:
             User("John", "Doe", "john@example.com", "PASSWORD123!")
-        self.assertIn("lowercase", str(e.exception))
+        self.assertIn("lettre minuscule", str(e.exception))
 
     def test_valid_password(self):
         user = User("John", "Doe", "john@example.com", "Password123!")
@@ -259,7 +259,7 @@ class TestUser(BaseTest):
         invalid_phones = [
             "abc123",
             "123abc", 
-            "01.23.45.67.89",
+            "01/23/45/67/89",
             "01@23456789",
             "01#23456789"
         ]

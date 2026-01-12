@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, redirect, url_for
+from flask_jwt_extended import jwt_required, get_jwt
 
 
 static_bp = Blueprint('static_pages', __name__)
@@ -18,6 +19,10 @@ def techniques():
 @static_bp.route('/prestations')
 def prestations():
     return render_template('prestations_tarifs.html')
+
+@static_bp.route('/holistiques')
+def holistiques():
+    return render_template('prestations_holistiques.html')
 
 @static_bp.route('/coordonnees')
 def coordonnees():
@@ -50,3 +55,17 @@ def formulaire_commentaires():
 @static_bp.route('/politique')
 def politique_confidentialite():
     return render_template('politique_confidentialite.html')
+
+@static_bp.route('/admin', methods=['GET'])
+@jwt_required()
+def admin_dashboard():
+    try:
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        if not is_admin:
+            return redirect(url_for('static_pages.accueil'))
+        return render_template('admin_page.html')
+    
+    except Exception as e:
+        return redirect(url_for('static_pages.login'))

@@ -1,13 +1,12 @@
-# app/services/AuthenticationService.py
+from flask_jwt_extended import create_access_token
 from app.persistence.UserRepository import UserRepository
 from app.utils import (email_validation, validate_password, verify_password, validate_entity_id, CustomError)
-from flask_jwt_extended import create_access_token
 
 
 class AuthenticationService:
     def __init__(self):
         self.user_repository = UserRepository()
-    
+
     def login(self, email, password):
         """Authenticate user with email/password
         
@@ -23,12 +22,12 @@ class AuthenticationService:
         try:
             email_validation(email)
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         try:
             validate_password(password)
-        except ValueError:
-            raise CustomError("Invalid credentials", 400)
+        except ValueError as e:
+            raise CustomError("Invalid credentials", 400) from e
 
         user = self.user_repository.get_by_attribute("email", email)
         if not user or not verify_password(user.password, password):
@@ -58,24 +57,24 @@ class AuthenticationService:
         try:
             validate_entity_id(user_id, 'user_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         # Valider les mots de passe
         try:
             validate_password(old_password)
             validate_password(new_password)
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         # Récupérer l'utilisateur
         user = self.user_repository.get_by_id(user_id)
         if not user:
             raise CustomError("User not found", 404)
-        
+
         # Vérifier l'ancien mot de passe
         if not verify_password(user.password, old_password):
             raise CustomError("Invalid current password", 400)
-        
+
         # Mettre à jour le mot de passe
         updated_user = self.user_repository.update(user_id, password=new_password)
 
@@ -97,7 +96,7 @@ class AuthenticationService:
         try:
             validate_entity_id(user_id, 'user_id')
         except (ValueError, TypeError) as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         # Récupérer l'utilisateur
         user = self.user_repository.get_by_id(user_id)
@@ -107,8 +106,40 @@ class AuthenticationService:
         try:
             validate_password(new_password)
         except ValueError as e:
-            raise CustomError(str(e), 400)
+            raise CustomError(str(e), 400) from e
 
         # Mettre à jour le mot de passe
         updated_user = self.user_repository.update(user_id, password=new_password)
+        return updated_user
+
+    def reset_password_by_email(self, email, new_temp_password):
+        """Reset password for a user using their email
+        
+        Args:
+            email (str): The user's email
+            new_temp_password (str): The generated temporary password
+            
+        Returns:
+            The updated User object
+            
+        Raises:
+            CustomError: if the email is invalid(400), if the user is not found(404)
+        """
+        try:
+            email_validation(email)
+        except ValueError as e:
+            raise CustomError(str(e), 400) from e
+
+        # Récupérer l'utilisateur par email
+        user = self.user_repository.get_by_attribute("email", email)
+        if not user:
+            raise CustomError("Vous n'avez pas créé de compte", 404)
+
+        try:
+            validate_password(new_temp_password)
+        except ValueError as e:
+            raise CustomError(str(e), 400) from e
+
+        # Mettre à jour le mot de passe
+        updated_user = self.user_repository.update(user.id, password=new_temp_password)
         return updated_user

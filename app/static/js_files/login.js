@@ -2,53 +2,6 @@ const API_BASE_URL = '/api/v1/authentication';
 const API_LOGIN_URL = `${API_BASE_URL}/login`;
 const API_LOGOUT_URL = `${API_BASE_URL}/logout`;
 
-// Fonction pour les messages d'alerte
-function showFeedbackMessage(message, isError = false) {
-  const banner = document.getElementById('feedback-message');
-  if (!banner) return;
-
-  banner.textContent = message;
-  banner.classList.remove('error', 'show');
-  if (isError) banner.classList.add('error');
-
-  banner.style.display = 'block';
-  setTimeout(() => banner.classList.add('show'), 10);
-
-  setTimeout(() => {
-    banner.classList.remove('show');
-    setTimeout(() => {
-      banner.style.display = 'none';
-      banner.classList.remove('error');
-    }, 100);
-  }, 3000);
-}
-
-
-// Fonction qui permet d'effacer le contenu des champs
-function setupClearButton() {
-  const inputFields = document.querySelectorAll('.form-field input');
-
-  inputFields.forEach(input => {
-    const clearButton = input.nextElementSibling;
-
-    clearButton.style.display = 'none';
-
-    input.addEventListener('input', () => {
-      if (input.value.length > 0) {
-        clearButton.style.display = 'block';
-      } else {
-        clearButton.style.display = 'none';
-        }
-    });
-    // Efface le champ quand on clique
-    clearButton.addEventListener('click', () => {
-      input.value = '';
-      clearButton.style.display = 'none';
-      input.focus();
-    });
-  });
-}
-
 
 // Fonction pour se connecter
 function setupLogin() {
@@ -90,12 +43,26 @@ function setupLogin() {
       const result = await response.json();
 
       if (response.ok) {
-        window.location.href = '/mon-espace';
+        if (result.user && result.user.is_admin === true) {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/mon-espace';
+        }
 
       } else {
         // Afficher le message d'erreur
         showFeedbackMessage("Email ou mot de passe invalide", true);
 
+        // Vider le champ 'mot de passe' et 'email'
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+
+        // Masquer la croix d'effacement
+        const clearButtons = loginForm.querySelectorAll('.clear-input-button');
+        clearButtons.forEach(button => {
+          button.style.display = 'none';
+        });
+        document.getElementById('email').focus();
       }
     } catch (error) {
       console.error("Erreur lors de la connexion; ", error);
@@ -123,12 +90,18 @@ function setupLogout() {
     logoutButton.disabled = true;
     logoutButton.textContent = 'Déconnexion...';
 
+    const csrfToken = getCookie('csrf_access_token');
+    if (!csrfToken) {
+        console.error('Token CSRF manquant pour la déconnexion');
+    }
+
     try {
       // Appel à l'API
       const response = await fetch(API_LOGOUT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
         },
         credentials: 'include',
         body: JSON.stringify({})
@@ -168,10 +141,20 @@ async function checkLoginStatus() {
     });
 
     if (response.ok) {
+      const data = await response.json();
       // Utilisateur connecté
       if (loginLink) loginLink.style.display = 'none';
       if (logoutLink) logoutLink.style.display = 'inline-block';
-      if (espaceLink) espaceLink.style.display = 'inline-block';
+
+      // Admin connecté
+      if (espaceLink) {
+        espaceLink.style.display = 'inline-block';
+        if (data.is_admin === true) {
+          espaceLink.href = '/admin';
+        } else {
+          espaceLink.href = '/mon-espace';
+        }
+      }
     } else {
       // Utilisateur déconnecté
       if (loginLink) loginLink.style.display = 'inline-block';
@@ -196,8 +179,14 @@ async function redirectToContactPage() {
     });
 
     if (response.ok) {
-      // Utilisateur connecté
-      window.location.href = '/mon-espace';
+      const data = await response.json();
+      // Admin connecté
+      if (data.is_admin === true) {
+        window.location.href = '/admin';
+      } else {
+        // Utilisateur connecté
+        window.location.href = '/mon-espace';
+      }
     } else if (response.status === 401) {
       // Utilisateur déconnecté (retour à l'accueil)
       window.location.href = '/login';
@@ -210,11 +199,129 @@ async function redirectToContactPage() {
 }
 
 
+// Fonction qui gère la demande de réinitialisation du mot de passe
+async function sendForgotPasswordRequest() {
+  const API_USERS_URL = '/api/v1/users';
+  // Récupération de l'input
+  const emailInput = document.getElementById('reset-email');
+  const email = emailInput ? emailInput.value : '';
+
+  if (!email) {
+    showFeedbackMessage('Veuillez entrer une adresse email', true);
+    return;
+  }
+
+  // Gestion du bouton 'Envoyer'
+  const modal = document.getElementById('forgot-password-modal');
+  const submitButton = modal.querySelector('.save-edit-button');
+
+  if (submitButton) {
+    submitButton.textContent = 'Envoi...';
+    submitButton.disabled = true;
+  }
+
+  const csrfToken = getCookie('csrf_access_token');
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
+  // On ajoute le token seulement s'il existe
+  if (csrfToken) {
+    headers['X-CSRF-TOKEN'] = csrfToken;
+  }
+
+  try {
+    const response = await fetch(`${API_USERS_URL}/forgot-password`, {
+      method: 'POST',
+      headers: headers,
+      credentials: 'include',
+      body: JSON.stringify({ email: email })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Erreur lors de la demande");
+    }
+
+    showFeedbackMessage('Un nouveau mot de passe a été envoyé');
+    closeForgotPasswordModal();
+
+  } catch (error) {
+    console.error('Erreur lors de la demande de mot de passe: ', error);
+    showFeedbackMessage(error.message || "Erreur technique, veuillez réessayer", true);
+
+    if (submitButton) {
+      submitButton.textContent = 'Envoyer';
+      submitButton.disabled = false;
+    }
+  }
+}
+
+
+// Fonction qui gère l'ouverture de la modale
+function openForgotPasswordModal() {
+  const modal = document.getElementById('forgot-password-modal');
+  if (!modal) return;
+
+  // Réinitialisation du champ 'Email'
+  const emailInput = document.getElementById('reset-email');
+  if (emailInput) {
+    emailInput.value = '';
+
+    const clearButton = emailInput.nextElementSibling;
+    if (clearButton && clearButton.classList.contains('clear-input-button')) {
+      clearButton.style.display = 'none';
+    }
+  }
+
+  // Gestion du bouton 'Envoyer'
+  const submitButton = modal.querySelector('.save-edit-button');
+  if (submitButton) {
+    const newSubmitButton = submitButton.cloneNode(true);
+    submitButton.parentNode.replaceChild(newSubmitButton, submitButton);
+
+    newSubmitButton.textContent = 'Envoyer';
+    newSubmitButton.disabled = false;
+
+    newSubmitButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      sendForgotPasswordRequest();
+    });
+  }
+
+  // Gestion du bouton 'Annuler'
+  const cancelButton = document.getElementById('closeModal');
+  if (cancelButton) {
+    const newCancelButton = cancelButton.cloneNode(true);
+    cancelButton.parentNode.replaceChild(newCancelButton, cancelButton);
+
+    newCancelButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeForgotPasswordModal();
+    });
+  }
+
+  // Affichage de la modale
+  modal.style.display = 'flex';
+}
+
+
+// Fonction pour fermer la modale
+function closeForgotPasswordModal() {
+  const modal = document.getElementById('forgot-password-modal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const currentPage = window.location.pathname;
 
   if (currentPage.includes('/login')) {
-    setupClearButton();
+    setupClearButton('.form-field input');
     setupLogin();
   }
 
@@ -227,6 +334,14 @@ document.addEventListener('DOMContentLoaded', () => {
     contactButton.addEventListener('click', (e) => {
       e.preventDefault();
       redirectToContactPage();
+    });
+  }
+
+  const forgotLink = document.getElementById('forgotPasswordLink');
+  if (forgotLink) {
+    forgotLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openForgotPasswordModal();
     });
   }
 });

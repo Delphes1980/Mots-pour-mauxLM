@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<!-- Meta pour le responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Meta pour le SEO -->
+	<meta name="description" content="Consultez les tarifs et les détails des prestations de psychothérapie et d'hypnose. Séances individuelles, programmes et forfaits disponibles.">
+
+    <title>Mots pour maux LM - Prestations & Tarifs</title>
+
+	<!-- Liens pour les fichiers CSS -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/styles.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css_files/prestations_tarifs.css') }}">
+	<!-- Liens pour le favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon/favicon-32x32.png') }}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon/favicon-16x16.png') }}">
+	<link rel="manifest" href="{{ url_for('static', filename='images/favicon/site.webmanifest') }}">
+	<!-- Liens pour Google fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lexend&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Signika:wght@300..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    	<header class="header">
+			<div class="logo-container">
+        		<img class="logo" src="{{ url_for('static', filename='images/Logo Clair.png') }}" alt="Mots pour maux LM logo">
+			</div>
+			<div class="nav-container">
+        		<nav id="nav-links" role="navigation" aria-label="Menu principal">
+					<a href="{{ url_for('static_pages.accueil') }}" id="accueil_link" aria-label="Retour à l'accueil du site">Accueil</a>
+                    <a href="{{ url_for('static_pages.en_savoir_plus') }}" id="en_savoir_plus_link" aria-label="Page en savoir plus sur la praticienne">En Savoir Plus</a>
+                    <a href="{{ url_for('static_pages.techniques') }}" id="techniques_link" aria-label="Liste des techniques thérapeutiques utilisées">Techniques<br>Thérapeutiques</a>
+                    <a href="{{ url_for('static_pages.prestations') }}" id="prestations_link" aria-label="Tarifs et prestations proposées">Prestations<br>& Tarifs</a>
+					<a href="{{ url_for('static_pages.holistiques') }}" id="holistiques_link" aria-label="Tarifs et prestations holistiques proposées">Prestations<br>Holistiques</a>
+                    <a href="{{ url_for('static_pages.coordonnees') }}" id="coordonnees_link" aria-label="Coordonnées, horaires et emplacement du cabinet">Coordonnées<br>& Horaires</a>
+                    <a href="{{ url_for('static_pages.avis') }}" id="avis_link" aria-label="Accéder aux avis des clients">Avis</a>
+                    <a href="{{ url_for('static_pages.admin_dashboard') }}" id="admin_link" style="display: none;" aria-label="Accéder au panneau d'administration">Admin</a>
+					<a href="{{ url_for('static_pages.espace') }}" id="espace_link" style="display: none;" aria-label="Accéder à mon espace personnel">Mon espace</a>
+                    <a href="{{ url_for('static_pages.login') }}" id="login_link" aria-label="Se connecter ou créer un compte">Connexion</a>
+					<a href="#" id="logout_link" style="display: none;">Déconnexion</a>
+        		</nav>
+			</div>
+    	</header>
+
+    	<main id="main-content" role="main" aria-labelledby="prestations-hero-title">
+			<div class="hero-box"><p id="prestations-hero-title">Prestations holistiques</p></div>
+			<hr class="line">
+			<div class="main-content">
+			<div class="prestations-container" role="list" aria-label="Liste des prestations holistiques proposées">
+
+				<!-- Conteneur pour la séance de nettoyage et purification des lieux -->
+				<div class="prestation-box" role="listitem" aria-label="purification-seance-title">
+					<h3 id="purification-seance-title">Nettoyage et purification de lieux</h3>
+					<p>Rituel énergétique pour harmoniser et purifier l'énergie de votre espace de vie ou de travail. Élimination des énergies négatives et rétablissement de l'équilibre vibratoire.</p>
+					<ul class="prestation-list" aria-label="Détails de la séance de purification des lieux">
+						<li>Analyse énergétique du lieu</li>
+						<li>Purification complète</li>
+						<li>Protection énergétique</li>
+					</ul>
+					<div class="price-container" aria-label="Tarif de la prestation">
+						<p>90€</p>
+					</div>
+				</div>
+
+				<!-- Conteneur pour la séance de pendule -->
+				<div class="prestation-box" role="listitem" aria-label="pendule-seance-title">
+					<h3 id="pendule-seance-title">Séance pendule</h3>
+					<p>Consultation de radiesthésie pour obtenir des réponses à vos questions, explorer des blocages énergétiques ou recevoir des guidances sur votre chemin de vie.</p>
+					<ul class="prestation-list" aria-label="Détails de la séance de pendule">
+						<li>Durée: 1 heure</li>
+						<li>En cabinet ou en visio</li>
+						<li>Questions illimitées</li>
+					</ul>
+					<div class="price-container" aria-label="Tarif de la prestation">
+						<p>50€</p>
+					</div>
+				</div>
+
+				<!-- Conteneur pour la guidance cartomancie -->
+				<div class="prestation-box" role="listitem" aria-label="guidance-cartomancie-title">
+					<h3 id="guidance-cartomancie-title">Guidance cartomancie</h3>
+					<p>Lecture intuitive des cartes pour vous éclairer sur votre situation actuelle, vos défis et les opportunités à venir. Un moment de connexion avec votre chemin de vie.</p>
+					<ul class="prestation-list" aria-label="Détails de la guidance en cartomancie">
+						<li>Durée: 1 heure</li>
+						<li>En cabinet ou en visio</li>
+						<li>Tirage personnalisé</li>
+					</ul>
+					<div class="price-container" aria-label="Tarif de la prestation">
+						<p>50€</p>
+					</div>
+				</div>
+
+				<!-- Conteneur pour l'accès annales akashiques -->
+				<div class="prestation-box" role="listitem" aria-label="annales-akashiques-title">
+					<h3 id="annales-akashiques-title">Accès annales akashiques</h3>
+					<p>Connexion à la mémoire universelle pour explorer vos vies antérieures, comprendre les schémas karmiques et recevoir des messages de vos guides spirituels.</p>
+					<ul class="prestation-list" aria-label="Détails de la séance d'accès aux annales akashiques">
+						<li>Durée: 1 heure</li>
+						<li>En cabinet uniquement</li>
+					</ul>
+					<div class="price-container" aria-label="Tarif de la prestation">
+						<p>50€</p>
+					</div>
+				</div>
+
+				<!-- Conteneur pour la séance acupressure -->
+				<div class="prestation-box" role="listitem" aria-label="acupressure-seance-title">
+					<h3 id="acupressure-seance-title">Séance acupressure</h3>
+					<p>Technique de médecine traditionnelle chinoise pour soulager la douleur et le stress.</p>
+					<ul class="prestation-list" aria-label="Détails de la séance d'acupressure">
+						<li>Durée: 1 heure</li>
+						<li>En cabinet</li>
+					</ul>
+					<div class="price-container" aria-label="Tarif de la prestation">
+						<p>70€</p>
+					</div>
+				</div>
+
+				<!-- Conteneur pour la séance réflexologie palmaire/plantaire -->
+				<div class="prestation-box" role="listitem" aria-label="reflexologie-seance-title">
+					<h3 id="reflexologie-seance-title">Séance réflexologie palmaire/plantaire</h3>
+					<p>Massage des pieds et des mains pour stimuler les zones réflexes et favoriser la relaxation.</p>
+					<ul class="prestation-list" aria-label="Détails de la séance de réfléxologie palmaire et plantaire">
+						<li>Durée: 1 heure</li>
+						<li>En cabinet</li>
+					</ul>
+					<div class="price-container" aria-label="Tarif de la prestation">
+						<p>70€</p>
+					</div>
+				</div>
+
+				<!-- Conteneur pour la séance massage ayurvédique -->
+				<div class="prestation-box" role="listitem" aria-label="massage-ayurvedique-title">
+					<h3 id="massage-ayurvedique-title">Séance massage ayurvédique</h3>
+					<p>Massage traditionnel indien pour harmoniser le corps et l'esprit.</p>
+					<ul class="prestation-list" aria-label="Détails de la séance de massage ayurvédique">
+						<li>Durée: 1 heure</li>
+						<li>En cabinet</li>
+					</ul>
+					<div class="price-container" aria-label="Tarif de la prestation">
+						<p>65€</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Informations supplémentaires sur les prestations -->
+			<div class="informations-container" aria-label="Informations complémentaires sur les prestations">
+				<h4>Informations complémentaires</h4>
+				<ul class="informations-list" aria-label="Conditions de paiement et remboursement">
+					<li>Le règlement peut s'effectuer par carte bancaire, virement ou espèces.</li>
+					<li>Les séances non annulées 24h à l'avance sont dues.</li>
+				</ul>
+			</div>
+			</div>
+    	</main>
+
+		<!-- Liens pour les fichiers JS -->
+		<script src="{{ url_for('static', filename='js_files/utils.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='js_files/login.js') }}" defer></script>
+
+		<hr class="line">
+    	<footer class="footer" role="contentinfo" aria-label="Pied de page et informations légales">
+            <div class="footer-content">
+            <span class="copyright-info">© 2023 Mots pour maux LM - Mélanie Laborda. Tous droits réservés<br>Psychothérapeute & Hypnothérapeute - SIRET: 93841610400017</span>
+
+            <a href="{{ url_for('static_pages.politique_confidentialite') }}" id="politique" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+			</div>
+        </footer>
+
+</body>
+</html>

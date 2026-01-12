@@ -7,13 +7,13 @@
 }
 
 .policy-grid-container p {
-	text-align: left;
+	text-align: justify;
 }
 
 /* Style pour la phrase d'introduction */
 .intro {
-	text-align: left;
-	max-width: 800px;
+	text-align: justify;
+	/* max-width: 1200px; */
 	margin: 30px;
 }
 
@@ -54,7 +54,7 @@
 }
 
 .policy-box p {
-	text-align: left;
+	text-align: justify;
 }
 
 /* Style pour la liste */
@@ -69,7 +69,7 @@
 .policy-list li {
 	margin-bottom: 8px;
 	color: var(--button-hover);
-	text-align: start;
+	text-align: justify;
 }
 
 /* Style pour les titres dans les listes */
@@ -107,17 +107,19 @@
 }
 
 /* ##### Code responsive #####*/
-/* Pour les écrans plus petits que 1024px */
+/* Pour les écrans jusqu'à 1024px */
 @media (max-width: 1024px) {
 	.policy-grid-content {
 		grid-template-columns: 1fr;
 	}
 }
 
-/* Responsive pour les écrans plus petits */
+
+/* ##### Code responsive ##### */
+/* Pour les écrans jusqu'à 768px */
 @media (max-width: 768px) {
 	.policy-grid-container {
-		padding: 0 10px;
+		padding: 0 15px;
 	}
 	.policy-box {
 		padding: 15px;
@@ -127,6 +129,7 @@
 	}
 	.data-table {
 		box-shadow: none;
+		border: none;
 	}
 	.data-table thead {
 		display: none;
@@ -135,26 +138,32 @@
 		display: block;
 		margin-bottom: 20px;
 		border: 1px solid var(--button-hover);
-		border-radius: 5px;
+		border-radius: 8px;
 		overflow: hidden;
+		background-color: var(--background-form);
 	}
-	.data-table th, .data-table td {
+	.data-table td {
 		display: block;
 		width: 100%;
 		box-sizing: border-box;
 		text-align: right;
-		padding-left: 50%;
+		padding: 10px 10px 10px 50%;
 		position: relative;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+		word-break: break-word;
+	}
+	.data td:last-child {
+		border-bottom: none;
 	}
 	.data-table td::before {
 		content: attr(data-label);
 		position: absolute;
-		left: 12px;
+		left: 10px;
+		top: 10px;
 		width: 45%;
-		padding-right: 10px;
-		white-space: normal;
 		font-weight: bold;
 		color: var(--writing-dark);
 		text-align: left;
+		white-space: normal;
 	}
 }

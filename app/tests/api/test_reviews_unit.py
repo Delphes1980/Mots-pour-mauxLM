@@ -287,10 +287,16 @@ class TestReviewsUnit(BaseTest):
         
         # Vérifier la structure du commentaire (modèle admin)
         review_data = response_data[0]
-        admin_fields = ['id', 'rating', 'text', 'prestation_id', 'user_id']
+        admin_fields = ['id', 'rating', 'text']
         
         for field in admin_fields:
             self.assertIn(field, review_data)
+        
+        # Vérifier les objets imbriqués
+        self.assertIn('user', review_data)
+        self.assertIn('prestation', review_data)
+        self.assertIn('id', review_data['user'])
+        self.assertIn('id', review_data['prestation'])
     
     def test_update_review_partial_data(self):
         """Test unitaire : mise à jour avec données partielles"""

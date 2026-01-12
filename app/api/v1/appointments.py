@@ -1,9 +1,9 @@
 from flask_restx import Namespace, Resource, fields, _http
-from app.services import facade
-from app.utils import (compare_data_and_model, CustomError, text_field_validation, validate_entity_id)
+from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from app.services.mail_service import send_appointment_notifications
-from flask import current_app
+from app.services import facade
+from app.utils import (compare_data_and_model, CustomError, text_field_validation, validate_entity_id, sanitize_input)
+from app.models.appointment import AppointmentStatus
 
 
 # Créer une instance de façade
@@ -17,19 +17,49 @@ appointment_model = api.model('Appointment', {
 'prestation_id': fields.String(required=True, description='L\'ID de la prestation associée au rendez-vous')
 })
 
+# Définir le modèle pour la mise à jour du statut
+allowed_statuses = [
+	AppointmentStatus.PENDING,
+	AppointmentStatus.CONFIRMED,
+	AppointmentStatus.CANCELLED,
+	AppointmentStatus.COMPLETED
+]
+
+# Définir le modèle de données pour la mise à jour du statut
+appointment_status_model = api.model('AppointmentStatusModel', {
+	'status': fields.String(required=True, description='Le nouveau statut', enum=allowed_statuses, example=AppointmentStatus.CONFIRMED)
+})
+
 # Définir le modèle de données pour la réponse
 appointment_response_model = api.model('AppointmentReponse', {
     'id': fields.String(required=True, description='L\'ID du rendez-vous'),
     'message': fields.String(required=True, description='Le message du rendez-vous'),
+    'status': fields.String(required=True, description='Le statut du rendez-vous'),
     'prestation_id': fields.String(attribute=lambda appointment: f"{appointment.prestation_id}", required=True, description='L\'ID de la prestation associée au rendez-vous')
+})
+
+# Définir le modèle de données pour le nom de la prestation liée à l'avis
+prestation_details_model = api.model('PrestationDetails', {
+	'id': fields.String(required=True, description='ID de la prestation'),
+	'name': fields.String(required=True, description='Le nom de la prestation')
+})
+
+# Définir le modèle de données pour l'utilisateur pour l'admin
+user_admin_details_model = api.model('UserAdminDetails', {
+	'id': fields.String(required=True, description='ID de l\'utilisateur'),
+	'first_name': fields.String(required=True, description='Le prénom de l\'utilisateur'),
+	'last_name': fields.String(required=True, description='Le nom de l\'utilisateur'),
+	'email': fields.String(required=True, description='L\'email de l\'utilisateur')
 })
 
 # Définir le modèle de données pour la réponse pour l'admin
 admin_appointment_response_model = api.model('AdminAppointmentResponse', {
     'id': fields.String(required=True, description='ID du rendez-vous'),
     'message': fields.String(required=True, description='Le message du rendez-vous'),
-    'prestation_id': fields.String(attribute=lambda appointment: f"{appointment.prestation_id}", required=True, description='L\'ID de la prestation associée au rendez-vous'),
-    'user_id': fields.String(attribute=lambda appointment: f"{appointment.user_id}", required=True, description='L\'ID de l\'utilisateur associé au rendez-vous')
+    'status': fields.String(required=True, description='Le statut du rendez-vous'),
+    'created_at': fields.DateTime(description='Date de création'),
+    'prestation': fields.Nested(prestation_details_model, description='Les détails de la prestation associée au rendez-vous'),
+    'user': fields.Nested(user_admin_details_model, description='Les détatils de l\'utilisateur associé au rendez-vous')
 })
 
 # Définir le modèle de données pour l'erreur
@@ -66,6 +96,7 @@ class AppointmentList(Resource):
             current_user = facade.get_user_by_id(current_user_id)
 
             # Vérification des champs
+            appointment_data['message'] = sanitize_input(appointment_data['message'], 'message')
             text_field_validation(appointment_data['message'], 'message', 1, 500)
 
             prestation_id = appointment_data.get('prestation_id')
@@ -82,27 +113,11 @@ class AppointmentList(Resource):
             # Créer le rendez-vous
             new_appointment = facade.create_appointment(**appointment_data)
 
-            # # Récupérer le mail de l'utilisateur et du praticien
-            # try:
-            # 	sender_email = current_app.config.get('MAIL_USERNAME')
-            # 	if not sender_email:
-            # 		raise CustomError('L\'adresse email de l\'utilisateur n\'est pas définie', 500)
-
-            # 	practitioner_email = current_app.config.get('MAIL_RECIPIENT_PRACTITIONER')
-            # 	if not practitioner_email:
-            # 		raise CustomError('L\'adresse email du praticien n\'est pas définie', 500)
-
-            # 	# Envoyer la notification par mail à l'utilisateur et au praticien
-            # 	send_appointment_notifications(sender_email, practitioner_email, **appointment_data)
-
-            # except Exception as e:
-            # 	api.abort(500, error=str(e))
-
             return new_appointment, 201
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             api.abort(400, error=str(e))
         except Exception as e:
             api.abort(500, error=str(e))
@@ -125,10 +140,46 @@ class AppointmentList(Resource):
         try:
             appointments = facade.get_all_appointments()
             return appointments, 200
+
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
         except Exception as e:
             api.abort(500, error=str(e))
+
+
+@api.route('/search')
+class AppointmentSearch(Resource):
+    @api.doc('Get appointment by status', params={'status': 'Le statut du rendez-vous à rechercher'})
+    @api.marshal_list_with(admin_appointment_response_model, code=_http.HTTPStatus.OK, description='Appointments retrieved successfully')
+    @jwt_required()
+    @api.response(200, 'Rendez-vous récupérés avec succès', admin_appointment_response_model)
+    @api.response(404, 'Rendez-vous non trouvés', error_model)
+    @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def get(self):
+        """Récupérer des rendez-vous par statut"""
+        status = request.args.get('status')
+        if not status:
+            api.abort(400, error='Le statut du rendez-vous est requis')
+
+        if status not in allowed_statuses:
+            api.abort(400, error="Le statut doit être l'un des suivants : " + ", ".join(allowed_statuses))
+
+        current_user = get_jwt()
+
+        # Vérifier que l'utilisateur a les droits admin
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        try:
+            appointments = facade.get_appointments_by_status(status)
+            return appointments, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except Exception as e:
+            api.abort(400, error=str(e))
 
 
 @api.route('/prestation/<prestation_id>')
@@ -159,7 +210,7 @@ class PrestationAppointmentList(Resource):
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             api.abort(400, error=str(e))
         except Exception as e:
             api.abort(500, error=str(e))
@@ -193,7 +244,7 @@ class UserAppointmentList(Resource):
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             api.abort(400, error=str(e))
         except Exception as e:
             api.abort(500, error=str(e))
@@ -234,7 +285,7 @@ class UserPrestationAppointmentList(Resource):
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             api.abort(400, error=str(e))
         except Exception as e:
             api.abort(500, error=str(e))
@@ -264,6 +315,85 @@ class Appointment(Resource):
             if not appointment:
                 raise CustomError('Le rendez-vous n\'existe pas', 404)
             return appointment, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except (ValueError, TypeError) as e:
+            api.abort(400, error=str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
+    @api.doc('Update appointment status')
+    @api.marshal_with(admin_appointment_response_model, code=_http.HTTPStatus.OK, description='Appointment status updated successfully')
+    @api.expect(appointment_status_model, validate=True)
+    @jwt_required()
+    @api.response(200, 'Statut du rendez-vous mis à jour avec succès', admin_appointment_response_model)
+    @api.response(400, 'Statut invalide', error_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
+    @api.response(404, 'Rendez-vous non trouvé', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def put(self, appointment_id):
+        """Mettre à jour le statut d'un rendez-vous (Admin seulement)"""
+        current_user= get_jwt()
+
+        # Vérifier que l'utilisateur a les droits admin
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        appointment_data = api.payload
+        new_status = appointment_data.get('status')
+
+        if not new_status:
+            api.abort(400, error="Le champ 'status' est requis")
+
+        if new_status not in allowed_statuses:
+            api.abort(400, error="Le statut doit être l'un des suivants : " + ", ".join(allowed_statuses))
+
+        try:
+            validate_entity_id(appointment_id, 'appointment_id')
+
+            existing_appointment = facade.get_appointment_by_id(appointment_id)
+            if not existing_appointment:
+                raise CustomError('Le rendez-vous n\'existe pas', 404)
+
+            updated_appointment = facade.update_appointment_status(appointment_id, **appointment_data)
+            return updated_appointment, 200
+
+        except CustomError as e:
+            api.abort(e.status_code, error=str(e))
+        except (ValueError, TypeError) as e:
+            api.abort(400, str(e))
+        except Exception as e:
+            api.abort(500, error=str(e))
+
+
+    @api.doc('Delete an appointment')
+    @api.marshal_with(msg_model, code=_http.HTTPStatus.OK, description='Appointment deleted successfully')
+    @jwt_required()
+    @api.response(200, 'Rendez-vous supprimé avec succès', msg_model)
+    @api.response(403, 'Vous n\'avez pas les droits administrateur', error_model)
+    @api.response(404, 'Le rendez-vous n\'a pas été trouvé', error_model)
+    @api.response(401, 'Vous devez vous connecter', error_model)
+    @api.response(500, 'Erreur interne du serveur', error_model)
+    def delete(self, appointment_id):
+        """Supprimer un rendez-vous"""
+        current_user = get_jwt()
+
+        # Vérifier que l'utilisateur a les droits admin
+        if not current_user.get('is_admin'):
+            api.abort(403, error='Vous n\'avez pas les droits administrateur')
+
+        try:
+            validate_entity_id(appointment_id, 'appointment_id')
+
+            appointment = facade.get_appointment_by_id(appointment_id)
+            if not appointment:
+                api.abort(404, error='Le rendez-vous n\'a pas été trouvé')
+
+            facade.delete_appointment(appointment_id)
+            return {'message': 'Rendez-vous supprimé avec succès'}, 200
 
         except CustomError as e:
             api.abort(e.status_code, error=str(e))
