@@ -548,10 +548,21 @@ function setupPasswordModal() {
 			});
 
 			if (response.ok) {
+				await fetch('/api/v1/authentication/logout', {
+					method: 'POST',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': csrfToken
+					}
+				});
+
 				showFeedbackMessage('Mot de passe modifié avec succès !');
 				passwordModal.style.display = 'none';
 				passwordForm.reset();
-				setTimeout(() => {  // Redirection vers la page login
+
+				// Redirection vers la page login
+				setTimeout(() => {
 					window.location.href = '/login';
 				}, 2000);
 			} else {
