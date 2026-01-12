@@ -294,6 +294,7 @@ You can now enjoy the web site and visit the different pages as a user do.
 - Frontend: HTML5, CSS3, JavaScript ES6
 - Backend: Python, Flask, Flask-RestX, Flask-JWT-Extended, Flask-Mail
 - Database: PostgreSQL
+- Containerization: Docker
 
 ---
 

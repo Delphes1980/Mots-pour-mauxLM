@@ -76,8 +76,8 @@ def send_appointment_notifications(user_email, practitioner_email, **context):
     send_mail_async(msg_user)
 
 def send_password_reset_notification(user_email, temp_password):
-    """Envoie un email à l'utilisateur après réinitialisation de son mot de passe par l'admin"""
-
+    """Envoie un email à l'utilisateur après réinitialisation de son mot de passe par l'admin"""  
+    
     sender_email = current_app.config.get('MAIL_DEFAULT_SENDER')
 
     subject = 'Votre mot de passe a été réinitialisé'
