@@ -210,7 +210,7 @@ docker-compose up --build -d
 
 ### Admin Setup
 To fully test all API endpoints (e.g., retrieving all users/ reviews) and simulate administration roles, you must create a dedicated administrator account after the database has been initialized.
-**1 - Ensure containers are running:** Verify that your `web` and `db` containers are active (`docker compose ps` must show **Up**).
+**1 - Ensure containers are running:** Verify that your `web` and `db` containers are active (`docker-compose ps` must show **Up**).
 **2 - Access the web container shell:** Open a new terminal session and execute a command to enter the running web container:
 ```	
 docker-compose exec web bash
