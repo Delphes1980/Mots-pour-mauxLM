@@ -551,6 +551,9 @@ function setupPasswordModal() {
 				showFeedbackMessage('Mot de passe modifié avec succès !');
 				passwordModal.style.display = 'none';
 				passwordForm.reset();
+				setTimeout(() => {  // Redirection vers la page login
+					window.location.href = '/login';
+				}, 2000);
 			} else {
 				const errorData = await response.json();
 				showFeedbackMessage(errorData.error || "Erreur lors de la modification du mot de passe", true);
