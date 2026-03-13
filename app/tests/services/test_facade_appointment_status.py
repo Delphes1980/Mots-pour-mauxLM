@@ -192,7 +192,7 @@ class TestFacadeAppointmentStatus(BaseTest):
             first_name='Ghost',
             last_name='User',
             email='deleted@system.local',
-            password='Ghost#2025!',
+            password='Ghost#2025!!',
             is_admin=False
         )
         

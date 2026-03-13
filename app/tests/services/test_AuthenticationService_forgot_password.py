@@ -26,7 +26,7 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
 
     def test_reset_password_by_email_success(self):
         """Test réinitialisation réussie par email"""
-        new_password = 'NewTemp123!'
+        new_password = 'NewTemp1234!'
         
         result = self.service.reset_password_by_email('test@example.com', new_password)
         
@@ -41,10 +41,10 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
     def test_reset_password_by_email_user_not_found(self):
         """Test avec email inexistant"""
         with self.assertRaises(CustomError) as context:
-            self.service.reset_password_by_email('nonexistent@example.com', 'NewTemp123!')
+            self.service.reset_password_by_email('nonexistent@example.com', 'NewTemp1234!')
         
         self.assertEqual(context.exception.status_code, 404)
-        self.assertIn('User not found', str(context.exception))
+        self.assertIn("Vous n'avez pas créé de compte", str(context.exception))
 
     def test_reset_password_by_email_invalid_email(self):
         """Test avec email invalide"""
@@ -58,7 +58,7 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
         
         for email in invalid_emails:
             with self.assertRaises(CustomError) as context:
-                self.service.reset_password_by_email(email, 'NewTemp123!')
+                self.service.reset_password_by_email(email, 'NewTemp1234!')
             
             self.assertEqual(context.exception.status_code, 400)
 
@@ -84,11 +84,11 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
     def test_reset_password_by_email_valid_password_formats(self):
         """Test avec différents formats de mots de passe valides"""
         valid_passwords = [
-            'NewTemp123!',
-            'ValidPass1@',
-            'Strong#Pass2',
-            'MySecure$3',
-            'Test&Pass4'
+            'NewTemp1234!',
+            'ValidPass123@',
+            'Strong#Pass12',
+            'MySecure$1234',
+            'Test&Pass456+'
         ]
         
         for password in valid_passwords:
@@ -114,7 +114,7 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
         
         for email in email_variations:
             try:
-                result = self.service.reset_password_by_email(email, 'NewTemp123!')
+                result = self.service.reset_password_by_email(email, 'NewTemp1234!')
                 # Si ça réussit, vérifier que c'est le bon utilisateur
                 self.assertEqual(result.email, 'test@example.com')
             except CustomError as e:
@@ -132,7 +132,7 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
         )
         self.save_to_db(admin_user)
         
-        result = self.service.reset_password_by_email('admin@example.com', 'NewAdminPass123!')
+        result = self.service.reset_password_by_email('admin@example.com', 'NewAdminPass1!')
         
         self.assertIsNotNone(result)
         self.assertEqual(result.email, 'admin@example.com')
@@ -156,7 +156,7 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
         
         # Réinitialiser le mot de passe pour chaque utilisateur
         for i, user in enumerate(users):
-            new_password = f'NewPass{i}123!'
+            new_password = f'NewPass{i}1234!'
             result = self.service.reset_password_by_email(user.email, new_password)
             
             self.assertEqual(result.email, user.email)
@@ -173,7 +173,7 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
         original_is_admin = self.test_user.is_admin
         original_created_at = self.test_user.created_at
         
-        result = self.service.reset_password_by_email('test@example.com', 'NewTemp123!')
+        result = self.service.reset_password_by_email('test@example.com', 'NewTemp1234!')
         
         # Vérifier que les autres champs sont préservés
         self.assertEqual(result.first_name, original_first_name)
@@ -183,7 +183,7 @@ class TestAuthenticationServiceForgotPassword(BaseTest):
 
     def test_reset_password_by_email_database_consistency(self):
         """Test cohérence de la base de données"""
-        new_password = 'NewTemp123!'
+        new_password = 'NewTemp1234!'
         
         # Compter les utilisateurs avant
         users_count_before = User.query.count()

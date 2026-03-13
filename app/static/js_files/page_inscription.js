@@ -17,7 +17,7 @@ function isValidEmail(email) {
 
 // Valide le mot de passe
 function isPasswordSecure(password) {
-	if (!password || password.length < 8) return false;
+	if (!password || password.length < 12) return false;
 	if (!/[a-z]/.test(password)) return false;
 	if (!/[A-Z]/.test(password)) return false;
 	if (!/\d/.test(password)) return false;
@@ -56,7 +56,7 @@ async function setupRegistrationForm() {
 		}
 
 		if (!isPasswordSecure(password)) {
-			showFeedbackMessage("Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial", true);
+			showFeedbackMessage("Le mot de passe doit contenir au moins 12 caractères, 1 majuscule, 1 chiffre et 1 caractère spécial", true);
 			return;
 		}
 

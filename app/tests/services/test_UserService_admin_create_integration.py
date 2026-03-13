@@ -19,7 +19,7 @@ class TestUserServiceAdminCreateIntegration(BaseTest):
             first_name='Ghost',
             last_name='User',
             email='deleted@system.local',
-            password='Ghost#2025!',
+            password='Ghost#2025!!',
             is_admin=False
         )
 
@@ -57,19 +57,19 @@ class TestUserServiceAdminCreateIntegration(BaseTest):
         """Test création de plusieurs utilisateurs par admin"""
         users_data = [
             {
-                'temp_password': 'TempPass1!',
+                'temp_password': 'TempPass123!',
                 'first_name': 'UserOne',
                 'last_name': 'Test',
                 'email': 'user1@example.com'
             },
             {
-                'temp_password': 'TempPass2!',
+                'temp_password': 'TempPass234!',
                 'first_name': 'UserTwo',
                 'last_name': 'Test',
                 'email': 'user2@example.com'
             },
             {
-                'temp_password': 'TempPass3!',
+                'temp_password': 'TempPass345!',
                 'first_name': 'UserThree',
                 'last_name': 'Test',
                 'email': 'user3@example.com'
@@ -139,13 +139,13 @@ class TestUserServiceAdminCreateIntegration(BaseTest):
         # Créer des utilisateurs via admin
         admin_created_users = [
             {
-                'temp_password': 'AdminTemp1!',
+                'temp_password': 'AdminTemp1!!',
                 'first_name': 'AdminUserOne',
                 'last_name': 'Test',
                 'email': 'admin.user1@test.com'
             },
             {
-                'temp_password': 'AdminTemp2!',
+                'temp_password': 'AdminTemp2!!',
                 'first_name': 'AdminUserTwo',
                 'last_name': 'Test',
                 'email': 'admin.user2@test.com'

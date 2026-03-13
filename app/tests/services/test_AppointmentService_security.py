@@ -63,7 +63,7 @@ class TestAppointmentServiceSecurity(BaseTest):
             "admin' OR '1'='1",
             "UNION SELECT * FROM users"
         ]
-        
+
         for malicious_input in malicious_inputs:
             with self.assertRaises(CustomError) as context:
                 self.appointment_service.update_appointment_status(
