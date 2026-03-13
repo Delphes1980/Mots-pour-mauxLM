@@ -58,7 +58,7 @@ class TestAdvancedValidation(BaseTest):
         weak_passwords = [
             'password',  # Pas de majuscule, chiffre, caractère spécial
             'PASSWORD123',  # Pas de caractère spécial
-            'Password!',  # Trop court (< 8 caractères)
+            'Password!',  # Trop court (< 12 caractères)
             '12345678!',  # Pas de lettre
             'Aa1!',  # Trop court
             'A' * 129 + '1!',  # Trop long (> 128 caractères)

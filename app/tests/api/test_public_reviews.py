@@ -36,13 +36,13 @@ class TestPublicReviewsEndToEnd(BaseTest):
             first_name="Jean-Pierre",
             last_name="Dupont",
             email="jp@test.com",
-            password="Test123!"
+            password="Testpassword123!"
         )
         self.ghost_user = User(
             first_name="Ghost",
             last_name="User",
             email="ghost@test.com",
-            password="Test123!"
+            password="Testpassword123!"
         )
         self.save_to_db(self.user, self.ghost_user)
 

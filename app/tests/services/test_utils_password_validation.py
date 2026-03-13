@@ -15,13 +15,13 @@ class TestPasswordValidation(BaseTest):
             "Password123!",
             "MySecure456@",
             "Complex789#Pass",
-            "Minimum8!",  # Exactement 8 caractères
+            "Password123!",  # Exactement 12 caractères
             "VeryLongPasswordWithAllRequirements123!@#",
-            "Test123$",
-            "Secure456%",
-            "Strong789&",
-            "Valid012*",
-            "Good345+",
+            "Testtest123$",
+            "Securepass456%",
+            "StrongPass789&",
+            "ValidPass012*",
+            "Goodpassword345+",
         ]
         
         for password in valid_passwords:
@@ -43,12 +43,12 @@ class TestPasswordValidation(BaseTest):
         for password in short_passwords:
             with self.assertRaises(ValueError) as context:
                 validate_password(password)
-            self.assertIn("au moins 8 caractères", str(context.exception))
+            self.assertIn("au moins 12 caractères", str(context.exception))
 
     def test_validate_password_no_digit(self):
         """Test validation échoue sans chiffre"""
         no_digit_passwords = [
-            "Password!",
+            "Passwordtest!",
             "NoDigitHere@",
             "OnlyLetters#",
             "TestPassword$",
@@ -65,7 +65,7 @@ class TestPasswordValidation(BaseTest):
             "password123!",
             "lowercase456@",
             "nouppercasehere789#",
-            "test123$",
+            "testpass123$",
         ]
         
         for password in no_uppercase_passwords:
@@ -76,10 +76,10 @@ class TestPasswordValidation(BaseTest):
     def test_validate_password_no_special_char(self):
         """Test validation échoue sans caractère spécial"""
         no_special_passwords = [
-            "Password123",
+            "Password1234",
             "NoSpecialChar456",
             "TestPassword789",
-            "Valid012",
+            "Validpass012",
         ]
         
         for password in no_special_passwords:
@@ -111,7 +111,7 @@ class TestPasswordValidation(BaseTest):
         """Test validation échoue avec chaîne vide"""
         with self.assertRaises(ValueError) as context:
             validate_password("")
-        self.assertIn("au moins 8 caractères", str(context.exception))
+        self.assertIn("au moins 12 caractères", str(context.exception))
 
     def test_validate_password_special_characters_variety(self):
         """Test validation avec différents caractères spéciaux"""
@@ -150,16 +150,14 @@ class TestPasswordValidation(BaseTest):
         """Test que generate_temp_password génère des mots de passe valides"""
         for _ in range(10):  # Tester plusieurs générations
             temp_password = generate_temp_password()
-            
             # Le mot de passe généré doit passer la validation
             try:
                 validated = validate_password(temp_password)
                 self.assertEqual(validated, temp_password)
             except ValueError as e:
                 self.fail(f"Mot de passe temporaire généré '{temp_password}' ne respecte pas les exigences: {str(e)}")
-            
             # Vérifier les exigences individuellement
-            self.assertGreaterEqual(len(temp_password), 8)
+            self.assertGreaterEqual(len(temp_password), 12)
             self.assertTrue(any(c.isupper() for c in temp_password))
             self.assertTrue(any(c.islower() for c in temp_password))
             self.assertTrue(any(c.isdigit() for c in temp_password))
@@ -167,7 +165,7 @@ class TestPasswordValidation(BaseTest):
 
     def test_generate_temp_password_different_lengths(self):
         """Test génération de mots de passe temporaires de différentes longueurs"""
-        lengths = [8, 12, 16, 20]
+        lengths = [12, 16, 20]
         
         for length in lengths:
             temp_password = generate_temp_password(length=length)
@@ -194,11 +192,11 @@ class TestPasswordValidation(BaseTest):
 
     def test_password_validation_edge_cases(self):
         """Test cas limites de validation"""
-        # Exactement 8 caractères avec toutes les exigences
+        # Exactement 12 caractères avec toutes les exigences
         edge_case_passwords = [
-            "Minimum8!",  # Exactement 8 caractères
-            "A1!bcdef",   # Minimum avec tous les types
-            "Test123@",   # Cas standard minimum
+            "Password123!",  # Exactement 12 caractères
+            "A1!bcdefghij",   # Minimum avec tous les types
+            "Testpass123@",   # Cas standard minimum
         ]
         
         for password in edge_case_passwords:
@@ -213,10 +211,9 @@ class TestPasswordValidation(BaseTest):
         # Les caractères Unicode ne devraient pas compter comme caractères spéciaux
         unicode_passwords = [
             "Pässwörd123!",  # Avec accents + exigences
-            "Test123é!",     # Avec accent + exigences
-            "Válid456@",     # Avec accent + exigences
+            "Válidpass456@",     # Avec accent + exigences
         ]
-        
+        # "Test123é!" ne respecte pas la longueur minimale de 12 caractères, donc retiré
         for password in unicode_passwords:
             try:
                 result = validate_password(password)

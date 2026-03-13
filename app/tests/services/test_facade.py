@@ -120,7 +120,7 @@ class TestFacadeSimple(BaseTest):
             first_name="Ghost",
             last_name="User",
             email="deleted@system.local",
-            password="Ghost#2025!",
+            password="Ghost#2025!!",
             is_admin=False
         )
 
@@ -690,13 +690,13 @@ class TestFacadeSimple(BaseTest):
         """Test intégration admin_create_user et search_users_by_email_fragment via facade"""
         # Créer des utilisateurs via admin
         admin_user1 = self.facade.admin_create_user(
-            temp_password="AdminTemp1!",
+            temp_password="AdminTemp1!!",
             first_name="AdminUserOne",
             last_name="Test",
             email="admin.user1@test.com"
         )
         admin_user2 = self.facade.admin_create_user(
-            temp_password="AdminTemp2!",
+            temp_password="AdminTemp2!!",
             first_name="AdminUserTwo",
             last_name="Test",
             email="admin.user2@test.com"

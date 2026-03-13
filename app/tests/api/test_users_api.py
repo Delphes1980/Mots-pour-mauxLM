@@ -413,7 +413,7 @@ class TestUsersAPI(BaseTest):
             'first_name': 'Ghost',
             'last_name': 'User',
             'email': 'deleted@system.local',
-            'password': 'Ghost#2025!'
+            'password': 'Ghost#2025!!'
         }
         self.client.post('/users/', data=json.dumps(ghost_data), content_type='application/json')
 

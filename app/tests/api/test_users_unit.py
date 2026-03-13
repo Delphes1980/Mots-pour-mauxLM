@@ -179,7 +179,7 @@ class TestUsersUnitSimple(BaseTest):
         # Créer un utilisateur à rechercher
         user = User(
             email='john.doe@example.com',
-            password='Secure123!',
+            password='Securepass123!',
             first_name='John',
             last_name='Doe'
         )

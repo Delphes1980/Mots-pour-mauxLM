@@ -128,12 +128,12 @@ class TestUser(BaseTest):
     # Test de mots de passe
     def test_password_too_short(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", "Pass1!")  # < 8 chars
-        self.assertIn("au moins 8 caractères", str(e.exception))
+            User("John", "Doe", "john@example.com", "Pass1!")  # < 12 chars
+        self.assertIn("au moins 12 caractères", str(e.exception))
 
     def test_password_no_digit(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", "Password!")
+            User("John", "Doe", "john@example.com", "Passwordtest!")
         self.assertIn("au moins un chiffre", str(e.exception))
 
     def test_password_invalid_variations(self):
@@ -154,7 +154,7 @@ class TestUser(BaseTest):
 
     def test_password_no_special_char(self):
         with self.assertRaises(ValueError) as e:
-            User("John", "Doe", "john@example.com", "Password123")
+            User("John", "Doe", "john@example.com", "Password1234")
         self.assertIn("caractère spécial", str(e.exception))
 
     def test_password_no_uppercase(self):
@@ -177,7 +177,7 @@ class TestUser(BaseTest):
             "Password123!",
             "MySecure456@",
             "Complex789#Pass",
-            "Minimum8!",  # Exactement 8 caractères
+            "Password123!",  # Exactement 12 caractères
             "VeryLongPasswordWithAllRequirements123!@#",
         ]
         
