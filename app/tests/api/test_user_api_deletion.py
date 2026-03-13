@@ -24,14 +24,14 @@ class TestUserApiDeletion(BaseTest):
 
         self.ghost_user = User(
             email='deleted@system.local',
-            password='Ghost#2025!',
+            password='Ghost#2025!!',
             first_name='Ghost',
             last_name='User',
             is_admin=False
         )
         self.admin_user = User(
             email='admin@example.com',
-            password='Admin123!',
+            password='Admin1234567!',
             first_name='Admin',
             last_name='Root',
             is_admin=True
@@ -67,7 +67,7 @@ class TestUserApiDeletion(BaseTest):
 
         assert self.facade.get_user_by_email('deleted@system.local') is not None
 
-        self.login_as('admin@example.com', 'Admin123!')
+        self.login_as('admin@example.com', 'Admin1234567!')
         response = self.client.delete(f"/users/{user_id}")
         print("DELETE with reviews:", response.status_code, response.json)
 
@@ -84,7 +84,7 @@ class TestUserApiDeletion(BaseTest):
         assert len(self.facade.get_review_by_user(self.ghost_user.id)) == 2
 
     def test_api_delete_user_without_reviews(self):
-        user = User(email='claire.martin@example.com', password='Claire456!', first_name='Claire', last_name='Martin')
+        user = User(email='claire.martin@example.com', password='Claire456789!', first_name='Claire', last_name='Martin')
         self.save_to_db(user)
         user_id = user.id
 
@@ -93,7 +93,7 @@ class TestUserApiDeletion(BaseTest):
 
         assert self.facade.get_user_by_email('deleted@system.local') is not None
 
-        self.login_as('admin@example.com', 'Admin123!')
+        self.login_as('admin@example.com', 'Admin1234567!')
         response = self.client.delete(f"/users/{user_id}")
         print("DELETE without reviews:", response.status_code, response.json)
 
@@ -110,12 +110,12 @@ class TestUserApiDeletion(BaseTest):
         assert len(self.facade.get_review_by_user(self.ghost_user.id)) == 0
 
     def test_api_delete_user_as_non_admin_forbidden(self):
-        regular_user = User(email='user@example.com', password='User123!', first_name='User', last_name='Test')
-        target_user = User(email='target@example.com', password='Target123!', first_name='Target', last_name='User')
+        regular_user = User(email='user@example.com', password='User12345678!', first_name='User', last_name='Test')
+        target_user = User(email='target@example.com', password='Target123456!', first_name='Target', last_name='User')
         self.save_to_db(regular_user, target_user)
         target_user_id = target_user.id
 
-        self.login_as('user@example.com', 'User123!')
+        self.login_as('user@example.com', 'User12345678!')
         response = self.client.delete(f"/users/{target_user_id}")
         print("DELETE as non-admin:", response.status_code, response.json)
 
@@ -127,7 +127,7 @@ class TestUserApiDeletion(BaseTest):
 
     def test_api_delete_ghost_user_forbidden(self):
         ghost_user_id = self.ghost_user.id
-        self.login_as('admin@example.com', 'Admin123!')
+        self.login_as('admin@example.com', 'Admin1234567!')
         response = self.client.delete(f"/users/{ghost_user_id}")
         print("DELETE ghost user:", response.status_code, response.json)
 

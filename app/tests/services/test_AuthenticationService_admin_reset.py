@@ -126,7 +126,7 @@ class TestAuthenticationServiceAdminReset(BaseTest):
             "ValidPass123!",
             "AnotherGood456@",
             "Complex789#Password",
-            "Minimum8!",  # Exactement 8 caractères
+            "Password123!",  # Exactement 12 caractères
             "VeryLongPasswordWithAllRequirements123!@#",
         ]
         

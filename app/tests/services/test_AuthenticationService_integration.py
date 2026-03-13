@@ -50,7 +50,7 @@ class TestAuthenticationServiceIntegration(BaseTest):
 
     def test_multiple_password_changes(self):
         """Test changements multiples de mot de passe"""
-        passwords = ["NewPass1!", "NewPass2!", "NewPass3!"]
+        passwords = ["NewPassword1!", "NewPassword2!", "NewPassword3!"]
         current_password = "Password123!"
         
         for new_password in passwords:

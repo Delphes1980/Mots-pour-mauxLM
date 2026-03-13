@@ -220,8 +220,8 @@ def validate_password(plain_password):
     """ Validates the password to ensure it meets the requirements """
     if plain_password is None:
         raise ValueError("Mot de passe attendu mais aucun reçu")
-    if len(plain_password) < 8:
-        raise ValueError("Mot de passe invalide : le mot de passe doit comporter au moins 8 caractères")
+    if len(plain_password) < 12:
+        raise ValueError("Mot de passe invalide : le mot de passe doit comporter au moins 12 caractères")
     if not re.search(r'\d', plain_password):
         raise ValueError("Mot de passe invalide : le mot de passe doit contenir au moins un chiffre")
     if not re.search(r'[A-Z]', plain_password):

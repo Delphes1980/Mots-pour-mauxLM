@@ -59,7 +59,7 @@ class TestUserServiceIntegration(BaseTest):
             first_name="Ghost",
             last_name="User",
             email="deleted@system.local",
-            password="Ghost#2025!",
+            password="Ghost#2025!!",
             is_admin=False
         )
 
@@ -121,7 +121,7 @@ class TestUserServiceIntegration(BaseTest):
             first_name="Ana",
             last_name="Silva",
             email="ana@example.com",
-            password="MinPass123!"
+            password="MinPass123!!"
         )
         
         self.assertIsNone(minimal_user.address)
